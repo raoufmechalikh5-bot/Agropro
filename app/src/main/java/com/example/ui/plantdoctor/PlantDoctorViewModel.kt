@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.data.ai.PlantDoctorRepository
 import com.example.data.ai.PlantDoctorUiState
+import com.example.data.ai.SelectedPlantImage
 import com.example.data.catalog.DiseaseFlashcard
 import com.example.data.catalog.FlashcardCatalog
 import com.example.data.local.DiagnosisHistoryEntity
@@ -33,11 +34,8 @@ class PlantDoctorViewModel(
     private val localRepository: ExperimentRepository
 ) : ViewModel() {
 
-    private val _selectedBitmap = MutableStateFlow<Bitmap?>(null)
-    val selectedBitmap: StateFlow<Bitmap?> = _selectedBitmap.asStateFlow()
-
-    private val _selectedImageLabel = MutableStateFlow<String?>(null)
-    val selectedImageLabel: StateFlow<String?> = _selectedImageLabel.asStateFlow()
+    private val _selectedImages = MutableStateFlow<List<SelectedPlantImage>>(emptyList())
+    val selectedImages: StateFlow<List<SelectedPlantImage>> = _selectedImages.asStateFlow()
 
     private val _farmerNotes = MutableStateFlow("")
     val farmerNotes: StateFlow<String> = _farmerNotes.asStateFlow()
@@ -90,6 +88,18 @@ class PlantDoctorViewModel(
         _farmerNotes.value = notes
     }
 
+    fun removeImage(imageId: Long) {
+        _selectedImages.value = _selectedImages.value.filterNot { it.id == imageId }
+        if (_selectedImages.value.isEmpty()) {
+            _diagnosisState.value = PlantDoctorUiState.Idle
+        }
+    }
+
+    fun clearAllImages() {
+        _selectedImages.value = emptyList()
+        _diagnosisState.value = PlantDoctorUiState.Idle
+    }
+
     fun loadSampleImage(context: Context, @DrawableRes resId: Int, label: String) {
         viewModelScope.launch {
             val bmp = withContext(Dispatchers.IO) {
@@ -97,8 +107,7 @@ class PlantDoctorViewModel(
                 decoded?.let { scaleBitmap(it, 768) }
             }
             if (bmp != null) {
-                _selectedBitmap.value = bmp
-                _selectedImageLabel.value = label
+                _selectedImages.value = listOf(SelectedPlantImage(bitmap = bmp, label = label))
                 _diagnosisState.value = PlantDoctorUiState.Idle
             }
         }
@@ -125,8 +134,13 @@ class PlantDoctorViewModel(
                 }
             }
             if (bmp != null) {
-                _selectedBitmap.value = bmp
-                _selectedImageLabel.value = label
+                val current = _selectedImages.value
+                val updated = if (current.size >= 3) {
+                    current.drop(1) + SelectedPlantImage(bitmap = bmp, label = label)
+                } else {
+                    current + SelectedPlantImage(bitmap = bmp, label = label)
+                }
+                _selectedImages.value = updated
                 _diagnosisState.value = PlantDoctorUiState.Idle
             } else {
                 _diagnosisState.value = PlantDoctorUiState.Error("تعذر قراءة الصورة المختارة. يرجى تجربة صورة أخرى.")
@@ -135,22 +149,23 @@ class PlantDoctorViewModel(
     }
 
     fun analyzePlantImage(context: Context? = null) {
-        val bitmap = _selectedBitmap.value
-        if (bitmap == null) {
-            _diagnosisState.value = PlantDoctorUiState.Error("يرجى اختيار أو التقاط صورة للورقة أو الثمرة أولاً.")
+        val images = _selectedImages.value
+        if (images.isEmpty()) {
+            _diagnosisState.value = PlantDoctorUiState.Error("يرجى اختيار أو التقاط صورة واحدة على الأقل للورقة أو الثمرة.")
             return
         }
 
         viewModelScope.launch {
             _diagnosisState.value = PlantDoctorUiState.Loading
-            val result = aiRepository.diagnosePlantImage(bitmap, _farmerNotes.value)
+            val bitmaps = images.map { it.bitmap }
+            val result = aiRepository.diagnosePlantImages(bitmaps, _farmerNotes.value)
             result.fold(
                 onSuccess = { diagnosis ->
                     val savedPhotoPath = if (context != null) {
                         withContext(Dispatchers.IO) {
                             com.example.util.PhotoStorageHelper.saveBitmapToInternalFiles(
                                 context,
-                                bitmap,
+                                bitmaps.first(),
                                 "diagnosis_photos"
                             )
                         }
