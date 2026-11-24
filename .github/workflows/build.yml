@@ -18,10 +18,11 @@ jobs:
         env:
           KEYSTORE_B64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
         run: |
-          if [ -n "$KEYSTORE_B64" ]; then
-            echo "$KEYSTORE_B64" | base64 -d > debug.keystore
+          CLEAN_B64=$(printf '%s' "$KEYSTORE_B64" | tr -d '[:space:]')
+          if [ -n "$CLEAN_B64" ] && echo "$CLEAN_B64" | base64 -d > debug.keystore 2>/dev/null && [ -s debug.keystore ]; then
             echo "Restored persistent keystore from secrets."
           else
+            rm -f debug.keystore
             keytool -genkeypair -v -keystore debug.keystore \
               -storepass android -keypass android \
               -alias androiddebugkey -keyalg RSA -keysize 2048 \
