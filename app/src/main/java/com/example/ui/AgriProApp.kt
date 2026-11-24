@@ -1,16 +1,18 @@
 package com.example.ui
 
 import android.app.Activity
-import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
@@ -24,12 +26,16 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -165,6 +171,9 @@ private val destinations = listOf(
     AgriDestination.Notebook
 )
 
+// منحنى حركة حريري فائق السلاسة (Ultra-Smooth Quintic Easing)
+private val UltraSmoothEasing = CubicBezierEasing(0.22f, 1f, 0.36f, 1f)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AgriProApp() {
@@ -226,7 +235,6 @@ fun AgriProApp() {
         factory = NotebookViewModel.Factory(experimentRepo)
     )
 
-    // Enforce authentic Arabic RTL layout direction throughout Agro pro
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         AgriProTheme(darkTheme = useDarkTheme) {
             val navController = rememberNavController()
@@ -309,12 +317,14 @@ fun AgriProApp() {
                                 currentRoute = currentRoute,
                                 useDarkTheme = useDarkTheme,
                                 onSelectDestination = { dest ->
-                                    navController.navigate(dest.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
+                                    if (currentRoute != dest.route) {
+                                        navController.navigate(dest.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
                                         }
-                                        launchSingleTop = true
-                                        restoreState = true
                                     }
                                 }
                             )
@@ -372,24 +382,34 @@ fun AgriProApp() {
                                 val toIndex = destinations.indexOfFirst { it.route == targetState.destination.route }
                                 val direction = if (toIndex >= fromIndex) -1 else 1
                                 slideInHorizontally(
-                                    animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing),
-                                    initialOffsetX = { fullWidth -> direction * (fullWidth / 4) }
-                                ) + fadeIn(animationSpec = tween(durationMillis = 260))
+                                    animationSpec = tween(durationMillis = 360, easing = UltraSmoothEasing),
+                                    initialOffsetX = { fullWidth -> direction * (fullWidth / 6) }
+                                ) + fadeIn(
+                                    animationSpec = tween(durationMillis = 320, easing = UltraSmoothEasing)
+                                ) + scaleIn(
+                                    initialScale = 0.985f,
+                                    animationSpec = tween(durationMillis = 360, easing = UltraSmoothEasing)
+                                )
                             },
                             exitTransition = {
                                 val fromIndex = destinations.indexOfFirst { it.route == initialState.destination.route }
                                 val toIndex = destinations.indexOfFirst { it.route == targetState.destination.route }
                                 val direction = if (toIndex >= fromIndex) 1 else -1
                                 slideOutHorizontally(
-                                    animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing),
-                                    targetOffsetX = { fullWidth -> direction * (fullWidth / 4) }
-                                ) + fadeOut(animationSpec = tween(durationMillis = 200))
+                                    animationSpec = tween(durationMillis = 340, easing = UltraSmoothEasing),
+                                    targetOffsetX = { fullWidth -> direction * (fullWidth / 8) }
+                                ) + fadeOut(
+                                    animationSpec = tween(durationMillis = 240, easing = UltraSmoothEasing)
+                                ) + scaleOut(
+                                    targetScale = 0.99f,
+                                    animationSpec = tween(durationMillis = 340, easing = UltraSmoothEasing)
+                                )
                             },
                             popEnterTransition = {
-                                fadeIn(animationSpec = tween(durationMillis = 260))
+                                fadeIn(animationSpec = tween(durationMillis = 300, easing = UltraSmoothEasing))
                             },
                             popExitTransition = {
-                                fadeOut(animationSpec = tween(durationMillis = 200))
+                                fadeOut(animationSpec = tween(durationMillis = 240, easing = UltraSmoothEasing))
                             }
                         ) {
                             composable(AgriDestination.PlantDoctor.route) {
@@ -454,21 +474,21 @@ private fun LiquidGlassNavigationBar(
     useDarkTheme: Boolean,
     onSelectDestination: (AgriDestination) -> Unit
 ) {
-    val glassShape = RoundedCornerShape(30.dp)
+    val glassShape = RoundedCornerShape(32.dp)
+    val selectedIndex = destinations.indexOfFirst { it.route == currentRoute }.coerceAtLeast(0)
 
-    // ألوان الزجاج السائل المتدرجة مع لمعة الضوء
     val glassBackgroundBrush = if (useDarkTheme) {
         Brush.verticalGradient(
             colors = listOf(
-                Color(0xFF1F2B24).copy(alpha = 0.78f),
-                Color(0xFF121A15).copy(alpha = 0.88f)
+                Color(0xFF1F2B24).copy(alpha = 0.80f),
+                Color(0xFF121A15).copy(alpha = 0.90f)
             )
         )
     } else {
         Brush.verticalGradient(
             colors = listOf(
-                Color.White.copy(alpha = 0.82f),
-                Color(0xFFF1F7F3).copy(alpha = 0.72f)
+                Color.White.copy(alpha = 0.85f),
+                Color(0xFFF1F7F3).copy(alpha = 0.76f)
             )
         )
     }
@@ -495,9 +515,10 @@ private fun LiquidGlassNavigationBar(
             .navigationBarsPadding()
             .padding(horizontal = 14.dp, vertical = 10.dp)
     ) {
-        Row(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(66.dp)
                 .shadow(
                     elevation = 14.dp,
                     shape = glassShape,
@@ -507,90 +528,112 @@ private fun LiquidGlassNavigationBar(
                 .clip(glassShape)
                 .background(brush = glassBackgroundBrush)
                 .border(width = 1.2.dp, brush = specularBorderBrush, shape = glassShape)
-                .padding(horizontal = 6.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(6.dp)
         ) {
-            destinations.forEach { dest ->
-                val selected = currentRoute == dest.route
-                val label = stringResource(dest.labelRes)
+            val itemWidth = maxWidth / destinations.size
 
-                // حركة تكبير مرنة (Spring) للأيقونة عند الاختيار
-                val scale by animateFloatAsState(
-                    targetValue = if (selected) 1.08f else 0.96f,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessLow
-                    ),
-                    label = "LiquidPillScale"
-                )
+            // انزلاق الكبسولة الزجاجية السائلة بسلاسة بين الخانات
+            val indicatorOffset by animateDpAsState(
+                targetValue = itemWidth * selectedIndex,
+                animationSpec = spring(
+                    dampingRatio = 0.82f,
+                    stiffness = Spring.StiffnessMediumLow
+                ),
+                label = "SlidingLiquidPillOffset"
+            )
 
-                val pillColor by animateColorAsState(
-                    targetValue = if (selected) {
-                        MaterialTheme.colorScheme.primary.copy(alpha = if (useDarkTheme) 0.28f else 0.16f)
-                    } else {
-                        Color.Transparent
-                    },
-                    animationSpec = tween(250),
-                    label = "LiquidPillColor"
-                )
-
-                val contentColor by animateColorAsState(
-                    targetValue = if (selected) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
-                    animationSpec = tween(250),
-                    label = "LiquidContentColor"
-                )
-
-                val interactionSource = remember { MutableInteractionSource() }
-
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .graphicsLayer {
-                            scaleX = scale
-                            scaleY = scale
-                        }
-                        .clip(CircleShape)
-                        .background(pillColor)
-                        .then(
-                            if (selected) {
-                                Modifier.border(
-                                    width = 0.8.dp,
-                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
-                                    shape = CircleShape
+            // الكبسولة الزجاجية المضيئة المتحركة في الخلفية
+            Box(
+                modifier = Modifier
+                    .offset(x = indicatorOffset)
+                    .width(itemWidth)
+                    .fillMaxHeight()
+                    .clip(CircleShape)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = if (useDarkTheme) {
+                                listOf(
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.34f),
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
                                 )
                             } else {
-                                Modifier
+                                listOf(
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.20f),
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)
+                                )
                             }
                         )
-                        .clickable(
-                            interactionSource = interactionSource,
-                            indication = null,
-                            onClick = { onSelectDestination(dest) }
+                    )
+                    .border(
+                        width = 0.9.dp,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
+                        shape = CircleShape
+                    )
+            )
+
+            // الأيقونات والنصوص فوق الكبسولة المتحركة
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                destinations.forEach { dest ->
+                    val selected = currentRoute == dest.route
+                    val label = stringResource(dest.labelRes)
+
+                    val scale by animateFloatAsState(
+                        targetValue = if (selected) 1.07f else 0.96f,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioNoBouncy,
+                            stiffness = Spring.StiffnessMediumLow
+                        ),
+                        label = "SmoothIconScale"
+                    )
+
+                    val contentColor by animateColorAsState(
+                        targetValue = if (selected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        animationSpec = tween(durationMillis = 300, easing = UltraSmoothEasing),
+                        label = "SmoothContentColor"
+                    )
+
+                    val interactionSource = remember { MutableInteractionSource() }
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .graphicsLayer {
+                                scaleX = scale
+                                scaleY = scale
+                            }
+                            .clip(CircleShape)
+                            .clickable(
+                                interactionSource = interactionSource,
+                                indication = null,
+                                onClick = { onSelectDestination(dest) }
+                            )
+                            .testTag(dest.testTag),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,
+                            contentDescription = label,
+                            tint = contentColor,
+                            modifier = Modifier.size(22.dp)
                         )
-                        .padding(vertical = 8.dp, horizontal = 4.dp)
-                        .testTag(dest.testTag),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(3.dp)
-                ) {
-                    Icon(
-                        imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,
-                        contentDescription = label,
-                        tint = contentColor,
-                        modifier = Modifier.size(22.dp)
-                    )
-                    Text(
-                        text = label,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-                        color = contentColor
-                    )
+                        Text(
+                            text = label,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                            color = contentColor
+                        )
+                    }
                 }
             }
         }
