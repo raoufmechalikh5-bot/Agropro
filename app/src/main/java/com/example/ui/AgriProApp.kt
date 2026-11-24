@@ -373,7 +373,28 @@ fun AgriProApp() {
                             modifier = Modifier.weight(1f)
                         ) {
                             composable(AgriDestination.PlantDoctor.route) {
-                                PlantDoctorScreen(viewModel = plantDoctorViewModel)
+                                PlantDoctorScreen(
+                                    viewModel = plantDoctorViewModel,
+                                    onOpenInNpkCalculator = { cropNameAr, diseaseNameAr ->
+                                        fertilizerCalculatorViewModel.applyDiagnosisContext(cropNameAr, diseaseNameAr)
+                                        navController.navigate(AgriDestination.FertilizerCalculator.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    },
+                                    onNavigateToNotebook = {
+                                        navController.navigate(AgriDestination.Notebook.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    }
+                                )
                             }
                             composable(AgriDestination.FertilizerCalculator.route) {
                                 FertilizerCalculatorScreen(viewModel = fertilizerCalculatorViewModel)
