@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AgriPro أجري برو</string>
+    <string name="app_name">AgroPro أجرو برو</string>
     <string name="camera_permission_rationale_title">صلاحية الكاميرا للتشخيص الميداني</string>
     <string name="camera_permission_rationale_body">يحتاج طبيب النبات إلى الوصول للكاميرا لالتقاط صور واضحة للأوراق والثمار المصابة وتحليلها عبر الذكاء الاصطناعي، أو يمكنك اختيار صورة من المعرض.</string>
     <string name="camera_permission_grant_action">السماح بالكاميرا</string>
