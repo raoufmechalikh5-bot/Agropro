@@ -16,7 +16,13 @@ import java.net.URL
 import kotlin.math.max
 
 private const val TAG = "PlantDoctorRepository"
-private const val MODEL = "gemini-3.8-flash"
+
+// قائمة النماذج مرتبة حسب الأولوية: يبدأ بالأحدث وينتقل تلقائياً للاحتياطي عند الضغط
+private val MODELS = listOf(
+    "gemini-3.8-flash",
+    "gemini-3.8-flash-lite",
+    "gemini-3.0-flash"
+)
 
 class PlantDoctorRepository {
 
@@ -27,10 +33,10 @@ class PlantDoctorRepository {
         try {
             val key = BuildConfig.GEMINI_API_KEY
             if (key.isBlank()) {
-                return@withContext Result.failure(Exception("مفتاح Gemini غير مضبوط في البناء."))
+                return@withContext Result.failure(Exception("مفتاح الذكاء الاصطناعي غير مضبوط في التطبيق."))
             }
 
-            // 1. تصغير الصورة إلى 512 بكسل لتسريع الإرسال والتحليل
+            // تصغير الصورة إلى 512 بكسل لتسريع الرفع والمعالجة
             val largest = max(bitmap.width, bitmap.height)
             var img = bitmap
             if (largest > 512) {
@@ -60,7 +66,6 @@ class PlantDoctorRepository {
                 if (farmerNotes.isNotBlank()) append("\nملاحظات المزارع: $farmerNotes")
             }
 
-            // 2. إيقاف التفكير المطول لتسريع الاستجابة الفورية
             val genConfig = JSONObject().apply {
                 put("responseMimeType", "application/json")
                 put("thinkingConfig", JSONObject().put("thinkingBudget", 0))
@@ -76,70 +81,93 @@ class PlantDoctorRepository {
                 put("generationConfig", genConfig)
             }
 
-            val conn = URL("https://generativelanguage.googleapis.com/v1beta/models/$MODEL:generateContent")
-                .openConnection() as HttpURLConnection
-            conn.requestMethod = "POST"
-            conn.connectTimeout = 15_000
-            conn.readTimeout = 25_000
-            conn.doOutput = true
-            conn.setRequestProperty("Content-Type", "application/json")
-            conn.setRequestProperty("x-goog-api-key", key)
-            conn.outputStream.use { it.write(body.toString().toByteArray()) }
+            val payloadBytes = body.toString().toByteArray()
+            var lastErrorMsg = "الخوادم مشغولة حالياً، يرجى المحاولة بعد قليل."
 
-            val code = conn.responseCode
-            val text = (if (code in 200..299) conn.inputStream else conn.errorStream)
-                ?.bufferedReader()?.use { it.readText() } ?: ""
-            if (code !in 200..299) {
-                Log.e(TAG, "HTTP $code:$text")
-                val msg = try {
-                    JSONObject(text).getJSONObject("error").getString("message")
-                } catch (e: Exception) { "خطأ في الخادم: $code" }
-                return@withContext Result.failure(Exception(msg))
-            }
+            // تجربة النماذج بالترتيب عند وجود ضغط
+            for (modelName in MODELS) {
+                try {
+                    val conn = URL("https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent")
+                        .openConnection() as HttpURLConnection
+                    conn.requestMethod = "POST"
+                    conn.connectTimeout = 12_000
+                    conn.readTimeout = 20_000
+                    conn.doOutput = true
+                    conn.setRequestProperty("Content-Type", "application/json")
+                    conn.setRequestProperty("x-goog-api-key", key)
+                    conn.outputStream.use { it.write(payloadBytes) }
 
-            // 3. استخراج النص النهائي وتجاهل أي أجزاء تفكير داخلية
-            val parts = JSONObject(text).getJSONArray("candidates").getJSONObject(0)
-                .getJSONObject("content").getJSONArray("parts")
-            val raw = buildString {
-                for (i in 0 until parts.length()) {
-                    val part = parts.getJSONObject(i)
-                    if (!part.optBoolean("thought", false)) {
-                        append(part.optString("text"))
+                    val code = conn.responseCode
+                    val text = (if (code in 200..299) conn.inputStream else conn.errorStream)
+                        ?.bufferedReader()?.use { it.readText() } ?: ""
+
+                    // إذا كان هناك ضغط (503) أو تجاوز حد الطلبات (429) أو النموذج غير متاح (404)، انتقل للتالي فوراً
+                    if (code == 503 || code == 429 || code == 404) {
+                        Log.w(TAG, "Model $modelName busy/unavailable (HTTP$code), switching to fallback...")
+                        continue
                     }
-                }
-            }.trim().removePrefix("```json").removePrefix("```").removeSuffix("```").trim()
 
-            if (raw.isBlank()) {
-                return@withContext Result.failure(IllegalStateException("لم يُرجع النموذج أي نتيجة."))
+                    if (code !in 200..299) {
+                        Log.e(TAG, "HTTP $code on $modelName:$text")
+                        lastErrorMsg = if (code == 400 || code == 403) {
+                            "خطأ في صلاحية مفتاح API (رمز $code)."
+                        } else {
+                            "تعذر الاتصال بخدمة التشخيص (رمز $code)."
+                        }
+                        continue
+                    }
+
+                    val parts = JSONObject(text).getJSONArray("candidates").getJSONObject(0)
+                        .getJSONObject("content").getJSONArray("parts")
+                    val raw = buildString {
+                        for (i in 0 until parts.length()) {
+                            val part = parts.getJSONObject(i)
+                            if (!part.optBoolean("thought", false)) {
+                                append(part.optString("text"))
+                            }
+                        }
+                    }.trim().removePrefix("```json").removePrefix("```").removeSuffix("```").trim()
+
+                    if (raw.isBlank()) {
+                        continue
+                    }
+
+                    val json = JSONObject(raw)
+                    val arr = json.optJSONArray("recommendations")
+                    val recs = buildList {
+                        if (arr != null) for (i in 0 until arr.length()) {
+                            val s = arr.optString(i)
+                            if (s.isNotBlank()) add(s)
+                        }
+                    }
+
+                    return@withContext Result.success(
+                        PlantDiagnosisResult(
+                            cropNameAr = json.optString("cropNameAr", "نبات غير محدد"),
+                            diseaseNameAr = json.optString("diseaseNameAr", "تشخيص غير محدد"),
+                            scientificName = json.optString("scientificName", "Unknown species"),
+                            cause = json.optString("cause", "فطري"),
+                            severity = json.optString("severity", "متوسطة"),
+                            activeIngredient = json.optString("activeIngredient", "يرجى استشارة مهندس وقاية النبات"),
+                            phiDays = json.optString("phiDays", "حسب بطاقة المبيد"),
+                            summary = json.optString("summary", ""),
+                            recommendations = recs
+                        )
+                    )
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    Log.w(TAG, "Error with model $modelName: ${e.message}")
+                    lastErrorMsg = "يرجى التأكد من اتصال الإنترنت والمحاولة مرة أخرى."
+                }
             }
 
-            val json = JSONObject(raw)
-            val arr = json.optJSONArray("recommendations")
-            val recs = buildList {
-                if (arr != null) for (i in 0 until arr.length()) {
-                    val s = arr.optString(i)
-                    if (s.isNotBlank()) add(s)
-                }
-            }
-
-            Result.success(
-                PlantDiagnosisResult(
-                    cropNameAr = json.optString("cropNameAr", "نبات غير محدد"),
-                    diseaseNameAr = json.optString("diseaseNameAr", "تشخيص غير محدد"),
-                    scientificName = json.optString("scientificName", "Unknown species"),
-                    cause = json.optString("cause", "فطري"),
-                    severity = json.optString("severity", "متوسطة"),
-                    activeIngredient = json.optString("activeIngredient", "يرجى استشارة مهندس وقاية النبات"),
-                    phiDays = json.optString("phiDays", "حسب بطاقة المبيد"),
-                    summary = json.optString("summary", ""),
-                    recommendations = recs
-                )
-            )
+            Result.failure(Exception(lastErrorMsg))
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             Log.e(TAG, "Plant diagnosis failed", e)
-            Result.failure(Exception(e.localizedMessage ?: "تعذر إتمام التشخيص."))
+            Result.failure(Exception("تعذر إتمام التشخيص، يرجى المحاولة مرة أخرى."))
         }
     }
 }
