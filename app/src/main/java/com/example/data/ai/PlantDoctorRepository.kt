@@ -17,11 +17,11 @@ import kotlin.math.max
 
 private const val TAG = "PlantDoctorRepository"
 
-// قائمة النماذج مرتبة حسب الأولوية: يبدأ بالأحدث وينتقل تلقائياً للاحتياطي عند الضغط
+// قائمة النماذج المعتمدة والمستقرة بالترتيب
 private val MODELS = listOf(
     "gemini-3.8-flash",
-    "gemini-3.8-flash-lite",
-    "gemini-3.0-flash"
+    "gemini-3.8-pro",
+    "gemini-3.5-flash"
 )
 
 class PlantDoctorRepository {
@@ -33,7 +33,7 @@ class PlantDoctorRepository {
         try {
             val key = BuildConfig.GEMINI_API_KEY
             if (key.isBlank()) {
-                return@withContext Result.failure(Exception("مفتاح الذكاء الاصطناعي غير مضبوط في التطبيق."))
+                return@withContext Result.failure(Exception("مفتاح الذكاء الاصطناعي (GEMINI_API_KEY) فارغ أو غير مضبوط."))
             }
 
             // تصغير الصورة إلى 512 بكسل لتسريع الرفع والمعالجة
@@ -68,7 +68,6 @@ class PlantDoctorRepository {
 
             val genConfig = JSONObject().apply {
                 put("responseMimeType", "application/json")
-                put("thinkingConfig", JSONObject().put("thinkingBudget", 0))
             }
 
             val body = JSONObject().apply {
@@ -82,16 +81,15 @@ class PlantDoctorRepository {
             }
 
             val payloadBytes = body.toString().toByteArray()
-            var lastErrorMsg = "الخوادم مشغولة حالياً، يرجى المحاولة بعد قليل."
+            var lastErrorMsg = "تعذر الاتصال بخدمة الذكاء الاصطناعي."
 
-            // تجربة النماذج بالترتيب عند وجود ضغط
             for (modelName in MODELS) {
                 try {
                     val conn = URL("https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent")
                         .openConnection() as HttpURLConnection
                     conn.requestMethod = "POST"
-                    conn.connectTimeout = 12_000
-                    conn.readTimeout = 20_000
+                    conn.connectTimeout = 15_000
+                    conn.readTimeout = 35_000
                     conn.doOutput = true
                     conn.setRequestProperty("Content-Type", "application/json")
                     conn.setRequestProperty("x-goog-api-key", key)
@@ -101,19 +99,14 @@ class PlantDoctorRepository {
                     val text = (if (code in 200..299) conn.inputStream else conn.errorStream)
                         ?.bufferedReader()?.use { it.readText() } ?: ""
 
-                    // إذا كان هناك ضغط (503) أو تجاوز حد الطلبات (429) أو النموذج غير متاح (404)، انتقل للتالي فوراً
-                    if (code == 503 || code == 429 || code == 404) {
-                        Log.w(TAG, "Model $modelName busy/unavailable (HTTP$code), switching to fallback...")
-                        continue
-                    }
-
                     if (code !in 200..299) {
                         Log.e(TAG, "HTTP $code on $modelName:$text")
-                        lastErrorMsg = if (code == 400 || code == 403) {
-                            "خطأ في صلاحية مفتاح API (رمز $code)."
-                        } else {
-                            "تعذر الاتصال بخدمة التشخيص (رمز $code)."
+                        val apiMsg = try {
+                            JSONObject(text).getJSONObject("error").getString("message")
+                        } catch (e: Exception) {
+                            "رمز الخطأ $code"
                         }
+                        lastErrorMsg = "[$modelName]$apiMsg"
                         continue
                     }
 
@@ -129,6 +122,7 @@ class PlantDoctorRepository {
                     }.trim().removePrefix("```json").removePrefix("```").removeSuffix("```").trim()
 
                     if (raw.isBlank()) {
+                        lastErrorMsg = "[$modelName] أرجع الخادم رداً فارغاً."
                         continue
                     }
 
@@ -158,7 +152,7 @@ class PlantDoctorRepository {
                     throw e
                 } catch (e: Exception) {
                     Log.w(TAG, "Error with model $modelName: ${e.message}")
-                    lastErrorMsg = "يرجى التأكد من اتصال الإنترنت والمحاولة مرة أخرى."
+                    lastErrorMsg = "[$modelName] ${e.localizedMessage ?: "خطأ في الاتصال"}"
                 }
             }
 
@@ -167,7 +161,7 @@ class PlantDoctorRepository {
             throw e
         } catch (e: Exception) {
             Log.e(TAG, "Plant diagnosis failed", e)
-            Result.failure(Exception("تعذر إتمام التشخيص، يرجى المحاولة مرة أخرى."))
+            Result.failure(Exception(e.localizedMessage ?: "تعذر إتمام التشخيص."))
         }
     }
 }
