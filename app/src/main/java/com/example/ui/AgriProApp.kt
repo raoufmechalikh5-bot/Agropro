@@ -2,6 +2,12 @@ package com.example.ui
 
 import android.app.Activity
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -370,7 +376,31 @@ fun AgriProApp() {
                         NavHost(
                             navController = navController,
                             startDestination = AgriDestination.PlantDoctor.route,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            enterTransition = {
+                                val fromIndex = destinations.indexOfFirst { it.route == initialState.destination.route }
+                                val toIndex = destinations.indexOfFirst { it.route == targetState.destination.route }
+                                val direction = if (toIndex >= fromIndex) -1 else 1
+                                slideInHorizontally(
+                                    animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing),
+                                    initialOffsetX = { fullWidth -> direction * (fullWidth / 4) }
+                                ) + fadeIn(animationSpec = tween(durationMillis = 260))
+                            },
+                            exitTransition = {
+                                val fromIndex = destinations.indexOfFirst { it.route == initialState.destination.route }
+                                val toIndex = destinations.indexOfFirst { it.route == targetState.destination.route }
+                                val direction = if (toIndex >= fromIndex) 1 else -1
+                                slideOutHorizontally(
+                                    animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing),
+                                    targetOffsetX = { fullWidth -> direction * (fullWidth / 4) }
+                                ) + fadeOut(animationSpec = tween(durationMillis = 200))
+                            },
+                            popEnterTransition = {
+                                fadeIn(animationSpec = tween(durationMillis = 260))
+                            },
+                            popExitTransition = {
+                                fadeOut(animationSpec = tween(durationMillis = 200))
+                            }
                         ) {
                             composable(AgriDestination.PlantDoctor.route) {
                                 PlantDoctorScreen(
