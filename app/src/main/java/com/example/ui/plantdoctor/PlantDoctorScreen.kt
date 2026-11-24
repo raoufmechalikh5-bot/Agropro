@@ -123,6 +123,8 @@ import java.util.Locale
 @Composable
 fun PlantDoctorScreen(
     viewModel: PlantDoctorViewModel,
+    onOpenInNpkCalculator: (cropNameAr: String, diseaseNameAr: String) -> Unit = { _, _ -> },
+    onNavigateToNotebook: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -461,7 +463,15 @@ fun PlantDoctorScreen(
                             is PlantDoctorUiState.Success -> {
                                 DiagnosisResultCard(
                                     result = state.result,
-                                    onShareReport = { shareDiagnosisReport(context, state.result) }
+                                    onShareReport = { shareDiagnosisReport(context, state.result) },
+                                    onOpenInNpk = {
+                                        onOpenInNpkCalculator(state.result.cropNameAr, state.result.diseaseNameAr)
+                                    },
+                                    onAddToNotebook = {
+                                        viewModel.createTreatmentPlanInNotebook(state.result) {
+                                            onNavigateToNotebook()
+                                        }
+                                    }
                                 )
                             }
                         }
@@ -979,7 +989,9 @@ private fun PlantCaptureCard(
 @Composable
 private fun DiagnosisResultCard(
     result: PlantDiagnosisResult,
-    onShareReport: () -> Unit
+    onShareReport: () -> Unit,
+    onOpenInNpk: () -> Unit,
+    onAddToNotebook: () -> Unit
 ) {
     val semantic = AgriTheme.semantic
     val severityColors = when (result.severity) {
@@ -1223,6 +1235,57 @@ private fun DiagnosisResultCard(
             }
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+            // أزرار الربط الذكي مع التجارب وحاسبة NPK
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Button(
+                    onClick = onAddToNotebook,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .testTag("add_treatment_to_notebook_button"),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Science,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = "خطة علاج (PHI)",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Button(
+                    onClick = onOpenInNpk,
+                    colors = ButtonDefaults.filledTonalButtonColors(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .testTag("open_diagnosis_in_npk_button"),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Eco,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = "حاسبة NPK",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
             // زر مشاركة التقرير
             OutlinedButton(
