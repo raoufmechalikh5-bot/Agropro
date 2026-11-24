@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.util.Base64
 import android.util.Log
 import androidx.core.graphics.scale
-import com.example.BuildConfig
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,7 +16,9 @@ import kotlin.math.max
 
 private const val TAG = "PlantDoctorRepository"
 
-// قائمة النماذج المعتمدة والمستقرة بالترتيب
+// رابط الخادم الوسيط الآمن على Cloudflare
+private const val PROXY_URL = "https://agro-pro-api.raoufmechalikh5.workers.dev"
+
 private val MODELS = listOf(
     "gemini-3.8-flash",
     "gemini-3.8-pro",
@@ -31,12 +32,6 @@ class PlantDoctorRepository {
         farmerNotes: String
     ): Result<PlantDiagnosisResult> = withContext(Dispatchers.IO) {
         try {
-            val key = BuildConfig.GEMINI_API_KEY
-            if (key.isBlank()) {
-                return@withContext Result.failure(Exception("مفتاح الذكاء الاصطناعي (GEMINI_API_KEY) فارغ أو غير مضبوط."))
-            }
-
-            // تصغير الصورة إلى 512 بكسل لتسريع الرفع والمعالجة
             val largest = max(bitmap.width, bitmap.height)
             var img = bitmap
             if (largest > 512) {
@@ -66,34 +61,32 @@ class PlantDoctorRepository {
                 if (farmerNotes.isNotBlank()) append("\nملاحظات المزارع: $farmerNotes")
             }
 
-            val genConfig = JSONObject().apply {
-                put("responseMimeType", "application/json")
-            }
-
-            val body = JSONObject().apply {
+            val geminiPayload = JSONObject().apply {
                 put("contents", JSONArray().put(JSONObject().apply {
                     put("parts", JSONArray()
                         .put(JSONObject().put("inline_data", JSONObject()
                             .put("mime_type", "image/jpeg").put("data", b64)))
                         .put(JSONObject().put("text", prompt)))
                 }))
-                put("generationConfig", genConfig)
+                put("generationConfig", JSONObject().put("responseMimeType", "application/json"))
             }
 
-            val payloadBytes = body.toString().toByteArray()
             var lastErrorMsg = "تعذر الاتصال بخدمة الذكاء الاصطناعي."
 
             for (modelName in MODELS) {
                 try {
-                    val conn = URL("https://generativelanguage.googleapis.com/v1beta/models/$modelName:generateContent")
-                        .openConnection() as HttpURLConnection
+                    val wrapperBody = JSONObject().apply {
+                        put("model", modelName)
+                        put("payload", geminiPayload)
+                    }
+
+                    val conn = URL(PROXY_URL).openConnection() as HttpURLConnection
                     conn.requestMethod = "POST"
                     conn.connectTimeout = 15_000
                     conn.readTimeout = 35_000
                     conn.doOutput = true
                     conn.setRequestProperty("Content-Type", "application/json")
-                    conn.setRequestProperty("x-goog-api-key", key)
-                    conn.outputStream.use { it.write(payloadBytes) }
+                    conn.outputStream.use { it.write(wrapperBody.toString().toByteArray()) }
 
                     val code = conn.responseCode
                     val text = (if (code in 200..299) conn.inputStream else conn.errorStream)
