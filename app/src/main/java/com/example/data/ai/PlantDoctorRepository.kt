@@ -15,8 +15,6 @@ import java.net.URL
 import kotlin.math.max
 
 private const val TAG = "PlantDoctorRepository"
-
-// رابط الخادم الوسيط الآمن على Cloudflare
 private const val PROXY_URL = "https://agro-pro-api.raoufmechalikh5.workers.dev"
 
 private val MODELS = listOf(
@@ -27,47 +25,65 @@ private val MODELS = listOf(
 
 class PlantDoctorRepository {
 
-    suspend fun diagnosePlantImage(
-        bitmap: Bitmap,
+    suspend fun diagnosePlantImages(
+        bitmaps: List<Bitmap>,
         farmerNotes: String
     ): Result<PlantDiagnosisResult> = withContext(Dispatchers.IO) {
         try {
-            val largest = max(bitmap.width, bitmap.height)
-            var img = bitmap
-            if (largest > 512) {
-                val r = 512f / largest
-                img = bitmap.scale(
-                    (bitmap.width * r).toInt().coerceAtLeast(1),
-                    (bitmap.height * r).toInt().coerceAtLeast(1)
+            if (bitmaps.isEmpty()) {
+                return@withContext Result.failure(Exception("يرجى إرفاق صورة واحدة على الأقل."))
+            }
+
+            val partsArray = JSONArray()
+            for (bitmap in bitmaps.take(3)) {
+                val largest = max(bitmap.width, bitmap.height)
+                var img = bitmap
+                if (largest > 512) {
+                    val r = 512f / largest
+                    img = bitmap.scale(
+                        (bitmap.width * r).toInt().coerceAtLeast(1),
+                        (bitmap.height * r).toInt().coerceAtLeast(1)
+                    )
+                }
+                if (img.config != Bitmap.Config.ARGB_8888) {
+                    img = img.copy(Bitmap.Config.ARGB_8888, false)
+                }
+                val out = ByteArrayOutputStream()
+                img.compress(Bitmap.CompressFormat.JPEG, 75, out)
+                val b64 = Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
+
+                partsArray.put(
+                    JSONObject().put(
+                        "inline_data",
+                        JSONObject()
+                            .put("mime_type", "image/jpeg")
+                            .put("data", b64)
+                    )
                 )
             }
-            if (img.config != Bitmap.Config.ARGB_8888) {
-                img = img.copy(Bitmap.Config.ARGB_8888, false)
-            }
-            val out = ByteArrayOutputStream()
-            img.compress(Bitmap.CompressFormat.JPEG, 75, out)
-            val b64 = Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
 
             val prompt = buildString {
                 append(
-                    "أنت مهندس وقاية نباتات. افحص الصورة بعناية وأجب بصيغة JSON فقط بالمفاتيح التالية: " +
-                        "cropNameAr (اسم المحصول بالعربية)، diseaseNameAr (اسم المرض أو الحالة بالعربية)، " +
-                        "scientificName (الاسم العلمي)، cause (واحدة فقط من: فطري، بكتيري، فيروسي، حشري، نقص عناصر غذائية، سليم)، " +
+                    "أنت مهندس وقاية نباتات خبير. افحص جميع الصور المرفقة معاً (قد تمثل زوايا مختلفة لنفس النبات) وأجب بصيغة JSON فقط بالمفاتيح التالية: " +
+                        "cropNameAr (اسم المحصول بالعربية)، " +
+                        "diseaseNameAr (اسم المرض أو الحالة بالعربية)، " +
+                        "scientificName (الاسم العلمي)، " +
+                        "cause (واحدة فقط من: فطري، بكتيري، فيروسي، حشري، نقص عناصر غذائية، سليم)، " +
                         "severity (واحدة فقط من: منخفضة، متوسطة، مرتفعة، حرجة)، " +
+                        "confidencePercent (رقم صحيح من 0 إلى 100 يمثل نسبة ثقتك في التشخيص بناءً على وضوح الصور)، " +
+                        "clarificationNeeded (إذا كانت الصور غير واضحة أو بعيدة أو تحتاج زاوية إضافية مثل أسفل الورقة، اكتب نصيحة قصيرة للمزارع لالتقاط صورة أدق، وإلا اتركها نصاً فارغاً \"\")، " +
                         "activeIngredient (المادة الفعالة أو المعاملة الموصى بها)، " +
-                        "phiDays (فترة التحريم قبل الجني)، summary (وصف الأعراض الظاهرة)، " +
+                        "phiDays (فترة التحريم قبل الجني)، " +
+                        "summary (وصف دقيق للأعراض الظاهرة)، " +
                         "recommendations (مصفوفة من 3 إلى 4 توصيات عملية)."
                 )
                 if (farmerNotes.isNotBlank()) append("\nملاحظات المزارع: $farmerNotes")
             }
 
+            partsArray.put(JSONObject().put("text", prompt))
+
             val geminiPayload = JSONObject().apply {
-                put("contents", JSONArray().put(JSONObject().apply {
-                    put("parts", JSONArray()
-                        .put(JSONObject().put("inline_data", JSONObject()
-                            .put("mime_type", "image/jpeg").put("data", b64)))
-                        .put(JSONObject().put("text", prompt)))
-                }))
+                put("contents", JSONArray().put(JSONObject().put("parts", partsArray)))
                 put("generationConfig", JSONObject().put("responseMimeType", "application/json"))
             }
 
@@ -83,7 +99,7 @@ class PlantDoctorRepository {
                     val conn = URL(PROXY_URL).openConnection() as HttpURLConnection
                     conn.requestMethod = "POST"
                     conn.connectTimeout = 15_000
-                    conn.readTimeout = 35_000
+                    conn.readTimeout = 40_000
                     conn.doOutput = true
                     conn.setRequestProperty("Content-Type", "application/json")
                     conn.outputStream.use { it.write(wrapperBody.toString().toByteArray()) }
@@ -135,6 +151,8 @@ class PlantDoctorRepository {
                             scientificName = json.optString("scientificName", "Unknown species"),
                             cause = json.optString("cause", "فطري"),
                             severity = json.optString("severity", "متوسطة"),
+                            confidencePercent = json.optInt("confidencePercent", 85).coerceIn(0, 100),
+                            clarificationNeeded = json.optString("clarificationNeeded", "").trim(),
                             activeIngredient = json.optString("activeIngredient", "يرجى استشارة مهندس وقاية النبات"),
                             phiDays = json.optString("phiDays", "حسب بطاقة المبيد"),
                             summary = json.optString("summary", ""),
