@@ -11,6 +11,7 @@ import androidx.core.graphics.scale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.data.ai.PlantDiagnosisResult
 import com.example.data.ai.PlantDoctorRepository
 import com.example.data.ai.PlantDoctorUiState
 import com.example.data.ai.SelectedPlantImage
@@ -197,6 +198,23 @@ class PlantDoctorViewModel(
     fun deleteDiagnosisRecord(id: Long) {
         viewModelScope.launch {
             localRepository.deleteDiagnosis(id)
+        }
+    }
+
+    fun createTreatmentPlanInNotebook(
+        result: PlantDiagnosisResult,
+        onCreated: () -> Unit
+    ) {
+        viewModelScope.launch {
+            localRepository.createTreatmentPlanFromDiagnosis(
+                cropNameAr = result.cropNameAr,
+                diseaseNameAr = result.diseaseNameAr,
+                scientificName = result.scientificName,
+                activeIngredient = result.activeIngredient,
+                phiDaysText = result.phiDays,
+                recommendations = result.recommendations
+            )
+            onCreated()
         }
     }
 
