@@ -16,7 +16,7 @@ import java.net.URL
 import kotlin.math.max
 
 private const val TAG = "PlantDoctorRepository"
-private const val MODEL = "gemini-2.5-flash"
+private const val MODEL = "gemini-3.8-flash"
 
 class PlantDoctorRepository {
 
