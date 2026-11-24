@@ -337,6 +337,27 @@ class FertilizerCalculatorViewModel(
         }
     }
 
+    fun applyDiagnosisContext(cropNameAr: String, diseaseNameAr: String) {
+        val matchedCrop = when {
+            cropNameAr.contains("زيتون") -> FertilizerCrop.OLIVE
+            cropNameAr.contains("طماطم") || cropNameAr.contains("بندورة") -> FertilizerCrop.TOMATO
+            cropNameAr.contains("بطاطا") || cropNameAr.contains("بطاطس") -> FertilizerCrop.POTATO
+            cropNameAr.contains("حمضيات") || cropNameAr.contains("برتقال") || cropNameAr.contains("ليمون") -> FertilizerCrop.CITRUS
+            cropNameAr.contains("قمح") || cropNameAr.contains("شعير") -> FertilizerCrop.WHEAT
+            cropNameAr.contains("عنب") || cropNameAr.contains("كروم") -> FertilizerCrop.GRAPEVINE
+            cropNameAr.contains("فراولة") -> FertilizerCrop.STRAWBERRY
+            cropNameAr.contains("نخيل") || cropNameAr.contains("تمر") -> FertilizerCrop.DATE_PALM
+            else -> _uiState.value.selectedCrop
+        }
+        updateState {
+            it.copy(
+                selectedCrop = matchedCrop,
+                plotLabelInput = "تغذية داعمة: $diseaseNameAr",
+                lastSavedAtMillis = null
+            )
+        }
+    }
+
     private fun updateState(transform: (FertilizerCalculatorUiState) -> FertilizerCalculatorUiState) {
         _uiState.update { prev ->
             val next = transform(prev)
