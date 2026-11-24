@@ -1,6 +1,7 @@
 package com.example.ui.plantdoctor
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
@@ -33,15 +34,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Biotech
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Flip
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.filled.PhotoLibrary
@@ -49,6 +53,8 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Science
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
@@ -103,6 +109,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 import com.example.R
 import com.example.data.ai.PlantDiagnosisResult
 import com.example.data.ai.PlantDoctorUiState
+import com.example.data.ai.SelectedPlantImage
 import com.example.data.catalog.DiseaseFlashcard
 import com.example.data.catalog.FlashcardCatalog
 import com.example.data.local.DiagnosisHistoryEntity
@@ -119,8 +126,7 @@ fun PlantDoctorScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val selectedBitmap by viewModel.selectedBitmap.collectAsStateWithLifecycle()
-    val selectedImageLabel by viewModel.selectedImageLabel.collectAsStateWithLifecycle()
+    val selectedImages by viewModel.selectedImages.collectAsStateWithLifecycle()
     val farmerNotes by viewModel.farmerNotes.collectAsStateWithLifecycle()
     val diagnosisState by viewModel.diagnosisState.collectAsStateWithLifecycle()
     val isFlashcardMode by viewModel.isFlashcardMode.collectAsStateWithLifecycle()
@@ -140,7 +146,7 @@ fun PlantDoctorScreen(
     ) { success ->
         val uri = pendingCameraUri
         if (success && uri != null) {
-            viewModel.loadImageFromUri(context, uri, "صورة ملتقطة بالكاميرا")
+            viewModel.loadImageFromUri(context, uri, "صورة كاميرا")
         }
     }
 
@@ -178,10 +184,10 @@ fun PlantDoctorScreen(
     }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri ->
-        if (uri != null) {
-            viewModel.loadImageFromUri(context, uri, "صورة مختارة من المعرض")
+        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 3)
+    ) { uris ->
+        uris.forEachIndexed { index, uri ->
+            viewModel.loadImageFromUri(context, uri, "صورة ${index + 1}")
         }
     }
 
@@ -305,8 +311,7 @@ fun PlantDoctorScreen(
             if (!isFlashcardMode) {
                 item {
                     PlantCaptureCard(
-                        selectedBitmap = selectedBitmap,
-                        selectedImageLabel = selectedImageLabel,
+                        selectedImages = selectedImages,
                         farmerNotes = farmerNotes,
                         isLoading = diagnosisState is PlantDoctorUiState.Loading,
                         cameraPermissionStatus = cameraPermissionState.status,
@@ -317,6 +322,7 @@ fun PlantDoctorScreen(
                         },
                         onOpenAppSettings = openAppSettings,
                         onNotesChange = viewModel::updateFarmerNotes,
+                        onRemoveImage = viewModel::removeImage,
                         onPickFromGallery = {
                             photoPickerLauncher.launch(
                                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
@@ -367,7 +373,7 @@ fun PlantDoctorScreen(
                                             tint = MaterialTheme.colorScheme.primary
                                         )
                                         Text(
-                                            text = "اختر صورة نبات أو عينة حقلية أعلاه ثم اضغط «تحليل وتشخيص الحالة» للحصول على التشخيص العلمي والمادة الفعالة وفترة التحريم.",
+                                            text = "أرفق من 1 إلى 3 صور للعينة النباتية (ورقة قريبة، ساق، أو مظهر عام) ثم اضغط «تحليل وتشخيص الحالة» للحصول على تقرير دقيق.",
                                             style = MaterialTheme.typography.bodyMedium,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -393,12 +399,12 @@ fun PlantDoctorScreen(
                                             color = MaterialTheme.colorScheme.primary
                                         )
                                         Text(
-                                            text = "جاري فحص الأعراض المرضية وتحديد المسبب...",
+                                            text = "جاري فحص الصور وتحديد المسبب المرضي...",
                                             style = MaterialTheme.typography.titleMedium,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
                                         Text(
-                                            text = "يتم التحليل عبر الذكاء الاصطناعي السحابي مع استخراج المادة الفعالة وفترة التحريم.",
+                                            text = "يتم تحليل الأعراض عبر الذكاء الاصطناعي وتقدير نسبة الثقة والمادة الفعالة.",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -453,7 +459,10 @@ fun PlantDoctorScreen(
                             }
 
                             is PlantDoctorUiState.Success -> {
-                                DiagnosisResultCard(result = state.result)
+                                DiagnosisResultCard(
+                                    result = state.result,
+                                    onShareReport = { shareDiagnosisReport(context, state.result) }
+                                )
                             }
                         }
                     }
@@ -524,6 +533,41 @@ fun PlantDoctorScreen(
     }
 }
 
+private fun shareDiagnosisReport(context: Context, result: PlantDiagnosisResult) {
+    val recsText = if (result.recommendations.isNotEmpty()) {
+        result.recommendations.mapIndexed { i, r -> "${i + 1}. $r" }.joinToString("\n")
+    } else {
+        "يرجى مراجعة مهندس وقاية النبات."
+    }
+
+    val report = buildString {
+        appendLine("🌿 *تقرير تشخيص نباتي - تطبيق Agro pro*")
+        appendLine("━━━━━━━━━━━━━━━━━━━━")
+        appendLine("🌱 *المحصول:* ${result.cropNameAr}")
+        appendLine("🔬 *التشخيص:* ${result.diseaseNameAr} (${result.scientificName})")
+        appendLine("🦠 *المسبب:* ${result.cause}")
+        appendLine("⚠️ *درجة الخطورة:* ${result.severity}")
+        appendLine("📊 *نسبة الثقة:* ${result.confidencePercent}%")
+        appendLine("💊 *المادة الفعالة الموصى بها:* ${result.activeIngredient}")
+        appendLine("⏳ *فترة التحريم قبل الجني (PHI):* ${result.phiDays}")
+        if (result.summary.isNotBlank()) {
+            appendLine("\n📝 *وصف الأعراض:*")
+            appendLine(result.summary)
+        }
+        appendLine("\n✅ *بروتوكول التدخل والوقاية:*")
+        appendLine(recsText)
+        appendLine("━━━━━━━━━━━━━━━━━━━━")
+        append("تم الإنشاء بواسطة Agro pro")
+    }
+
+    val sendIntent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_SUBJECT, "تقرير تشخيص: ${result.diseaseNameAr}")
+        putExtra(Intent.EXTRA_TEXT, report)
+    }
+    context.startActivity(Intent.createChooser(sendIntent, "مشاركة تقرير التشخيص عبر"))
+}
+
 @Composable
 private fun AgriHeroBanner() {
     Box(
@@ -574,7 +618,7 @@ private fun AgriHeroBanner() {
                 color = Color.White
             )
             Text(
-                text = "صوّر الورقة أو الثمرة أو راجع بطاقات الأمراض للامتحانات الجامعية",
+                text = "أرفق حتى 3 صور للعينة للحصول على تشخيص أدق وتقرير قابل للمشاركة",
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.White.copy(alpha = 0.88f)
             )
@@ -585,8 +629,7 @@ private fun AgriHeroBanner() {
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun PlantCaptureCard(
-    selectedBitmap: android.graphics.Bitmap?,
-    selectedImageLabel: String?,
+    selectedImages: List<SelectedPlantImage>,
     farmerNotes: String,
     isLoading: Boolean,
     cameraPermissionStatus: PermissionStatus,
@@ -594,6 +637,7 @@ private fun PlantCaptureCard(
     onRequestCameraPermission: () -> Unit,
     onOpenAppSettings: () -> Unit,
     onNotesChange: (String) -> Unit,
+    onRemoveImage: (Long) -> Unit,
     onPickFromGallery: () -> Unit,
     onCaptureCamera: () -> Unit,
     onSelectSample: (Int, String) -> Unit,
@@ -610,43 +654,125 @@ private fun PlantCaptureCard(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                text = "إرفاق عينة نباتية للفحص",
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(190.dp)
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(MaterialTheme.colorScheme.surfaceContainerLow),
-                contentAlignment = Alignment.Center
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                if (selectedBitmap != null) {
-                    Image(
-                        bitmap = selectedBitmap.asImageBitmap(),
-                        contentDescription = selectedImageLabel ?: "صورة النبات المحددة للتشخيص",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
+                Text(
+                    text = "إرفاق عينات نباتية للفحص",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Surface(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = RoundedCornerShape(50)
+                ) {
+                    Text(
+                        text = "${selectedImages.size} / 3 صور",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                     )
-                    if (selectedImageLabel != null) {
-                        Surface(
-                            color = Color.Black.copy(alpha = 0.68f),
-                            shape = RoundedCornerShape(50),
+                }
+            }
+
+            if (selectedImages.isNotEmpty()) {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(selectedImages, key = { it.id }) { item ->
+                        Box(
                             modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(10.dp)
+                                .width(180.dp)
+                                .height(160.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                                .background(MaterialTheme.colorScheme.surfaceContainerLow)
                         ) {
-                            Text(
-                                text = selectedImageLabel,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = Color.White,
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            Image(
+                                bitmap = item.bitmap.asImageBitmap(),
+                                contentDescription = item.label,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
                             )
+                            Surface(
+                                color = Color.Black.copy(alpha = 0.65f),
+                                shape = CircleShape,
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(6.dp)
+                                    .size(30.dp)
+                                    .clickable { onRemoveImage(item.id) }
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "إزالة الصورة",
+                                        tint = Color.White,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
+                            Surface(
+                                color = Color.Black.copy(alpha = 0.68f),
+                                shape = RoundedCornerShape(50),
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    text = item.label,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                )
+                            }
                         }
                     }
-                } else {
+
+                    if (selectedImages.size < 3) {
+                        item {
+                            Surface(
+                                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                shape = MaterialTheme.shapes.medium,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                                modifier = Modifier
+                                    .width(120.dp)
+                                    .height(160.dp)
+                                    .clickable(onClick = onCaptureCamera)
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center,
+                                    modifier = Modifier.padding(8.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.AddPhotoAlternate,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(32.dp)
+                                    )
+                                    Spacer(Modifier.height(6.dp))
+                                    Text(
+                                        text = "إضافة زاوية أخرى",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(175.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceContainerLow),
+                    contentAlignment = Alignment.Center
+                ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -667,11 +793,11 @@ private fun PlantCaptureCard(
                             }
                         }
                         Text(
-                            text = "لم يتم اختيار صورة بعد",
+                            text = "لم يتم اختيار صور بعد",
                             style = MaterialTheme.typography.titleSmall
                         )
                         Text(
-                            text = "التقط صورة بالكاميرا أو اختر من المعرض أو جرّب إحدى العينات الجاهزة أدناه",
+                            text = "التقط حتى 3 صور (ورقة قريبة + ساق + النبات كاملاً) لتشخيص فائق الدقة",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -685,6 +811,7 @@ private fun PlantCaptureCard(
             ) {
                 OutlinedButton(
                     onClick = onCaptureCamera,
+                    enabled = selectedImages.size < 3,
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp)
@@ -697,6 +824,7 @@ private fun PlantCaptureCard(
 
                 OutlinedButton(
                     onClick = onPickFromGallery,
+                    enabled = selectedImages.size < 3,
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp)
@@ -837,11 +965,11 @@ private fun PlantCaptureCard(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                     Spacer(Modifier.width(10.dp))
-                    Text("جاري التحليل عبر Gemini...")
+                    Text("جاري التحليل...")
                 } else {
                     Icon(Icons.Default.AutoAwesome, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
-                    Text("تحليل وتشخيص الحالة")
+                    Text("تحليل وتشخيص الحالة (${selectedImages.size})")
                 }
             }
         }
@@ -849,7 +977,10 @@ private fun PlantCaptureCard(
 }
 
 @Composable
-private fun DiagnosisResultCard(result: PlantDiagnosisResult) {
+private fun DiagnosisResultCard(
+    result: PlantDiagnosisResult,
+    onShareReport: () -> Unit
+) {
     val semantic = AgriTheme.semantic
     val severityColors = when (result.severity) {
         "حرجة", "مرتفعة" -> semantic.danger to semantic.dangerContainer
@@ -879,44 +1010,104 @@ private fun DiagnosisResultCard(result: PlantDiagnosisResult) {
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = RoundedCornerShape(50),
-                    modifier = Modifier.testTag("diagnosed_crop_chip")
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    Surface(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = RoundedCornerShape(50),
+                        modifier = Modifier.testTag("diagnosed_crop_chip")
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Eco,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(16.dp)
-                        )
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Eco,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                text = result.cropNameAr,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        shape = RoundedCornerShape(50),
+                        modifier = Modifier.testTag("diagnosed_pathogen_chip")
+                    ) {
                         Text(
-                            text = "المحصول: ${result.cropNameAr}",
+                            text = result.cause,
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontWeight = FontWeight.Bold
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                         )
                     }
                 }
+
+                // نسبة الثقة
                 Surface(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(50),
-                    modifier = Modifier.testTag("diagnosed_pathogen_chip")
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    shape = RoundedCornerShape(50)
                 ) {
-                    Text(
-                        text = "المسبب: ${result.cause}",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                    )
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Verified,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.tertiary,
+                            modifier = Modifier.size(15.dp)
+                        )
+                        Text(
+                            text = "ثقة ${result.confidencePercent}%",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+                    }
+                }
+            }
+
+            // تنبيه وضوح الصورة وطلب زاوية إضافية عند الحاجة
+            if (result.clarificationNeeded.isNotBlank()) {
+                Surface(
+                    color = semantic.warningContainer,
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = null,
+                            tint = semantic.warning
+                        )
+                        Text(
+                            text = "لرفع دقة التشخيص: ${result.clarificationNeeded}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = semantic.onWarningContainer,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
 
@@ -1029,6 +1220,29 @@ private fun DiagnosisResultCard(result: PlantDiagnosisResult) {
                         )
                     }
                 }
+            }
+
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+            // زر مشاركة التقرير
+            OutlinedButton(
+                onClick = onShareReport,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .testTag("share_diagnosis_report_button"),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = "مشاركة تقرير التشخيص (واتساب / نص)",
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
