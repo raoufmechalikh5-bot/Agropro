@@ -1,11 +1,21 @@
 package com.example.data.ai
 
+import android.graphics.Bitmap
+
+data class SelectedPlantImage(
+    val id: Long = System.nanoTime(),
+    val bitmap: Bitmap,
+    val label: String
+)
+
 data class PlantDiagnosisResult(
     val cropNameAr: String,
     val diseaseNameAr: String,
     val scientificName: String,
     val cause: String,
     val severity: String,
+    val confidencePercent: Int = 85,
+    val clarificationNeeded: String = "",
     val activeIngredient: String,
     val phiDays: String,
     val summary: String,
