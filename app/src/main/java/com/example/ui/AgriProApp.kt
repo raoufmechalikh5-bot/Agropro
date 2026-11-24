@@ -1,23 +1,36 @@
 package com.example.ui
 
 import android.app.Activity
+import android.os.Build
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Biotech
@@ -39,8 +52,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
@@ -55,6 +66,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -226,11 +242,11 @@ fun AgriProApp() {
                         Column {
                             CenterAlignedTopAppBar(
                                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                                    containerColor = MaterialTheme.colorScheme.surface
+                                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.88f)
                                 ),
                                 navigationIcon = {
                                     Surface(
-                                        color = MaterialTheme.colorScheme.primaryContainer,
+                                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.85f),
                                         shape = RoundedCornerShape(50),
                                         modifier = Modifier.padding(start = 12.dp)
                                     ) {
@@ -282,52 +298,26 @@ fun AgriProApp() {
                                 }
                             )
                             HorizontalDivider(
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f)
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
                             )
                         }
                     },
                     bottomBar = {
                         if (!useNavigationRail) {
-                            Column {
-                                HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f)
-                                )
-                                NavigationBar(
-                                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                                ) {
-                                    destinations.forEach { dest ->
-                                        val selected = currentRoute == dest.route
-                                        val label = stringResource(dest.labelRes)
-                                        NavigationBarItem(
-                                            selected = selected,
-                                            onClick = {
-                                                navController.navigate(dest.route) {
-                                                    popUpTo(navController.graph.findStartDestination().id) {
-                                                        saveState = true
-                                                    }
-                                                    launchSingleTop = true
-                                                    restoreState = true
-                                                }
-                                            },
-                                            icon = {
-                                                Icon(
-                                                    imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,
-                                                    contentDescription = label
-                                                )
-                                            },
-                                            label = {
-                                                Text(
-                                                    text = label,
-                                                    maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis,
-                                                    style = MaterialTheme.typography.labelSmall
-                                                )
-                                            },
-                                            modifier = Modifier.testTag(dest.testTag)
-                                        )
+                            LiquidGlassNavigationBar(
+                                destinations = destinations,
+                                currentRoute = currentRoute,
+                                useDarkTheme = useDarkTheme,
+                                onSelectDestination = { dest ->
+                                    navController.navigate(dest.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
                                 }
-                            }
+                            )
                         }
                     }
                 ) { innerPadding ->
@@ -451,6 +441,156 @@ fun AgriProApp() {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LiquidGlassNavigationBar(
+    destinations: List<AgriDestination>,
+    currentRoute: String,
+    useDarkTheme: Boolean,
+    onSelectDestination: (AgriDestination) -> Unit
+) {
+    val glassShape = RoundedCornerShape(30.dp)
+
+    // ألوان الزجاج السائل المتدرجة مع لمعة الضوء
+    val glassBackgroundBrush = if (useDarkTheme) {
+        Brush.verticalGradient(
+            colors = listOf(
+                Color(0xFF1F2B24).copy(alpha = 0.78f),
+                Color(0xFF121A15).copy(alpha = 0.88f)
+            )
+        )
+    } else {
+        Brush.verticalGradient(
+            colors = listOf(
+                Color.White.copy(alpha = 0.82f),
+                Color(0xFFF1F7F3).copy(alpha = 0.72f)
+            )
+        )
+    }
+
+    val specularBorderBrush = if (useDarkTheme) {
+        Brush.verticalGradient(
+            colors = listOf(
+                Color.White.copy(alpha = 0.28f),
+                Color.White.copy(alpha = 0.06f)
+            )
+        )
+    } else {
+        Brush.verticalGradient(
+            colors = listOf(
+                Color.White.copy(alpha = 0.95f),
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
+            )
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .padding(horizontal = 14.dp, vertical = 10.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(
+                    elevation = 14.dp,
+                    shape = glassShape,
+                    ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f),
+                    spotColor = Color.Black.copy(alpha = 0.22f)
+                )
+                .clip(glassShape)
+                .background(brush = glassBackgroundBrush)
+                .border(width = 1.2.dp, brush = specularBorderBrush, shape = glassShape)
+                .padding(horizontal = 6.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            destinations.forEach { dest ->
+                val selected = currentRoute == dest.route
+                val label = stringResource(dest.labelRes)
+
+                // حركة تكبير مرنة (Spring) للأيقونة عند الاختيار
+                val scale by animateFloatAsState(
+                    targetValue = if (selected) 1.08f else 0.96f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    ),
+                    label = "LiquidPillScale"
+                )
+
+                val pillColor by animateColorAsState(
+                    targetValue = if (selected) {
+                        MaterialTheme.colorScheme.primary.copy(alpha = if (useDarkTheme) 0.28f else 0.16f)
+                    } else {
+                        Color.Transparent
+                    },
+                    animationSpec = tween(250),
+                    label = "LiquidPillColor"
+                )
+
+                val contentColor by animateColorAsState(
+                    targetValue = if (selected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    animationSpec = tween(250),
+                    label = "LiquidContentColor"
+                )
+
+                val interactionSource = remember { MutableInteractionSource() }
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .graphicsLayer {
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                        .clip(CircleShape)
+                        .background(pillColor)
+                        .then(
+                            if (selected) {
+                                Modifier.border(
+                                    width = 0.8.dp,
+                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+                                    shape = CircleShape
+                                )
+                            } else {
+                                Modifier
+                            }
+                        )
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = { onSelectDestination(dest) }
+                        )
+                        .padding(vertical = 8.dp, horizontal = 4.dp)
+                        .testTag(dest.testTag),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    Icon(
+                        imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,
+                        contentDescription = label,
+                        tint = contentColor,
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Text(
+                        text = label,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                        color = contentColor
+                    )
                 }
             }
         }
