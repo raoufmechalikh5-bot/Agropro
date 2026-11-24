@@ -204,7 +204,7 @@ fun AgriProApp() {
         factory = NotebookViewModel.Factory(experimentRepo)
     )
 
-    // Enforce authentic Arabic RTL layout direction throughout AgriPro
+    // Enforce authentic Arabic RTL layout direction throughout Agro pro
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         AgriProTheme(darkTheme = useDarkTheme) {
             val navController = rememberNavController()
@@ -250,7 +250,7 @@ fun AgriProApp() {
                                 },
                                 title = {
                                     Text(
-                                        text = "أجري برو • AgriPro",
+                                        text = "Agro pro",
                                         style = MaterialTheme.typography.titleLarge,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
