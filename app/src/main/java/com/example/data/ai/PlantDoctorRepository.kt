@@ -30,10 +30,11 @@ class PlantDoctorRepository {
                 return@withContext Result.failure(Exception("مفتاح Gemini غير مضبوط في البناء."))
             }
 
+            // 1. تصغير الصورة إلى 512 بكسل لتسريع الإرسال والتحليل
             val largest = max(bitmap.width, bitmap.height)
             var img = bitmap
-            if (largest > 768) {
-                val r = 768f / largest
+            if (largest > 512) {
+                val r = 512f / largest
                 img = bitmap.scale(
                     (bitmap.width * r).toInt().coerceAtLeast(1),
                     (bitmap.height * r).toInt().coerceAtLeast(1)
@@ -43,7 +44,7 @@ class PlantDoctorRepository {
                 img = img.copy(Bitmap.Config.ARGB_8888, false)
             }
             val out = ByteArrayOutputStream()
-            img.compress(Bitmap.CompressFormat.JPEG, 85, out)
+            img.compress(Bitmap.CompressFormat.JPEG, 75, out)
             val b64 = Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP)
 
             val prompt = buildString {
@@ -59,6 +60,12 @@ class PlantDoctorRepository {
                 if (farmerNotes.isNotBlank()) append("\nملاحظات المزارع: $farmerNotes")
             }
 
+            // 2. إيقاف التفكير المطول لتسريع الاستجابة الفورية
+            val genConfig = JSONObject().apply {
+                put("responseMimeType", "application/json")
+                put("thinkingConfig", JSONObject().put("thinkingBudget", 0))
+            }
+
             val body = JSONObject().apply {
                 put("contents", JSONArray().put(JSONObject().apply {
                     put("parts", JSONArray()
@@ -66,14 +73,14 @@ class PlantDoctorRepository {
                             .put("mime_type", "image/jpeg").put("data", b64)))
                         .put(JSONObject().put("text", prompt)))
                 }))
-                put("generationConfig", JSONObject().put("responseMimeType", "application/json"))
+                put("generationConfig", genConfig)
             }
 
             val conn = URL("https://generativelanguage.googleapis.com/v1beta/models/$MODEL:generateContent")
                 .openConnection() as HttpURLConnection
             conn.requestMethod = "POST"
-            conn.connectTimeout = 30_000
-            conn.readTimeout = 90_000
+            conn.connectTimeout = 15_000
+            conn.readTimeout = 25_000
             conn.doOutput = true
             conn.setRequestProperty("Content-Type", "application/json")
             conn.setRequestProperty("x-goog-api-key", key)
@@ -83,18 +90,25 @@ class PlantDoctorRepository {
             val text = (if (code in 200..299) conn.inputStream else conn.errorStream)
                 ?.bufferedReader()?.use { it.readText() } ?: ""
             if (code !in 200..299) {
-                Log.e(TAG, "HTTP $code: $text")
+                Log.e(TAG, "HTTP $code:$text")
                 val msg = try {
                     JSONObject(text).getJSONObject("error").getString("message")
-                } catch (e: Exception) { "خطأ $code" }
+                } catch (e: Exception) { "خطأ في الخادم: $code" }
                 return@withContext Result.failure(Exception(msg))
             }
 
+            // 3. استخراج النص النهائي وتجاهل أي أجزاء تفكير داخلية
             val parts = JSONObject(text).getJSONArray("candidates").getJSONObject(0)
                 .getJSONObject("content").getJSONArray("parts")
             val raw = buildString {
-                for (i in 0 until parts.length()) append(parts.getJSONObject(i).optString("text"))
+                for (i in 0 until parts.length()) {
+                    val part = parts.getJSONObject(i)
+                    if (!part.optBoolean("thought", false)) {
+                        append(part.optString("text"))
+                    }
+                }
             }.trim().removePrefix("```json").removePrefix("```").removeSuffix("```").trim()
+
             if (raw.isBlank()) {
                 return@withContext Result.failure(IllegalStateException("لم يُرجع النموذج أي نتيجة."))
             }
