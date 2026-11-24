@@ -1,0 +1,8 @@
+{
+  "name": "Remix AgriPro أجري برو",
+  "description": "تطبيق العلوم الزراعية والزراعة الذكية المتكامل: طبيب النبات الذكي، حاسبة التسميد والري، موسوعة المبيدات، ومفكرة التجارب الميدانية.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
