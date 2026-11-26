@@ -587,34 +587,10 @@ private fun CalculatorResultsCard(result: AgronomyCalculationResult) {
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.TipsAndUpdates,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.tertiary
-                )
-                Text(
-                    text = "توصيات المهندس الزراعي:",
-                    style = MaterialTheme.typography.titleSmall
-                )
-            }
-
-            result.advisories.forEach { tip ->
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "• $tip",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-            }
+            ExpandableSuggestions(
+                items = result.advisories,
+                title = "توصيات المهندس الزراعي"
+            )
         }
     }
 }
