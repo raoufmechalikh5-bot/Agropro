@@ -201,7 +201,7 @@ fun EncyclopediaScreen(
                 item {
                     Surface(
                         color = MaterialTheme.colorScheme.surfaceContainerLow,
-                        shape = MaterialTheme.shapes.large,
+                        shape = RoundedCornerShape(24.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(
@@ -330,9 +330,9 @@ private fun TankMixCheckerCard(
     val statusVector = statusIcon as androidx.compose.ui.graphics.vector.ImageVector
 
     Card(
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
         border = BorderStroke(1.5.dp, statusAccent.copy(alpha = 0.45f)),
         modifier = Modifier
@@ -509,9 +509,9 @@ private fun AgrochemicalCard(
     var isExpanded by remember(item.id) { mutableStateOf(false) }
 
     ElevatedCard(
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
         modifier = Modifier
             .fillMaxWidth()
