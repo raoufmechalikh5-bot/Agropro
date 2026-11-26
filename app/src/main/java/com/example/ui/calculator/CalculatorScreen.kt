@@ -71,6 +71,10 @@ import com.example.data.catalog.IrrigationMethod
 import com.example.ui.theme.AgriTheme
 import java.util.Locale
 import kotlin.math.max
+import com.example.ui.weather.WeatherContextBanner
+import com.example.ui.weather.WeatherContextMode
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,6 +99,10 @@ fun CalculatorScreen(
 contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 120.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+                       item {
+                WeatherContextBanner(mode = WeatherContextMode.IRRIGATION)
+            }
+
             item {
                 Surface(
                     color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
