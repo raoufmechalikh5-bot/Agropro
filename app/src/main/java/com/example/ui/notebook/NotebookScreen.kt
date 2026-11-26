@@ -101,6 +101,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.max
+import com.example.ui.weather.WeatherContextBanner
+import com.example.ui.weather.WeatherContextMode
+
 
 @Composable
 fun NotebookScreen(
@@ -163,6 +166,10 @@ fun NotebookScreen(
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 92.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                        item {
+                WeatherContextBanner(mode = WeatherContextMode.NOTEBOOK)
+            }
+
                 item {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
