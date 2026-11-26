@@ -37,8 +37,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Biotech
-import androidx.compose.material.icons.filled.Calculate
-import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
@@ -116,6 +114,7 @@ import com.example.data.catalog.DiseaseFlashcard
 import com.example.data.catalog.FlashcardCatalog
 import com.example.data.local.DiagnosisHistoryEntity
 import com.example.ui.theme.AgriTheme
+import com.example.ui.theme.agriAmbientBackground
 import com.example.util.PhotoStorageHelper
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -129,8 +128,6 @@ fun PlantDoctorScreen(
     viewModel: PlantDoctorViewModel,
     onOpenInNpkCalculator: (cropNameAr: String, diseaseNameAr: String) -> Unit = { _, _ -> },
     onNavigateToNotebook: () -> Unit = {},
-    onNavigateToFertilizer: () -> Unit = {},
-    onNavigateToEncyclopedia: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -265,7 +262,7 @@ fun PlantDoctorScreen(
     }
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().agriAmbientBackground(),
         contentAlignment = Alignment.TopCenter
     ) {
         LazyColumn(
@@ -285,14 +282,6 @@ fun PlantDoctorScreen(
             item {
                 AgriWeatherCard()
             }
-            item {
-                DashboardShortcuts(
-                    onOpenFertilizer = onNavigateToFertilizer,
-                    onOpenEncyclopedia = onNavigateToEncyclopedia,
-                    onOpenNotebook = onNavigateToNotebook
-                )
-            }
-
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth().testTag("plant_doctor_mode_toggle"),
@@ -628,104 +617,6 @@ private fun DashboardWelcomeHeader() {
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(26.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun DashboardShortcuts(
-    onOpenFertilizer: () -> Unit,
-    onOpenEncyclopedia: () -> Unit,
-    onOpenNotebook: () -> Unit
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                "أدواتك الزراعية",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                "وصول سريع",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            item {
-                DashboardShortcutCard(
-                    title = "حاسبة NPK",
-                    subtitle = "احسب احتياجات التسميد",
-                    icon = Icons.Default.Calculate,
-                    onClick = onOpenFertilizer
-                )
-            }
-            item {
-                DashboardShortcutCard(
-                    title = "الموسوعة",
-                    subtitle = "تعرف على أمراض النبات",
-                    icon = Icons.Default.MenuBook,
-                    onClick = onOpenEncyclopedia
-                )
-            }
-            item {
-                DashboardShortcutCard(
-                    title = "دفتر المزرعة",
-                    subtitle = "ملاحظاتك وخططك",
-                    icon = Icons.Default.History,
-                    onClick = onOpenNotebook
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun DashboardShortcutCard(
-    title: String,
-    subtitle: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    onClick: () -> Unit
-) {
-    Surface(
-        modifier = Modifier
-            .width(188.dp)
-            .height(112.dp)
-            .clip(RoundedCornerShape(22.dp))
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(22.dp),
-        color = MaterialTheme.colorScheme.primary,
-        tonalElevation = 1.dp
-    ) {
-        Column(
-            modifier = Modifier.padding(14.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(25.dp)
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(
-                    title,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-                Text(
-                    subtitle,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.78f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
