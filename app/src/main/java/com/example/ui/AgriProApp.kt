@@ -465,33 +465,7 @@ fun AgriProApp() {
                                             restoreState = true
                                         }
                                     },
-                                    onNavigateToNotebook = {
-                                        navController.navigate(AgriDestination.Notebook.route) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                    },
-                                    onNavigateToFertilizer = {
-                                        navController.navigate(AgriDestination.FertilizerCalculator.route) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                    },
-                                    onNavigateToEncyclopedia = {
-                                        navController.navigate(AgriDestination.Encyclopedia.route) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                    }
+
                                 )
                             }
                             composable(AgriDestination.FertilizerCalculator.route) {
