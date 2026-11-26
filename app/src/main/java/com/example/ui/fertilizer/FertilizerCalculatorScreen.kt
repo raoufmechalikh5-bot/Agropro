@@ -193,7 +193,7 @@ fun FertilizerCalculatorScreen(
                             }
                         }
 
-Text(
+                        Text(
                             text = stringResource(R.string.fertilizer_calc_stage_label),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
