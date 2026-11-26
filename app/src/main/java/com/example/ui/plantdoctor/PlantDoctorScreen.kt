@@ -128,6 +128,7 @@ fun PlantDoctorScreen(
     viewModel: PlantDoctorViewModel,
     onOpenInNpkCalculator: (cropNameAr: String, diseaseNameAr: String) -> Unit = { _, _ -> },
     onNavigateToNotebook: () -> Unit = {},
+    onOpenLiveAssistant: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
