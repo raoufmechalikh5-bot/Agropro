@@ -670,3 +670,100 @@ private fun LocationPickerDialog(
         }
     )
 }
+enum class WeatherContextMode {
+    IRRIGATION,
+    FERTILIZER,
+    NOTEBOOK
+}
+
+@Composable
+fun WeatherContextBanner(
+    mode: WeatherContextMode,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val weather = remember { WeatherRepository.getCachedWeather(context) } ?: return
+    val clipboard = androidx.compose.ui.platform.LocalClipboardManager.current
+    var copied by remember { mutableStateOf(false) }
+
+    val (title, advice, accentColor) = when (mode) {
+        WeatherContextMode.IRRIGATION -> {
+            val et0 = String.format(java.util.Locale.US, "%.1f", weather.estimateDailyEt0Mm())
+            val rainNote = if (weather.precipitationMm > 0.5) {
+                " • أمطار مسجلة: ${weather.precipitationMm} ملم (اخفض كمية الري)"
+            } else {
+                " • أدخل $et0 ملم/يوم في خانة التبخر (ET₀)"
+            }
+            Triple(
+                "مؤشر الري من طقس ${weather.locationName}: ET₀ ≈ $et0 ملم/يوم",
+                "الحرارة ${weather.temperatureC.toInt()}°م | الرطوبة ${weather.humidityPercent}%$rainNote",
+                MaterialTheme.colorScheme.primary
+            )
+        }
+        WeatherContextMode.FERTILIZER -> {
+            val tip = when {
+                weather.precipitationMm > 2.0 ->
+                    "أمطار مسجلة: قسّم دفعات النيتروجين (N) لتجنب غسله في التربة."
+                weather.sprayStatus == SpraySuitability.UNSUITABLE ->
+                    "تنبيه التسميد الورقي: ${weather.sprayAdvice}"
+                else ->
+                    "الظروف الجوية مناسبة للتسميد الأرضي والورقي (${weather.temperatureC.toInt()}°م)."
+            }
+            Triple(
+                "توصية التسميد حسب طقس ${weather.locationName}",
+                tip,
+                if (weather.sprayStatus == SpraySuitability.UNSUITABLE) MaterialTheme.colorScheme.error else Color(0xFF2E7D32)
+            )
+        }
+        WeatherContextMode.NOTEBOOK -> {
+            Triple(
+                "الظروف الجوية الحالية للتوثيق الميداني",
+                weather.toFieldNoteSummary(),
+                MaterialTheme.colorScheme.secondary
+            )
+        }
+    }
+
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        color = accentColor.copy(alpha = 0.10f)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.WbSunny,
+                contentDescription = null,
+                tint = accentColor,
+                modifier = Modifier.size(20.dp)
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = accentColor
+                )
+                Text(
+                    text = advice,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            if (mode == WeatherContextMode.NOTEBOOK) {
+                TextButton(
+                    onClick = {
+                        clipboard.setText(androidx.compose.ui.text.AnnotatedString(weather.toFieldNoteSummary()))
+                        copied = true
+                    }
+                ) {
+                    Text(if (copied) "تم النسخ ✓" else "نسخ")
+                }
+            }
+        }
+    }
+}
+
