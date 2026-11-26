@@ -269,7 +269,7 @@ fun PlantDoctorScreen(
                 .fillMaxSize()
                 .widthIn(max = 760.dp),
             contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 120.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
            
             item {
@@ -589,7 +589,7 @@ private fun AgriHeroBanner() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(104.dp)
+            .height(112.dp)
             .clip(MaterialTheme.shapes.large)
     ) {
         Image(
