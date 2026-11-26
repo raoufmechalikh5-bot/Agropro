@@ -268,8 +268,8 @@ fun PlantDoctorScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .widthIn(max = 760.dp),
-            contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 120.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            contentPadding = PaddingValues(start = 18.dp, top = 18.dp, end = 18.dp, bottom = 132.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
            
             item {
@@ -589,8 +589,8 @@ private fun AgriHeroBanner() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(112.dp)
-            .clip(MaterialTheme.shapes.large)
+            .height(224.dp)
+            .clip(RoundedCornerShape(30.dp))
     ) {
         Image(
             painter = painterResource(id = R.drawable.img_agri_hero),
@@ -598,46 +598,102 @@ private fun AgriHeroBanner() {
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-        val heroBottomColor = AgriTheme.semantic.heroScrimBottom
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Black.copy(alpha = 0.15f),
-                            heroBottomColor.copy(alpha = 0.85f)
+                        colorStops = arrayOf(
+                            0.0f to Color(0x9908120C),
+                            0.42f to Color(0x5508120C),
+                            1.0f to Color(0xF208120C)
                         )
                     )
                 )
         )
         Column(
             modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+                .align(Alignment.TopStart)
+                .fillMaxWidth()
+                .padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            Surface(
-                color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.92f),
-                shape = RoundedCornerShape(50)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(9.dp)
             ) {
-                Text(
-                    text = "طبيب النبات الذكي • رؤية حاسوبية زراعية",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                )
+                Surface(
+                    color = Color(0xFFB7E4C7).copy(alpha = 0.18f),
+                    shape = RoundedCornerShape(13.dp),
+                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.22f))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Eco,
+                        contentDescription = null,
+                        tint = Color(0xFFB7E4C7),
+                        modifier = Modifier.padding(9.dp).size(22.dp)
+                    )
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                    Text(
+                        text = "AGROPRO",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "SMART AGRICULTURE",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.72f)
+                    )
+                }
+                Spacer(Modifier.weight(1f))
+                Surface(
+                    color = Color(0xFFB7E4C7).copy(alpha = 0.16f),
+                    shape = RoundedCornerShape(50),
+                    border = BorderStroke(1.dp, Color(0xFFB7E4C7).copy(alpha = 0.38f))
+                ) {
+                    Text(
+                        text = "مساعدك الزراعي",
+                        color = Color(0xFFD8F3DC),
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(horizontal = 11.dp, vertical = 7.dp)
+                    )
+                }
             }
+            Spacer(Modifier.weight(1f))
             Text(
-                text = "تشخيص دقيق لأمراض المحاصيل المتوسطية",
-                style = MaterialTheme.typography.titleLarge,
+                text = "اعتنِ بمحصولك،\nبذكاء أكبر",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.ExtraBold,
                 color = Color.White
             )
+            Spacer(Modifier.height(7.dp))
             Text(
-                text = "أرفق حتى 3 صور للعينة للحصول على تشخيص أدق وتقرير قابل للمشاركة",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.88f)
+                text = "تشخيص أمراض النباتات ومتابعة الحقول في مكان واحد",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.86f)
             )
+            Spacer(Modifier.height(12.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(color = Color(0xFFB7E4C7), shape = RoundedCornerShape(50)) {
+                    Text(
+                        text = "التشخيص الذكي",
+                        color = Color(0xFF0B2B13),
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                    )
+                }
+                Text(
+                    text = "•  حتى 3 صور لكل فحص",
+                    color = Color.White.copy(alpha = 0.82f),
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
         }
     }
 }
