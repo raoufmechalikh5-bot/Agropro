@@ -274,16 +274,10 @@ fun PlantDoctorScreen(
             verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
            
-            item {
-                DashboardWelcomeHeader()
-            }
-            item {
+item {
                 AgriHeroBanner()
             }
-            item {
-                AgriWeatherCard()
-            }
-            item {
+item {
                 Row(
                     modifier = Modifier.fillMaxWidth().testTag("plant_doctor_mode_toggle"),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
