@@ -3,6 +3,6 @@
     <item
         android:width="66dp"
         android:height="66dp"
-        android:drawable="@drawable/agripro_icon"
+        android:drawable="@drawable/agripro_brand_mark"
         android:gravity="center" />
 </layer-list>
