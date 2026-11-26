@@ -537,7 +537,7 @@ private fun LiquidGlassNavigationBar(
                     spotColor = Color.Black.copy(alpha = 0.22f)
                 )
                 .clip(glassShape)
-                .                .hazeEffect(
+                                .hazeEffect(
                     state = hazeState,
                     style = HazeStyle(
                         backgroundColor = MaterialTheme.colorScheme.surface,
