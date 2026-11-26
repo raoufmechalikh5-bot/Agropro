@@ -89,6 +89,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.ceil
+import com.example.ui.weather.WeatherContextBanner
+import com.example.ui.weather.WeatherContextMode
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -112,6 +115,10 @@ fun FertilizerCalculatorScreen(
             contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 120.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+                     item {
+                WeatherContextBanner(mode = WeatherContextMode.FERTILIZER)
+            }
+
             item {
                 FertilizerHeroHeader()
             }
