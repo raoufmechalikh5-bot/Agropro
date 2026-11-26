@@ -88,6 +88,7 @@ import com.example.data.local.ExperimentEntity
 import com.example.data.local.MeasurementEntity
 import com.example.ui.theme.AgriTheme
 import com.example.ui.theme.AgriPageHero
+import com.example.ui.theme.agriAmbientBackground
 import com.example.util.CsvExporter
 import com.example.util.PhotoStorageHelper
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -154,7 +155,7 @@ fun NotebookScreen(
     }
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().agriAmbientBackground(),
         contentAlignment = Alignment.TopCenter
     ) {
         val currentExp = selectedExperiment
