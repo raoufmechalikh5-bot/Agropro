@@ -33,9 +33,9 @@ val OutlineLight = Color(0xFF73796E)
 val OutlineVariantLight = Color(0xFFC2C9BC)
 
 // Dark Theme - Rich Loam & Luminous Sprout
-val SproutPrimaryDark = Color(0xFF81C784)
+val SproutPrimaryDark = Color(0xFF8BD5A2)
 val OnSproutPrimaryDark = Color(0xFF00390D)
-val SproutContainerDark = Color(0xFF1B4332)
+val SproutContainerDark = Color(0xFF173D2B)
 val OnSproutContainerDark = Color(0xFFB7E4C7)
 
 val TerracottaSecondaryDark = Color(0xFFFFB690)
@@ -48,19 +48,19 @@ val OnHarvestGoldTertiaryDark = Color(0xFF472F00)
 val HarvestGoldContainerDark = Color(0xFF664500)
 val OnHarvestGoldContainerDark = Color(0xFFFFDFAA)
 
-val BackgroundDark = Color(0xFF101510)
+val BackgroundDark = Color(0xFF0B120D)
 val OnBackgroundDark = Color(0xFFE1E4DC)
-val SurfaceDark = Color(0xFF101510)
+val SurfaceDark = Color(0xFF101A13)
 val OnSurfaceDark = Color(0xFFE1E4DC)
 val SurfaceVariantDark = Color(0xFF42493F)
 val OnSurfaceVariantDark = Color(0xFFC2C9BC)
-val SurfaceContainerLowestDark = Color(0xFF0B0F0B)
-val SurfaceContainerLowDark = Color(0xFF181D17)
-val SurfaceContainerDark = Color(0xFF1D221C)
-val SurfaceContainerHighDark = Color(0xFF272D26)
+val SurfaceContainerLowestDark = Color(0xFF080E0A)
+val SurfaceContainerLowDark = Color(0xFF142019)
+val SurfaceContainerDark = Color(0xFF19261D)
+val SurfaceContainerHighDark = Color(0xFF223126)
 
 val OutlineDark = Color(0xFF8C9387)
-val OutlineVariantDark = Color(0xFF42493F)
+val OutlineVariantDark = Color(0xFF34483A)
 
 // Semantic Agronomic Colors - Light
 val SafeGreen = Color(0xFF2D6A4F)
