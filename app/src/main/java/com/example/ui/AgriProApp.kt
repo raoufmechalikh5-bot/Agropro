@@ -334,7 +334,10 @@ fun AgriProApp() {
                     Row(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(innerPadding)
+                            .padding(
+                                top = innerPadding.calculateTopPadding(),
+                                bottom = if (useNavigationRail) innerPadding.calculateBottomPadding() else 0.dp
+                            )
                     ) {
                         if (useNavigationRail) {
                             NavigationRail(
@@ -480,15 +483,15 @@ private fun LiquidGlassNavigationBar(
     val glassBackgroundBrush = if (useDarkTheme) {
         Brush.verticalGradient(
             colors = listOf(
-                Color(0xFF1F2B24).copy(alpha = 0.80f),
-                Color(0xFF121A15).copy(alpha = 0.90f)
+                Color(0xFF1F2B24).copy(alpha = 0.42f),
+                Color(0xFF121A15).copy(alpha = 0.58f)
             )
         )
     } else {
         Brush.verticalGradient(
             colors = listOf(
-                Color.White.copy(alpha = 0.85f),
-                Color(0xFFF1F7F3).copy(alpha = 0.76f)
+                Color.White.copy(alpha = 0.55f),
+                Color(0xFFF1F7F3).copy(alpha = 0.42f)
             )
         )
     }
