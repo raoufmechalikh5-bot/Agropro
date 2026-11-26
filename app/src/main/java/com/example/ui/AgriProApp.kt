@@ -1,9 +1,6 @@
 package com.example.ui
 
 import android.app.Activity
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
-import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.CubicBezierEasing
@@ -21,7 +18,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -29,32 +25,24 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Biotech
 import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Eco
-import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Grass
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.MenuBook
@@ -65,30 +53,22 @@ import androidx.compose.material.icons.outlined.Calculate
 import androidx.compose.material.icons.outlined.Grass
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Science
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -107,7 +87,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -126,6 +105,7 @@ import com.example.data.local.ExperimentRepository
 import com.example.data.local.FertilizerCalculationRepository
 import com.example.data.local.ThemePreference
 import com.example.data.local.ThemePreferencesRepository
+import com.example.reminders.RemindersDialog
 import com.example.ui.calculator.CalculatorScreen
 import com.example.ui.calculator.CalculatorViewModel
 import com.example.ui.encyclopedia.EncyclopediaScreen
@@ -142,11 +122,7 @@ import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
-import java.util.Calendar
-import java.util.Locale
 import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONObject
 
 sealed class AgriDestination(
     val route: String,
@@ -206,50 +182,6 @@ private val destinations = listOf(
 
 // منحنى حركة حريري فائق السلاسة (Ultra-Smooth Quintic Easing)
 private val UltraSmoothEasing = CubicBezierEasing(0.22f, 1f, 0.36f, 1f)
-
-private data class AgriReminder(
-    val id: Long,
-    val title: String,
-    val category: String,
-    val dateTimeText: String,
-    val isDone: Boolean = false
-)
-
-private fun loadSavedReminders(context: Context): List<AgriReminder> {
-    val prefs = context.getSharedPreferences("agropro_reminders_prefs", Context.MODE_PRIVATE)
-    val raw = prefs.getString("reminders_json", null) ?: return emptyList()
-    return try {
-        val array = JSONArray(raw)
-        List(array.length()) { index ->
-            val obj = array.getJSONObject(index)
-            AgriReminder(
-                id = obj.getLong("id"),
-                title = obj.getString("title"),
-                category = obj.optString("category", "عام"),
-                dateTimeText = obj.optString("dateTimeText", ""),
-                isDone = obj.optBoolean("isDone", false)
-            )
-        }
-    } catch (_: Exception) {
-        emptyList()
-    }
-}
-
-private fun persistReminders(context: Context, items: List<AgriReminder>) {
-    val prefs = context.getSharedPreferences("agropro_reminders_prefs", Context.MODE_PRIVATE)
-    val array = JSONArray()
-    items.forEach { item ->
-        val obj = JSONObject().apply {
-            put("id", item.id)
-            put("title", item.title)
-            put("category", item.category)
-            put("dateTimeText", item.dateTimeText)
-            put("isDone", item.isDone)
-        }
-        array.put(obj)
-    }
-    prefs.edit().putString("reminders_json", array.toString()).apply()
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -556,251 +488,11 @@ fun AgriProApp() {
                 }
 
                 if (showReminders) {
-                    AgriRemindersDialog(
-                        onDismiss = { showReminders = false }
-                    )
+                    RemindersDialog(onDismiss = { showReminders = false })
                 }
             }
         }
     }
-}
-
-@Composable
-private fun AgriRemindersDialog(
-    onDismiss: () -> Unit
-) {
-    val context = LocalContext.current
-    val reminders = remember {
-        mutableStateListOf<AgriReminder>().apply {
-            addAll(loadSavedReminders(context))
-        }
-    }
-
-    var titleInput by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf("ري") }
-    var selectedDateTime by remember { mutableStateOf("") }
-
-    val categories = listOf("ري", "تسميد", "رش مبيد", "فحص حقلي")
-
-    fun pickDateTime() {
-        val cal = Calendar.getInstance()
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                TimePickerDialog(
-                    context,
-                    { _, hourOfDay, minute ->
-                        selectedDateTime = String.format(
-                            Locale.US,
-                            "%04d/%02d/%02d - %02d:%02d",
-                            year,
-                            month + 1,
-                            dayOfMonth,
-                            hourOfDay,
-                            minute
-                        )
-                    },
-                    cal.get(Calendar.HOUR_OF_DAY),
-                    cal.get(Calendar.MINUTE),
-                    true
-                ).show()
-            },
-            cal.get(Calendar.YEAR),
-            cal.get(Calendar.MONTH),
-            cal.get(Calendar.DAY_OF_MONTH)
-        ).show()
-    }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = "التذكيرات الزراعية",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        },
-        text = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                OutlinedTextField(
-                    value = titleInput,
-                    onValueChange = { titleInput = it },
-                    label = { Text("عنوان التذكير (مثلاً: رش نحاس للزيتون)") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    categories.forEach { cat ->
-                        FilterChip(
-                            selected = selectedCategory == cat,
-                            onClick = { selectedCategory = cat },
-                            label = { Text(cat) }
-                        )
-                    }
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    OutlinedButton(
-                        onClick = { pickDateTime() },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Event,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = if (selectedDateTime.isEmpty()) "تحديد الموعد" else selectedDateTime,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
-
-                    Button(
-                        onClick = {
-                            val cleanTitle = titleInput.trim()
-                            if (cleanTitle.isNotEmpty()) {
-                                val newItem = AgriReminder(
-                                    id = System.currentTimeMillis(),
-                                    title = cleanTitle,
-                                    category = selectedCategory,
-                                    dateTimeText = selectedDateTime.ifEmpty { "بدون موعد محدد" },
-                                    isDone = false
-                                )
-                                reminders.add(0, newItem)
-                                persistReminders(context, reminders)
-                                titleInput = ""
-                                selectedDateTime = ""
-                            }
-                        },
-                        enabled = titleInput.trim().isNotEmpty()
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("إضافة")
-                    }
-                }
-
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                )
-
-                if (reminders.isEmpty()) {
-                    Text(
-                        text = "لا توجد تذكيرات محفوظة. أضف أول تذكير زراعي أعلاه.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(vertical = 12.dp)
-                    )
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = 240.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(reminders, key = { it.id }) { item ->
-                            Surface(
-                                shape = RoundedCornerShape(12.dp),
-                                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 8.dp, vertical = 6.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Checkbox(
-                                        checked = item.isDone,
-                                        onCheckedChange = { checked ->
-                                            val idx = reminders.indexOfFirst { it.id == item.id }
-                                            if (idx != -1) {
-                                                reminders[idx] = item.copy(isDone = checked)
-                                                persistReminders(context, reminders)
-                                            }
-                                        }
-                                    )
-
-                                    Column(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(horizontal = 4.dp)
-                                    ) {
-                                        Text(
-                                            text = item.title,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            fontWeight = FontWeight.SemiBold,
-                                            textDecoration = if (item.isDone) TextDecoration.LineThrough else null,
-                                            color = if (item.isDone) {
-                                                MaterialTheme.colorScheme.onSurfaceVariant
-                                            } else {
-                                                MaterialTheme.colorScheme.onSurface
-                                            }
-                                        )
-                                        Text(
-                                            text = "${item.category} • ${item.dateTimeText}",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-
-                                    IconButton(
-                                        onClick = {
-                                            reminders.removeAll { it.id == item.id }
-                                            persistReminders(context, reminders)
-                                        },
-                                        modifier = Modifier.size(36.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.DeleteOutline,
-                                            contentDescription = "حذف",
-                                            tint = MaterialTheme.colorScheme.error,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("إغلاق")
-            }
-        }
-    )
 }
 
 @Composable
