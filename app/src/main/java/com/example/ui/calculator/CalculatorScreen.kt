@@ -114,37 +114,6 @@ contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom =
                 WeatherContextBanner(mode = WeatherContextMode.IRRIGATION)
             }
 
-            item {
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
-                    shape = RoundedCornerShape(24.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Calculate,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Column {
-                            Text(
-                                text = "حاسبة التسميد والري الذكية",
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            Text(
-                                text = "حساب دقيق لوحدات NPK وحجم مياه الري وفق تحليل التربة والمرحلة الفينولوجية",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            }
-
             if (onOpenNpkCalculator != null) {
                 item {
                     FilledTonalButton(
