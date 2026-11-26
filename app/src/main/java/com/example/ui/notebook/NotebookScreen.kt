@@ -224,7 +224,7 @@ fun NotebookScreen(
                 onClick = { showCreateExperimentDialog = true },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(20.dp)
+                    .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 112.dp)
                     .testTag("fab_new_experiment")
             ) {
                 Row(
@@ -398,7 +398,7 @@ fun NotebookScreen(
                 onClick = { showAddMeasurementDialog = true },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(20.dp)
+                    .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 112.dp)
                     .testTag("fab_add_measurement")
             ) {
                 Row(
