@@ -106,7 +106,7 @@ contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom =
             item {
                 Surface(
                     color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
-                    shape = MaterialTheme.shapes.large,
+                    shape = RoundedCornerShape(24.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -196,9 +196,9 @@ contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom =
             // Crop, Area, Stage Card
             item {
                 ElevatedCard(
-                    shape = MaterialTheme.shapes.large,
+                    shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.elevatedCardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -327,9 +327,9 @@ contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom =
             // Soil Analysis Card
             item {
                 ElevatedCard(
-                    shape = MaterialTheme.shapes.large,
+                    shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.elevatedCardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -465,9 +465,9 @@ contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom =
 @Composable
 private fun CalculatorResultsCard(result: AgronomyCalculationResult) {
     Card(
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
         modifier = Modifier
             .fillMaxWidth()
