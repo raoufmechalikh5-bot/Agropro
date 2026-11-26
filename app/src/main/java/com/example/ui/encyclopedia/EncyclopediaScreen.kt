@@ -168,6 +168,10 @@ fun EncyclopediaScreen(
                         )
                     }
 
+                }
+            }
+
+            
             item {
                 TankMixCheckerCard(
                     allItems = state.allItems,
@@ -181,10 +185,7 @@ fun EncyclopediaScreen(
                 )
             }
 
-                }
-            }
-
-            item {
+item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
