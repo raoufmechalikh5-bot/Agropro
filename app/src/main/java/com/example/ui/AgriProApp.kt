@@ -483,15 +483,15 @@ private fun LiquidGlassNavigationBar(
     val glassBackgroundBrush = if (useDarkTheme) {
         Brush.verticalGradient(
             colors = listOf(
-                Color(0xFF1F2B24).copy(alpha = 0.42f),
-                Color(0xFF121A15).copy(alpha = 0.58f)
+                Color(0xFF1F2B24).copy(alpha = 0.72f),
+                Color(0xFF121A15).copy(alpha = 0.82f)
             )
         )
     } else {
         Brush.verticalGradient(
             colors = listOf(
-                Color.White.copy(alpha = 0.55f),
-                Color(0xFFF1F7F3).copy(alpha = 0.42f)
+                Color.White.copy(alpha = 0.78f),
+                Color(0xFFF1F7F3).copy(alpha = 0.70f)
             )
         )
     }
