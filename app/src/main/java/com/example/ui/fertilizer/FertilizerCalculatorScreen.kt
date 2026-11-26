@@ -126,9 +126,9 @@ fun FertilizerCalculatorScreen(
             // Crop Type & Stage Input Card
             item {
                 ElevatedCard(
-                    shape = MaterialTheme.shapes.large,
+                    shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.elevatedCardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -233,9 +233,9 @@ fun FertilizerCalculatorScreen(
             // Area Size Input Card
             item {
                 ElevatedCard(
-                    shape = MaterialTheme.shapes.large,
+                    shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.elevatedCardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                     ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -484,7 +484,7 @@ fun FertilizerCalculatorScreen(
 @Composable
 private fun FertilizerHeroHeader() {
     Surface(
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(24.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         Box(
@@ -543,9 +543,9 @@ private fun NpkRecommendationCard(
 ) {
     val semantic = AgriTheme.semantic
     Card(
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.22f)),
         modifier = Modifier
@@ -836,9 +836,9 @@ private fun CommercialFertilizerBreakdownCard(
     result: FertilizerNpkResult
 ) {
     ElevatedCard(
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
         modifier = Modifier
             .fillMaxWidth()
