@@ -338,6 +338,39 @@ item {
 
             if (!isFlashcardMode) {
                 item {
+                    Button(
+                        onClick = onOpenLiveAssistant,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(68.dp)
+                            .testTag("open_agro_live_button"),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AutoAwesome,
+                                contentDescription = null,
+                                modifier = Modifier.size(26.dp)
+                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                Text("AgroPro Live", fontWeight = FontWeight.Bold)
+                                Text(
+                                    "تحدث مع المساعد مباشرة بالصوت والكاميرا",
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+                    }
+                }
+                item {
                     PlantCaptureCard(
                         selectedImages = selectedImages,
                         farmerNotes = farmerNotes,
