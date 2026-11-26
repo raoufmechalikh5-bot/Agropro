@@ -1,5 +1,6 @@
 package com.example.ui.encyclopedia
 
+import com.example.ui.components.ExpandableSuggestions
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -493,10 +494,9 @@ private fun TankMixCheckerCard(
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = statusOnContainer
                             )
-                            Text(
-                                text = "إرشاد الخلط: ${mixResult.mixingAdviceAr}",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = statusAccent
+                            ExpandableSuggestions(
+                                items = listOf(mixResult.mixingAdviceAr),
+                                title = "إرشاد الخلط الآمن"
                             )
                         }
                     }
