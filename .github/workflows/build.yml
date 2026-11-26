@@ -1,4 +1,8 @@
 name: Build APK
+
+concurrency:
+  group: agropro-build-${{ github.ref }}
+  cancel-in-progress: true
 on:
   push:
   workflow_dispatch:
