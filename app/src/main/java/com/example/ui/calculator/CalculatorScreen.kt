@@ -70,6 +70,7 @@ import com.example.data.catalog.GrowthStage
 import com.example.data.catalog.IrrigationMethod
 import com.example.ui.theme.AgriTheme
 import com.example.ui.theme.AgriPageHero
+import com.example.ui.theme.agriAmbientBackground
 import java.util.Locale
 import kotlin.math.max
 import com.example.ui.weather.WeatherContextBanner
@@ -90,7 +91,7 @@ fun CalculatorScreen(
     var stageExpanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().agriAmbientBackground(),
         contentAlignment = Alignment.TopCenter
     ) {
         LazyColumn(
