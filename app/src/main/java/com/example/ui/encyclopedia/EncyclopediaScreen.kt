@@ -130,19 +130,6 @@ fun EncyclopediaScreen(
                 )
             }
             item {
-                TankMixCheckerCard(
-                    allItems = state.allItems,
-                    productA = state.mixProductA,
-                    productB = state.mixProductB,
-                    mixResult = state.mixResult,
-                    isExpanded = state.isTankMixExpanded,
-                    onToggleExpanded = viewModel::toggleTankMixExpanded,
-                    onSelectA = viewModel::setMixProductA,
-                    onSelectB = viewModel::setMixProductB
-                )
-            }
-
-            item {
                 OutlinedTextField(
                     value = state.searchQuery,
                     onValueChange = viewModel::updateSearchQuery,
@@ -180,6 +167,20 @@ fun EncyclopediaScreen(
                             modifier = Modifier.testTag("category_chip_${category.name}")
                         )
                     }
+
+            item {
+                TankMixCheckerCard(
+                    allItems = state.allItems,
+                    productA = state.mixProductA,
+                    productB = state.mixProductB,
+                    mixResult = state.mixResult,
+                    isExpanded = state.isTankMixExpanded,
+                    onToggleExpanded = viewModel::toggleTankMixExpanded,
+                    onSelectA = viewModel::setMixProductA,
+                    onSelectB = viewModel::setMixProductB
+                )
+            }
+
                 }
             }
 
