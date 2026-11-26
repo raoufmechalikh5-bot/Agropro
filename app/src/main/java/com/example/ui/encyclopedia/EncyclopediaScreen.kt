@@ -90,6 +90,7 @@ import com.example.data.catalog.TankMixResult
 import com.example.data.local.PesticideNoteEntity
 import com.example.ui.theme.AgriTheme
 import com.example.ui.theme.AgriPageHero
+import com.example.ui.theme.agriAmbientBackground
 import com.example.util.PhotoStorageHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -109,7 +110,7 @@ fun EncyclopediaScreen(
     var showAddCustomDialog by remember { mutableStateOf(false) }
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().agriAmbientBackground(),
         contentAlignment = Alignment.TopCenter
     ) {
         LazyColumn(
