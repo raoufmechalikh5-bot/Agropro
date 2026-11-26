@@ -131,6 +131,8 @@ import com.example.ui.notebook.NotebookScreen
 import com.example.ui.notebook.NotebookViewModel
 import com.example.ui.plantdoctor.PlantDoctorScreen
 import com.example.ui.plantdoctor.PlantDoctorViewModel
+import com.example.ui.live.AgroLiveScreen
+import com.example.ui.live.AgroLiveViewModel
 import com.example.ui.theme.AgriProTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
@@ -248,6 +250,7 @@ fun AgriProApp() {
     val aiRepo = remember { PlantDoctorRepository() }
     val hazeState = remember { HazeState() }
 
+    val agroLiveViewModel: AgroLiveViewModel = viewModel()
     val plantDoctorViewModel: PlantDoctorViewModel = viewModel(
         factory = PlantDoctorViewModel.Factory(aiRepo, experimentRepo)
     )
@@ -393,6 +396,7 @@ fun AgriProApp() {
                 Scaffold(
                     contentWindowInsets = WindowInsets.safeDrawing,
                     topBar = {
+                        if (currentRoute != "agro_live") {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -488,9 +492,10 @@ fun AgriProApp() {
                                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
                             )
                         }
+                        }
                     },
                     bottomBar = {
-                        if (!useNavigationRail) {
+                        if (!useNavigationRail && currentRoute != "agro_live") {
                             LiquidGlassNavigationBar(
                                 destinations = destinations,
                                 currentRoute = currentRoute,
@@ -519,7 +524,7 @@ fun AgriProApp() {
                                 bottom = if (useNavigationRail) innerPadding.calculateBottomPadding() else 0.dp
                             )
                     ) {
-                        if (useNavigationRail) {
+                        if (useNavigationRail && currentRoute != "agro_live") {
                             NavigationRail(
                                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                             ) {
@@ -598,6 +603,7 @@ fun AgriProApp() {
                             composable(AgriDestination.PlantDoctor.route) {
                                 PlantDoctorScreen(
                                     viewModel = plantDoctorViewModel,
+                                    onOpenLiveAssistant = { navController.navigate("agro_live") },
                                     onOpenInNpkCalculator = { cropNameAr, diseaseNameAr ->
                                         fertilizerCalculatorViewModel.applyDiagnosisContext(cropNameAr, diseaseNameAr)
                                         navController.navigate(AgriDestination.FertilizerCalculator.route) {
@@ -609,6 +615,12 @@ fun AgriProApp() {
                                         }
                                     },
 
+                                )
+                            }
+                            composable("agro_live") {
+                                AgroLiveScreen(
+                                    viewModel = agroLiveViewModel,
+                                    onClose = { navController.popBackStack() }
                                 )
                             }
                             composable(AgriDestination.FertilizerCalculator.route) {
