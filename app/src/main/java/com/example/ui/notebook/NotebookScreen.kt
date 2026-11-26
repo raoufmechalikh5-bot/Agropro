@@ -173,7 +173,7 @@ fun NotebookScreen(
                 item {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
-                        shape = MaterialTheme.shapes.large,
+                        shape = RoundedCornerShape(24.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
@@ -205,7 +205,7 @@ fun NotebookScreen(
                     item {
                         Surface(
                             color = MaterialTheme.colorScheme.surfaceContainerLow,
-                            shape = MaterialTheme.shapes.large,
+                            shape = RoundedCornerShape(24.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(
@@ -300,9 +300,9 @@ fun NotebookScreen(
 
                 item {
                     Card(
-                        shape = MaterialTheme.shapes.large,
+                        shape = RoundedCornerShape(24.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                         ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -487,9 +487,9 @@ private fun ExperimentSummaryCard(
         SimpleDateFormat("yyyy/MM/dd", Locale.US).format(Date(experiment.startDateMillis))
     }
     ElevatedCard(
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -558,9 +558,9 @@ private fun ExperimentSummaryCard(
 @Composable
 private fun ExperimentGrowthChartCard(measurements: List<MeasurementEntity>) {
     Card(
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
         modifier = Modifier.fillMaxWidth()
     ) {
