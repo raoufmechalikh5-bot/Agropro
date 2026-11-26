@@ -87,6 +87,7 @@ import com.example.R
 import com.example.data.local.ExperimentEntity
 import com.example.data.local.MeasurementEntity
 import com.example.ui.theme.AgriTheme
+import com.example.ui.theme.AgriPageHero
 import com.example.util.CsvExporter
 import com.example.util.PhotoStorageHelper
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -166,8 +167,16 @@ fun NotebookScreen(
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 92.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                        item {
-                WeatherContextBanner(mode = WeatherContextMode.NOTEBOOK)
+                item {
+                    AgriPageHero(
+                        eyebrow = "AGROPRO • FIELD JOURNAL",
+                        title = "دفتر المزرعة",
+                        subtitle = "دوّن التجارب والقياسات وتابع تطور محاصيلك",
+                        icon = Icons.Default.Science
+                    )
+                }
+                item {
+                    WeatherContextBanner(mode = WeatherContextMode.NOTEBOOK)
             }
 
                 item {
