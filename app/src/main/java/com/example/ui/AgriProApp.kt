@@ -528,8 +528,8 @@ private fun LiquidGlassNavigationBar(
     val glassBackgroundBrush = if (useDarkTheme) {
         Brush.verticalGradient(
             colors = listOf(
-                Color(0xFF1F2B24).copy(alpha = 0.18f),
-                Color(0xFF121A15).copy(alpha = 0.30f)
+                Color(0xFF263B2D).copy(alpha = 0.42f),
+                Color(0xFF101A13).copy(alpha = 0.72f)
             )
         )
     } else {
@@ -544,8 +544,8 @@ private fun LiquidGlassNavigationBar(
     val specularBorderBrush = if (useDarkTheme) {
         Brush.verticalGradient(
             colors = listOf(
-                Color.White.copy(alpha = 0.28f),
-                Color.White.copy(alpha = 0.06f)
+                Color(0xFFB7E4C7).copy(alpha = 0.30f),
+                Color.White.copy(alpha = 0.045f)
             )
         )
     } else {
@@ -566,9 +566,9 @@ private fun LiquidGlassNavigationBar(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(66.dp)
+                .height(62.dp)
                 .shadow(
-                    elevation = 14.dp,
+                    elevation = 10.dp,
                     shape = glassShape,
                     ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f),
                     spotColor = Color.Black.copy(alpha = 0.22f)
@@ -612,8 +612,8 @@ private fun LiquidGlassNavigationBar(
                         brush = Brush.verticalGradient(
                             colors = if (useDarkTheme) {
                                 listOf(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.34f),
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.30f),
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
                                 )
                             } else {
                                 listOf(
