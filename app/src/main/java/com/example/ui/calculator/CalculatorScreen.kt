@@ -1,5 +1,6 @@
 package com.example.ui.calculator
 
+import com.example.ui.components.ExpandableSuggestions
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
