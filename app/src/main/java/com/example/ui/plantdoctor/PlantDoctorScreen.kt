@@ -37,6 +37,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Biotech
+import androidx.compose.material.icons.filled.Calculate
+import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
@@ -127,6 +129,8 @@ fun PlantDoctorScreen(
     viewModel: PlantDoctorViewModel,
     onOpenInNpkCalculator: (cropNameAr: String, diseaseNameAr: String) -> Unit = { _, _ -> },
     onNavigateToNotebook: () -> Unit = {},
+    onNavigateToFertilizer: () -> Unit = {},
+    onNavigateToEncyclopedia: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -273,11 +277,21 @@ fun PlantDoctorScreen(
         ) {
            
             item {
+                DashboardWelcomeHeader()
+            }
+            item {
                 AgriHeroBanner()
             }
-item {
-    AgriWeatherCard()
-}
+            item {
+                AgriWeatherCard()
+            }
+            item {
+                DashboardShortcuts(
+                    onOpenFertilizer = onNavigateToFertilizer,
+                    onOpenEncyclopedia = onNavigateToEncyclopedia,
+                    onOpenNotebook = onNavigateToNotebook
+                )
+            }
 
             item {
                 Row(
@@ -581,6 +595,143 @@ item {
     }
 }
 
+@Composable
+private fun DashboardWelcomeHeader() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 2.dp, vertical = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+            Text(
+                "مساحتك الزراعية الذكية",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                "تابع محاصيلك واتخذ قرارات أفضل",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Surface(
+            shape = RoundedCornerShape(17.dp),
+            color = MaterialTheme.colorScheme.primaryContainer,
+            modifier = Modifier.size(48.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Default.Eco,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(26.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DashboardShortcuts(
+    onOpenFertilizer: () -> Unit,
+    onOpenEncyclopedia: () -> Unit,
+    onOpenNotebook: () -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                "أدواتك الزراعية",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                "وصول سريع",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            item {
+                DashboardShortcutCard(
+                    title = "حاسبة NPK",
+                    subtitle = "احسب احتياجات التسميد",
+                    icon = Icons.Default.Calculate,
+                    onClick = onOpenFertilizer
+                )
+            }
+            item {
+                DashboardShortcutCard(
+                    title = "الموسوعة",
+                    subtitle = "تعرف على أمراض النبات",
+                    icon = Icons.Default.MenuBook,
+                    onClick = onOpenEncyclopedia
+                )
+            }
+            item {
+                DashboardShortcutCard(
+                    title = "دفتر المزرعة",
+                    subtitle = "ملاحظاتك وخططك",
+                    icon = Icons.Default.History,
+                    onClick = onOpenNotebook
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DashboardShortcutCard(
+    title: String,
+    subtitle: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    onClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .width(188.dp)
+            .height(112.dp)
+            .clip(RoundedCornerShape(22.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(22.dp),
+        color = MaterialTheme.colorScheme.primary,
+        tonalElevation = 1.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(14.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(25.dp)
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                Text(
+                    subtitle,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.78f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
 private fun shareDiagnosisReport(context: Context, result: PlantDiagnosisResult) {
     val recsText = if (result.recommendations.isNotEmpty()) {
         result.recommendations.mapIndexed { i, r -> "${i + 1}. $r" }.joinToString("\n")
@@ -621,7 +772,7 @@ private fun AgriHeroBanner() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(224.dp)
+            .height(194.dp)
             .clip(RoundedCornerShape(30.dp))
     ) {
         Image(
