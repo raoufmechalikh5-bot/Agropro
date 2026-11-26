@@ -113,6 +113,11 @@ import com.example.ui.notebook.NotebookViewModel
 import com.example.ui.plantdoctor.PlantDoctorScreen
 import com.example.ui.plantdoctor.PlantDoctorViewModel
 import com.example.ui.theme.AgriProTheme
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.launch
 
 sealed class AgriDestination(
@@ -218,6 +223,7 @@ fun AgriProApp() {
         FertilizerCalculationRepository(database.fertilizerCalculationDao())
     }
     val aiRepo = remember { PlantDoctorRepository() }
+        val hazeState = remember { HazeState() }
 
     val plantDoctorViewModel: PlantDoctorViewModel = viewModel(
         factory = PlantDoctorViewModel.Factory(aiRepo, experimentRepo)
@@ -316,6 +322,7 @@ fun AgriProApp() {
                                 destinations = destinations,
                                 currentRoute = currentRoute,
                                 useDarkTheme = useDarkTheme,
+                                                                hazeState = hazeState,
                                 onSelectDestination = { dest ->
                                     if (currentRoute != dest.route) {
                                         navController.navigate(dest.route) {
@@ -379,7 +386,7 @@ fun AgriProApp() {
                         NavHost(
                             navController = navController,
                             startDestination = AgriDestination.PlantDoctor.route,
-                            modifier = Modifier.weight(1f),
+                                                        modifier = Modifier.weight(1f).hazeSource(state = hazeState),
                             enterTransition = {
                                 val fromIndex = destinations.indexOfFirst { it.route == initialState.destination.route }
                                 val toIndex = destinations.indexOfFirst { it.route == targetState.destination.route }
@@ -475,6 +482,7 @@ private fun LiquidGlassNavigationBar(
     destinations: List<AgriDestination>,
     currentRoute: String,
     useDarkTheme: Boolean,
+        hazeState: HazeState,
     onSelectDestination: (AgriDestination) -> Unit
 ) {
     val glassShape = RoundedCornerShape(32.dp)
@@ -483,15 +491,15 @@ private fun LiquidGlassNavigationBar(
     val glassBackgroundBrush = if (useDarkTheme) {
         Brush.verticalGradient(
             colors = listOf(
-                Color(0xFF1F2B24).copy(alpha = 0.72f),
-                Color(0xFF121A15).copy(alpha = 0.82f)
+                Color(0xFF1F2B24).copy(alpha = 0.18f),
+                Color(0xFF121A15).copy(alpha = 0.30f)
             )
         )
     } else {
         Brush.verticalGradient(
             colors = listOf(
-                Color.White.copy(alpha = 0.78f),
-                Color(0xFFF1F7F3).copy(alpha = 0.70f)
+                Color.White.copy(alpha = 0.25f),
+                Color(0xFFF1F7F3).copy(alpha = 0.18f)
             )
         )
     }
@@ -529,6 +537,17 @@ private fun LiquidGlassNavigationBar(
                     spotColor = Color.Black.copy(alpha = 0.22f)
                 )
                 .clip(glassShape)
+                .                .hazeEffect(
+                    state = hazeState,
+                    style = HazeStyle(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        tint = HazeTint(
+                            MaterialTheme.colorScheme.surface.copy(alpha = if (useDarkTheme) 0.35f else 0.45f)
+                        ),
+                        blurRadius = 24.dp,
+                        noiseFactor = 0.04f
+                    )
+                )
                 .background(brush = glassBackgroundBrush)
                 .border(width = 1.2.dp, brush = specularBorderBrush, shape = glassShape)
                 .padding(6.dp)
