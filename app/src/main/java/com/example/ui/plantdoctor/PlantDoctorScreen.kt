@@ -1,5 +1,6 @@
 package com.example.ui.plantdoctor
 
+import com.example.ui.components.ExpandableSuggestions
 import android.Manifest
 import android.content.Context
 import android.content.Intent
