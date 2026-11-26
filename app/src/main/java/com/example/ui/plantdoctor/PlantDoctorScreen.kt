@@ -589,7 +589,7 @@ private fun AgriHeroBanner() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(148.dp)
+            .height(104.dp)
             .clip(MaterialTheme.shapes.large)
     ) {
         Image(
