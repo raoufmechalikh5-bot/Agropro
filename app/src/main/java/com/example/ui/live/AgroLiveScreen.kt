@@ -48,7 +48,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicLong
 
 @Composable
 fun AgroLiveScreen(
@@ -76,7 +77,10 @@ fun AgroLiveScreen(
     val microphonePermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        if (granted) viewModel.connect()
+        if (granted) {
+            if (viewModel.uiState.value.connected) viewModel.setMicrophoneEnabled(true)
+            else viewModel.connect()
+        }
     }
     val cameraPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -98,13 +102,14 @@ fun AgroLiveScreen(
         }
     }
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
-    var lastFrameAt by remember { mutableLongStateOf(0L) }
+    val lastFrameAt = remember { AtomicLong(0L) }
+    val latestState by rememberUpdatedState(state)
 
     DisposableEffect(cameraController, analysisExecutor) {
         cameraController.setImageAnalysisAnalyzer(analysisExecutor) { image: ImageProxy ->
             val now = System.currentTimeMillis()
-            if (now - lastFrameAt >= 1_000L && state.cameraEnabled && state.connected) {
-                lastFrameAt = now
+            if (now - lastFrameAt.get() >= 1_000L && latestState.cameraEnabled && latestState.connected) {
+                lastFrameAt.set(now)
                 val frame: Bitmap? = runCatching { image.toBitmap() }.getOrNull()
                 frame?.let(viewModel::sendVideoFrame)
             }
@@ -112,7 +117,7 @@ fun AgroLiveScreen(
         }
         onDispose {
             cameraController.clearImageAnalysisAnalyzer()
-            cameraController.unbind()
+            runCatching { cameraController.unbind() }
             analysisExecutor.shutdown()
         }
     }
@@ -122,7 +127,7 @@ fun AgroLiveScreen(
             runCatching { cameraController.bindToLifecycle(lifecycleOwner) }
                 .onFailure { viewModel.setCameraEnabled(false) }
         } else {
-            cameraController.unbind()
+            runCatching { cameraController.unbind() }
         }
     }
 
