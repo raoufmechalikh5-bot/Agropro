@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -115,7 +116,7 @@ fun EncyclopediaScreen(
                 .fillMaxSize()
                 .widthIn(max = 760.dp),
             contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 120.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
                 TankMixCheckerCard(
@@ -505,6 +506,8 @@ private fun AgrochemicalCard(
     onDeleteNote: () -> Unit,
     onDeleteCustom: () -> Unit
 ) {
+    var isExpanded by remember(item.id) { mutableStateOf(false) }
+
     ElevatedCard(
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.elevatedCardColors(
@@ -512,30 +515,39 @@ private fun AgrochemicalCard(
         ),
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { isExpanded = !isExpanded }
             .testTag("agro_card_${item.id}")
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(14.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = item.commercialName,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = item.activeIngredient,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = item.commercialName,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = if (isExpanded) 2 else 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(Modifier.width(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    if (savedNote != null) {
+                        Icon(
+                            imageVector = Icons.Default.StickyNote2,
+                            contentDescription = "توجد ملاحظة محفوظة",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
                     Surface(
                         color = MaterialTheme.colorScheme.tertiaryContainer,
                         shape = RoundedCornerShape(50)
@@ -544,21 +556,15 @@ private fun AgrochemicalCard(
                             text = item.modeCode,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onTertiaryContainer,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                         )
                     }
-                    if (isCustom) {
-                        IconButton(
-                            onClick = onDeleteCustom,
-                            modifier = Modifier.size(48.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.DeleteOutline,
-                                contentDescription = "حذف المنتج المخصص",
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }
+                    Icon(
+                        imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                        contentDescription = if (isExpanded) "طي التفاصيل" else "عرض التفاصيل",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(22.dp)
+                    )
                 }
             }
 
@@ -570,145 +576,172 @@ private fun AgrochemicalCard(
                     imageVector = Icons.Default.BugReport,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(16.dp)
                 )
                 Text(
                     text = "الآفات المستهدفة: ${item.targetPests}",
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(
-                    text = "الجرعة الموصى بها: ${item.recommendedDosage}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = "فترة التحريم (PHI): ${item.phiDays}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            }
-
-            if (item.formulationNotes.isNotBlank()) {
-                Text(
-                    text = item.formulationNotes,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    maxLines = if (isExpanded) 6 else 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
-            // Custom Saved User Pesticide Note Section
-            if (savedNote != null) {
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
-                    shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("saved_note_${item.id}")
+            AnimatedVisibility(visible = isExpanded) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+                    Text(
+                        text = "المادة الفعالة: ${item.activeIngredient}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(
+                            text = "الجرعة الموصى بها: ${item.recommendedDosage}",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "فترة التحريم (PHI): ${item.phiDays}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+
+                    if (item.formulationNotes.isNotBlank()) {
+                        Text(
+                            text = item.formulationNotes,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    if (savedNote != null) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                            shape = MaterialTheme.shapes.medium,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("saved_note_${item.id}")
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            Column(
+                                modifier = Modifier.padding(12.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.StickyNote2,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Text(
-                                    text = "ملاحظتك المحفوظة محلياً:",
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.StickyNote2,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                        Text(
+                                            text = "ملاحظتك المحفوظة محلياً:",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                    IconButton(
+                                        onClick = onDeleteNote,
+                                        modifier = Modifier.size(48.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.DeleteOutline,
+                                            contentDescription = "حذف الملاحظة",
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                }
+                                if (savedNote.customDosageNote.isNotBlank()) {
+                                    Text(
+                                        text = "الجرعة الحقلية المعتمدة: ${savedNote.customDosageNote}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                if (savedNote.noteText.isNotBlank()) {
+                                    Text(
+                                        text = savedNote.noteText,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                                val path = savedNote.photoPath
+                                if (!path.isNullOrBlank() && File(path).exists()) {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(model = File(path)),
+                                        contentDescription = "صورة مرفقة بملاحظة ${item.commercialName}",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(120.dp)
+                                            .clip(MaterialTheme.shapes.small)
+                                    )
+                                }
                             }
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (isCustom) {
                             IconButton(
-                                onClick = onDeleteNote,
+                                onClick = onDeleteCustom,
                                 modifier = Modifier.size(48.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.DeleteOutline,
-                                    contentDescription = "حذف الملاحظة",
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(20.dp)
+                                    contentDescription = "حذف المنتج المخصص",
+                                    tint = MaterialTheme.colorScheme.error
                                 )
                             }
                         }
-                        if (savedNote.customDosageNote.isNotBlank()) {
-                            Text(
-                                text = "الجرعة الحقلية المعتمدة: ${savedNote.customDosageNote}",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold
+
+                        OutlinedButton(
+                            onClick = onEditNote,
+                            modifier = Modifier
+                                .height(48.dp)
+                                .testTag("edit_note_${item.id}")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.EditNote,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
                             )
+                            Spacer(Modifier.width(4.dp))
+                            Text(if (savedNote == null) "ملاحظة ميدانية" else "تعديل الملاحظة", maxLines = 1)
                         }
-                        if (savedNote.noteText.isNotBlank()) {
-                            Text(
-                                text = savedNote.noteText,
-                                style = MaterialTheme.typography.bodySmall
+
+                        FilledTonalButton(
+                            onClick = onAddToMix,
+                            colors = ButtonDefaults.filledTonalButtonColors(),
+                            modifier = Modifier
+                                .height(48.dp)
+                                .testTag("add_mix_${item.id}")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AddCircleOutline,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
                             )
-                        }
-                        val path = savedNote.photoPath
-                        if (!path.isNullOrBlank() && File(path).exists()) {
-                            Image(
-                                painter = rememberAsyncImagePainter(model = File(path)),
-                                contentDescription = "صورة مرفقة بملاحظة ${item.commercialName}",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(120.dp)
-                                    .clip(MaterialTheme.shapes.small)
-                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text("فحص الخلط", maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
-                }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
-            ) {
-                OutlinedButton(
-                    onClick = onEditNote,
-                    modifier = Modifier
-                        .height(48.dp)
-                        .testTag("edit_note_${item.id}")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.EditNote,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text(if (savedNote == null) "ملاحظة ميدانية" else "تعديل الملاحظة", maxLines = 1)
-                }
-
-                FilledTonalButton(
-                    onClick = onAddToMix,
-                    colors = ButtonDefaults.filledTonalButtonColors(),
-                    modifier = Modifier
-                        .height(48.dp)
-                        .testTag("add_mix_${item.id}")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AddCircleOutline,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text("فحص الخلط", maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
         }
