@@ -1,6 +1,7 @@
 package com.example.ui.theme
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.drawBehind
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -89,4 +91,34 @@ fun AgriPageHero(
             }
         }
     }
+}
+
+@Composable
+fun Modifier.agriAmbientBackground(): Modifier {
+    val scheme = MaterialTheme.colorScheme
+    val top = if (scheme.background.red < 0.2f) {
+        androidx.compose.ui.graphics.Color(0xFF0B1710)
+    } else {
+        androidx.compose.ui.graphics.Color(0xFFE5EFE3)
+    }
+    val middle = scheme.background
+    val bottom = if (scheme.background.red < 0.2f) {
+        androidx.compose.ui.graphics.Color(0xFF101F16)
+    } else {
+        androidx.compose.ui.graphics.Color(0xFFF5F7F0)
+    }
+    return this
+        .background(Brush.verticalGradient(listOf(top, middle, bottom)))
+        .drawBehind {
+            drawCircle(
+                color = scheme.primary.copy(alpha = if (scheme.background.red < 0.2f) 0.10f else 0.08f),
+                radius = size.minDimension * 0.72f,
+                center = Offset(size.width * 1.04f, size.height * 0.10f)
+            )
+            drawCircle(
+                color = scheme.tertiary.copy(alpha = if (scheme.background.red < 0.2f) 0.07f else 0.09f),
+                radius = size.minDimension * 0.58f,
+                center = Offset(size.width * -0.12f, size.height * 0.68f)
+            )
+        }
 }
