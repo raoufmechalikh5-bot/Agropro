@@ -50,7 +50,8 @@ class ThemePreferencesRepository(private val context: Context) {
         when (prefs[themeKey]) {
             ThemePreference.LIGHT.name -> ThemePreference.LIGHT
             ThemePreference.DARK.name -> ThemePreference.DARK
-            else -> ThemePreference.SYSTEM
+            ThemePreference.SYSTEM.name -> ThemePreference.SYSTEM
+            else -> ThemePreference.DARK
         }
     }
 
