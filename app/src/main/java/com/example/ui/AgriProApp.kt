@@ -106,6 +106,8 @@ import com.example.data.local.FertilizerCalculationRepository
 import com.example.data.local.ThemePreference
 import com.example.data.local.ThemePreferencesRepository
 import com.example.reminders.RemindersDialog
+import androidx.compose.material.icons.filled.CalendarMonth
+import com.example.ui.calendar.AgriCalendarDialog
 import com.example.ui.calculator.CalculatorScreen
 import com.example.ui.calculator.CalculatorViewModel
 import com.example.ui.encyclopedia.EncyclopediaScreen
@@ -190,6 +192,7 @@ fun AgriProApp() {
     val view = LocalView.current
     val scope = rememberCoroutineScope()
     var showReminders by remember { mutableStateOf(false) }
+        var showCalendar by remember { mutableStateOf(false) }
 
     val themePrefsRepo = remember { ThemePreferencesRepository(context) }
     val themePref by themePrefsRepo.themePreference.collectAsStateWithLifecycle(
@@ -305,6 +308,15 @@ fun AgriProApp() {
                                         Icon(
                                             imageVector = Icons.Default.Notifications,
                                             contentDescription = "التذكيرات"
+                                        )
+                                    }
+                                                                        IconButton(
+                                        onClick = { showCalendar = true },
+                                        modifier = Modifier.size(48.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.CalendarMonth,
+                                            contentDescription = "التقويم الزراعي"
                                         )
                                     }
                                     IconButton(
@@ -490,6 +502,9 @@ fun AgriProApp() {
                 if (showReminders) {
                     RemindersDialog(onDismiss = { showReminders = false })
                 }
+                               if (showCalendar) {
+                    AgriCalendarDialog(onDismiss = { showCalendar = false })
+                } 
             }
         }
     }
