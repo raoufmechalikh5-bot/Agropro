@@ -1,5 +1,6 @@
 package com.example.ui.fertilizer
 
+import com.example.ui.components.ExpandableSuggestions
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -900,38 +901,10 @@ private fun CommercialFertilizerBreakdownCard(
                 )
             }
 
-            Surface(
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.TipsAndUpdates,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary
-                    )
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            text = "توصية المحصول (pH مثالي: ${crop.idealPhRange})",
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Text(
-                            text = crop.agronomyTipAr,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
+            ExpandableSuggestions(
+                items = listOf(crop.agronomyTipAr),
+                title = "توصية المحصول • pH مثالي: ${crop.idealPhRange}"
+            )
         }
     }
 }
