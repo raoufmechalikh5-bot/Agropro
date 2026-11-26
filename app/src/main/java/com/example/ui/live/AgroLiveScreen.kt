@@ -271,6 +271,21 @@ fun AgroLiveScreen(
             style = MaterialTheme.typography.bodySmall
         )
 
+        if (!state.connected && !state.connecting) {
+            Button(
+                onClick = {
+                    if (context.hasPermission(Manifest.permission.RECORD_AUDIO)) viewModel.connect()
+                    else microphonePermission.launch(Manifest.permission.RECORD_AUDIO)
+                },
+                modifier = Modifier.fillMaxWidth().height(52.dp),
+                shape = RoundedCornerShape(18.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2C6844))
+            ) {
+                Icon(Icons.Default.Mic, contentDescription = null)
+                Text("بدء المحادثة المباشرة", modifier = Modifier.padding(start = 8.dp))
+            }
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
