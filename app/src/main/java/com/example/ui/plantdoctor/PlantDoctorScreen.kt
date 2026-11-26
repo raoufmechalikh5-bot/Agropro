@@ -1389,38 +1389,10 @@ private fun DiagnosisResultCard(
                 )
             }
 
-            if (result.recommendations.isNotEmpty()) {
-                Text(
-                    text = "بروتوكول التدخل والوقاية:",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                result.recommendations.forEachIndexed { idx, rec ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = CircleShape,
-                            modifier = Modifier.size(22.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Text(
-                                    text = "${idx + 1}",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
-                        }
-                        Text(
-                            text = rec,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
-            }
+            ExpandableSuggestions(
+                items = result.recommendations,
+                title = "بروتوكول التدخل والوقاية"
+            )
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
