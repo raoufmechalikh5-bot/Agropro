@@ -58,7 +58,6 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -370,9 +369,6 @@ item {
                                     cameraPermissionState.launchPermissionRequest()
                                 }
                             }
-                        },
-                        onSelectSample = { resId, label ->
-                            viewModel.loadSampleImage(context, resId, label)
                         },
                         onAnalyzeClick = { viewModel.analyzePlantImage(context) }
                     )
@@ -774,7 +770,6 @@ private fun PlantCaptureCard(
     onRemoveImage: (Long) -> Unit,
     onPickFromGallery: () -> Unit,
     onCaptureCamera: () -> Unit,
-    onSelectSample: (Int, String) -> Unit,
     onAnalyzeClick: () -> Unit
 ) {
     ElevatedCard(
@@ -1093,39 +1088,6 @@ private fun PlantCaptureCard(
                             )
                         }
                     }
-                }
-            }
-
-            Text(
-                text = "عينات جاهزة للتجربة:",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                item {
-                    AssistChip(
-                        onClick = { onSelectSample(R.drawable.img_crop_olive, "عينة أوراق زيتون") },
-                        label = { Text("ورقة زيتون") },
-                        leadingIcon = { Icon(Icons.Default.Eco, contentDescription = null) },
-                        modifier = Modifier.testTag("sample_olive_chip")
-                    )
-                }
-                item {
-                    AssistChip(
-                        onClick = { onSelectSample(R.drawable.img_crop_tomato, "عينة طماطم مصابة") },
-                        label = { Text("أوراق طماطم") },
-                        leadingIcon = { Icon(Icons.Default.Eco, contentDescription = null) },
-                        modifier = Modifier.testTag("sample_tomato_chip")
-                    )
-                }
-                item {
-                    AssistChip(
-                        onClick = { onSelectSample(R.drawable.img_crop_citrus, "عينة حمضيات") },
-                        label = { Text("غصن حمضيات") },
-                        leadingIcon = { Icon(Icons.Default.Eco, contentDescription = null) },
-                        modifier = Modifier.testTag("sample_citrus_chip")
-                    )
                 }
             }
 
