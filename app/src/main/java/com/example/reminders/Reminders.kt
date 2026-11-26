@@ -14,16 +14,22 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -32,6 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -44,16 +51,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import org.json.JSONArray
-import org.json.JSONObject
+import com.example.ui.weather.SpraySuitability
+import com.example.ui.weather.WeatherRepository
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import org.json.JSONArray
+import org.json.JSONObject
 
 const val REPEAT_NONE = 0
 const val REPEAT_DAILY = 1
@@ -146,7 +157,6 @@ object ReminderScheduler {
         am.cancel(alarmIntent(context, id))
     }
 
-    /** يعيد أقرب موعد قادم للتذكير، أو null إذا كان تذكيراً منفرداً انتهى وقته. */
     fun nextTime(reminder: Reminder, now: Long): Long? {
         if (reminder.timeMillis > now) return reminder.timeMillis
         if (reminder.repeat == REPEAT_NONE) return null
@@ -173,13 +183,36 @@ class ReminderReceiver : BroadcastReceiver() {
             ) == PackageManager.PERMISSION_GRANTED
 
         if (canNotify) {
+            // فحص حارس الطقس للمهام المرتبطة بالرش أو الري أو التسميد
+            val cachedWeather = WeatherRepository.getCachedWeather(context)
+            val isSprayTask = listOf("رش", "مبيد", "ورقي", "فطري", "حشري", "وقاية").any {
+                reminder.title.contains(it)
+            }
+            val isIrrigationTask = listOf("ري", "سقي").any { reminder.title.contains(it) }
+
+            val weatherWarning = when {
+                cachedWeather != null && isSprayTask && cachedWeather.sprayStatus == SpraySuitability.UNSUITABLE ->
+                    "\n⚠️ تحذير طقس (${cachedWeather.locationName}): ${cachedWeather.sprayAdvice}"
+                cachedWeather != null && isIrrigationTask && cachedWeather.precipitationMm > 2.0 ->
+                    "\n🌧️ تنبيه طقس: توجد أمطار مسجلة (${cachedWeather.precipitationMm} ملم)، تحقق من رطوبة التربة قبل الري."
+                else -> ""
+            }
+
+            val notificationTitle = if (weatherWarning.isNotEmpty()) {
+                "⚠️ Agro pro • تنبيه طقس للمهمة"
+            } else {
+                "Agro pro • تذكير حقلي"
+            }
+            val fullText = reminder.title + weatherWarning
+
             val builder = NotificationCompat.Builder(context, ReminderScheduler.CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_popup_reminder)
-                .setContentTitle("Agro pro")
-                .setContentText(reminder.title)
-                .setStyle(NotificationCompat.BigTextStyle().bigText(reminder.title))
+                .setContentTitle(notificationTitle)
+                .setContentText(fullText)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(fullText))
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+
             val launch = context.packageManager.getLaunchIntentForPackage(context.packageName)
             if (launch != null) {
                 builder.setContentIntent(
@@ -259,6 +292,7 @@ private fun repeatLabel(repeat: Int): String = when (repeat) {
 fun RemindersDialog(onDismiss: () -> Unit) {
     val context = LocalContext.current
     val formatter = remember { SimpleDateFormat("EEEE d MMMM yyyy - HH:mm", Locale("ar")) }
+    val cachedWeather = remember { WeatherRepository.getCachedWeather(context) }
 
     var reminders by remember {
         mutableStateOf(ReminderStore.load(context).sortedBy { it.timeMillis })
@@ -282,17 +316,133 @@ fun RemindersDialog(onDismiss: () -> Unit) {
         }
     }
 
+    fun addBatchReminders(items: List<Pair<String, Int>>) {
+        val now = System.currentTimeMillis()
+        val baseId = (now % 1000000L).toInt()
+        val newList = items.mapIndexed { idx, (taskTitle, daysOffset) ->
+            val cal = Calendar.getInstance().apply {
+                timeInMillis = now
+                add(Calendar.DAY_OF_YEAR, daysOffset)
+                set(Calendar.HOUR_OF_DAY, 7)
+                set(Calendar.MINUTE, 30)
+                set(Calendar.SECOND, 0)
+                if (timeInMillis <= now) add(Calendar.DAY_OF_YEAR, 1)
+            }
+            Reminder(
+                id = baseId + idx + 1,
+                title = taskTitle,
+                timeMillis = cal.timeInMillis,
+                repeat = REPEAT_NONE
+            )
+        }
+        val merged = (reminders + newList).sortedBy { it.timeMillis }
+        ReminderStore.save(context, merged)
+        ReminderScheduler.ensureChannel(context)
+        newList.forEach { ReminderScheduler.schedule(context, it) }
+        reminders = merged
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = onDismiss) { Text("إغلاق") }
         },
-        title = { Text("التذكيرات") },
+        title = { Text("التذكيرات الذكية") },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+                // شريط حالة الطقس وصلاحية الرش في المزرعة
+                if (cachedWeather != null) {
+                    val isOptimal = cachedWeather.sprayStatus == SpraySuitability.OPTIMAL
+                    val bgColor = if (isOptimal) {
+                        Color(0xFF1B5E20).copy(alpha = 0.12f)
+                    } else {
+                        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.65f)
+                    }
+                    val fgColor = if (isOptimal) {
+                        Color(0xFF2E7D32)
+                    } else {
+                        MaterialTheme.colorScheme.error
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = bgColor,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (isOptimal) Icons.Default.CheckCircle else Icons.Default.Warning,
+                                contentDescription = null,
+                                tint = fgColor,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                text = "${cachedWeather.locationName}: ${cachedWeather.sprayAdvice}",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = fgColor
+                            )
+                        }
+                    }
+                }
+
+                // برامج زراعية جاهزة بضغطة زر (الميزة 5)
+                Text(
+                    text = "برامج زراعية سريعة (توليد تلقائي):",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    AssistChip(
+                        onClick = {
+                            addBatchReminders(
+                                listOf(
+                                    "رش وقائي بالنحاس (وقاية الزيتون)" to 0,
+                                    "تسميد ورقي بالبورون والزنك قبل الإزهار" to 10,
+                                    "فحص مصائد ذبابة ثمار الزيتون" to 21
+                                )
+                            )
+                        },
+                        label = { Text("برنامج الزيتون") }
+                    )
+                    AssistChip(
+                        onClick = {
+                            addBatchReminders(
+                                listOf(
+                                    "رش مبيد فطري وقائي (اللفحة والبياض)" to 0,
+                                    "تسميد متوازن + كالسيوم منعاً لعفن الطرف الزهري" to 7,
+                                    "انتهاء فترة التحريم وفحص الثمار" to 14
+                                )
+                            )
+                        },
+                        label = { Text("برنامج الطماطم") }
+                    )
+                    AssistChip(
+                        onClick = {
+                            addBatchReminders(
+                                listOf(
+                                    "تسميد آزوتي (دفعة التفريع)" to 0,
+                                    "مكافحة الأعشاب الضارة والصدأ" to 15
+                                )
+                            )
+                        },
+                        label = { Text("برنامج الحبوب") }
+                    )
+                }
+
+                HorizontalDivider()
+
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
