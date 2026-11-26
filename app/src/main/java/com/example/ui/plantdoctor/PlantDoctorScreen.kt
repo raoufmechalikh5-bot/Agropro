@@ -660,15 +660,16 @@ private fun PlantCaptureCard(
     onAnalyzeClick: () -> Unit
 ) {
     ElevatedCard(
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(26.dp),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -784,7 +785,7 @@ private fun PlantCaptureCard(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(175.dp)
+                        .height(152.dp)
                         .clip(MaterialTheme.shapes.medium)
                         .background(MaterialTheme.colorScheme.surfaceContainerLow),
                     contentAlignment = Alignment.Center
@@ -797,7 +798,7 @@ private fun PlantCaptureCard(
                         Surface(
                             color = MaterialTheme.colorScheme.primaryContainer,
                             shape = CircleShape,
-                            modifier = Modifier.size(56.dp)
+                            modifier = Modifier.size(52.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
@@ -920,7 +921,7 @@ private fun PlantCaptureCard(
             }
 
             Text(
-                text = "عيّنات ميدانية سريعة للتجربة:",
+                text = "عينات جاهزة للتجربة:",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
