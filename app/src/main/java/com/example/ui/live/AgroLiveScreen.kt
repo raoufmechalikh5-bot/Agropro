@@ -78,6 +78,10 @@ fun AgroLiveScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val state by viewModel.uiState.collectAsState()
 
+    DisposableEffect(viewModel) {
+        onDispose { viewModel.endSession() }
+    }
+
     val microphonePermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
