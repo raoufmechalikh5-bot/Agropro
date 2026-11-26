@@ -176,11 +176,7 @@ fun NotebookScreen(
                         icon = Icons.Default.Science
                     )
                 }
-                item {
-                    WeatherContextBanner(mode = WeatherContextMode.NOTEBOOK)
-            }
-
-                item {
+item {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
                         shape = RoundedCornerShape(24.dp),
