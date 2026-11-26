@@ -176,36 +176,6 @@ fun NotebookScreen(
                         icon = Icons.Default.Science
                     )
                 }
-item {
-                    Surface(
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
-                        shape = RoundedCornerShape(24.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Science,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Column {
-                                Text(
-                                    text = "مفكرة التجارب الميدانية والمخبرية",
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-                                Text(
-                                    text = "سجّل القياسات الدورية، الرسوم البيانية، وصدّر الجداول بصيغة CSV/Excel دون الحاجة للإنترنت",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                }
 
                 if (experiments.isEmpty()) {
                     item {
