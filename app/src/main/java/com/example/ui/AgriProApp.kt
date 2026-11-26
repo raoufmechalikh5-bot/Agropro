@@ -289,7 +289,7 @@ fun AgriProApp() {
                                 verticalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
                                 Text(
-                                    text = "Agro pro",
+                                    text = "AgroPro",
                                     style = MaterialTheme.typography.headlineSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary,
@@ -400,7 +400,7 @@ fun AgriProApp() {
                                 ),
                                 title = {
                                     Text(
-                                        text = "Agro pro",
+                                        text = "AgroPro",
                                         style = MaterialTheme.typography.titleLarge,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
