@@ -393,10 +393,54 @@ fun AgriProApp() {
                 Scaffold(
                     contentWindowInsets = WindowInsets.safeDrawing,
                     topBar = {
-                        Column {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .hazeEffect(
+                                    state = hazeState,
+                                    style = HazeStyle(
+                                        backgroundColor = MaterialTheme.colorScheme.surface,
+                                        tint = HazeTint(
+                                            MaterialTheme.colorScheme.surface.copy(
+                                                alpha = if (useDarkTheme) 0.38f else 0.52f
+                                            )
+                                        ),
+                                        blurRadius = 28.dp,
+                                        noiseFactor = 0.035f
+                                    )
+                                )
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = if (useDarkTheme) {
+                                            listOf(
+                                                Color(0xFF294735).copy(alpha = 0.78f),
+                                                Color(0xFF14251B).copy(alpha = 0.88f)
+                                            )
+                                        } else {
+                                            listOf(
+                                                Color.White.copy(alpha = 0.86f),
+                                                Color(0xFFEAF4ED).copy(alpha = 0.78f)
+                                            )
+                                        }
+                                    )
+                                )
+                                .border(
+                                    width = 1.dp,
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.White.copy(alpha = if (useDarkTheme) 0.24f else 0.82f),
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)
+                                        )
+                                    ),
+                                    shape = RoundedCornerShape(
+                                        bottomStart = 22.dp,
+                                        bottomEnd = 22.dp
+                                    )
+                                )
+                        ) {
                             CenterAlignedTopAppBar(
                                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.88f)
+                                    containerColor = Color.Transparent
                                 ),
                                 title = {
                                     Text(
