@@ -1,6 +1,5 @@
 package com.example.ui.weather
 
-import android.app.AlertDialog
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -82,8 +81,22 @@ data class AgriWeatherData(
     val conditionText: String,
     val sprayStatus: SpraySuitability,
     val sprayAdvice: String,
-    val diseaseRiskAlert: String?
-)
+    val diseaseRiskAlert: String?,
+    val updatedAtMillis: Long = System.currentTimeMillis()
+) {
+    /** تقدير التبخر والنتح المرجعي اليومي (ملم/يوم) اعتماداً على الحرارة والرطوبة والرياح */
+    fun estimateDailyEt0Mm(): Double {
+        val baseEt0 = (0.18 * temperatureC).coerceAtLeast(1.0)
+        val drynessFactor = (1.0 + (60 - humidityPercent) * 0.008).coerceIn(0.65, 1.45)
+        val windFactor = (1.0 + (windSpeedKmh - 8.0) * 0.015).coerceIn(0.85, 1.35)
+        return (baseEt0 * drynessFactor * windFactor).coerceIn(1.0, 11.0)
+    }
+
+    /** ملخص نصي قصير جاهز للإرفاق في سجل التجارب والملاحظات */
+    fun toFieldNoteSummary(): String {
+        return "الطقس (${locationName}): ${temperatureC.toInt()}°م | رطوبة ${humidityPercent}% | رياح ${windSpeedKmh.toInt()} كم/س ($conditionText)"
+    }
+}
 
 object WeatherRepository {
 
@@ -91,6 +104,7 @@ object WeatherRepository {
     private const val KEY_NAME = "loc_name"
     private const val KEY_LAT = "loc_lat"
     private const val KEY_LON = "loc_lon"
+    private const val KEY_CACHED_JSON = "cached_weather_json"
 
     val presetLocations = listOf(
         AgriLocation("عين الدفلى", 36.2641, 1.9679),
@@ -126,6 +140,59 @@ object WeatherRepository {
             .putFloat(KEY_LAT, location.latitude.toFloat())
             .putFloat(KEY_LON, location.longitude.toFloat())
             .apply()
+    }
+
+    fun saveCachedWeather(context: Context, data: AgriWeatherData) {
+        val obj = JSONObject()
+            .put("locationName", data.locationName)
+            .put("temperatureC", data.temperatureC)
+            .put("humidityPercent", data.humidityPercent)
+            .put("windSpeedKmh", data.windSpeedKmh)
+            .put("precipitationMm", data.precipitationMm)
+            .put("weatherCode", data.weatherCode)
+            .put("conditionText", data.conditionText)
+            .put("sprayStatus", data.sprayStatus.name)
+            .put("sprayAdvice", data.sprayAdvice)
+            .put("diseaseRiskAlert", data.diseaseRiskAlert ?: "")
+            .put("updatedAtMillis", data.updatedAtMillis)
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putString(KEY_CACHED_JSON, obj.toString())
+            .apply()
+    }
+
+    fun getCachedWeather(context: Context): AgriWeatherData? {
+        val raw = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getString(KEY_CACHED_JSON, null) ?: return null
+        return try {
+            val obj = JSONObject(raw)
+            val alert = obj.optString("diseaseRiskAlert", "")
+            AgriWeatherData(
+                locationName = obj.getString("locationName"),
+                temperatureC = obj.getDouble("temperatureC"),
+                humidityPercent = obj.getInt("humidityPercent"),
+                windSpeedKmh = obj.getDouble("windSpeedKmh"),
+                precipitationMm = obj.getDouble("precipitationMm"),
+                weatherCode = obj.getInt("weatherCode"),
+                conditionText = obj.getString("conditionText"),
+                sprayStatus = SpraySuitability.valueOf(obj.getString("sprayStatus")),
+                sprayAdvice = obj.getString("sprayAdvice"),
+                diseaseRiskAlert = alert.ifBlank { null },
+                updatedAtMillis = obj.optLong("updatedAtMillis", System.currentTimeMillis())
+            )
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    suspend fun getOrFetchWeather(context: Context, maxAgeMinutes: Int = 30): Result<AgriWeatherData> {
+        val cached = getCachedWeather(context)
+        val now = System.currentTimeMillis()
+        if (cached != null && (now - cached.updatedAtMillis) < maxAgeMinutes * 60 * 1000L) {
+            return Result.success(cached)
+        }
+        val loc = getSavedLocation(context)
+        return fetchAgriWeather(loc).onSuccess { saveCachedWeather(context, it) }
     }
 
     suspend fun searchCity(query: String): List<AgriLocation> = withContext(Dispatchers.IO) {
@@ -259,8 +326,8 @@ fun AgriWeatherCard(
     var selectedLocation by remember {
         mutableStateOf(WeatherRepository.getSavedLocation(context))
     }
-    var weatherData by remember { mutableStateOf<AgriWeatherData?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
+    var weatherData by remember { mutableStateOf(WeatherRepository.getCachedWeather(context)) }
+    var isLoading by remember { mutableStateOf(weatherData == null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var refreshTrigger by remember { mutableIntStateOf(0) }
     var showLocationDialog by remember { mutableStateOf(false) }
@@ -271,6 +338,7 @@ fun AgriWeatherCard(
         val result = WeatherRepository.fetchAgriWeather(selectedLocation)
         result.onSuccess { data ->
             weatherData = data
+            WeatherRepository.saveCachedWeather(context, data)
             isLoading = false
         }.onFailure {
             errorMessage = "تعذر تحديث الطقس. تحقق من الاتصال بالإنترنت."
