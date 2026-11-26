@@ -2,6 +2,11 @@ name: Build APK
 on:
   push:
   workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,25 +19,38 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 9.3.1
-      - name: Setup persistent debug keystore
+
+      # Keep the exact signing key used by the APK currently installed on the phone.
+      - name: Restore persistent debug keystore
+        uses: actions/cache@v4
+        with:
+          path: debug.keystore
+          key: agropro-debug-keystore-run99-v1
+
+      - name: Recover signing key from run 99 when cache is empty
         env:
-          KEYSTORE_B64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          CLEAN_B64=$(printf '%s' "$KEYSTORE_B64" | tr -d '[:space:]')
-          if [ -n "$CLEAN_B64" ] && echo "$CLEAN_B64" | base64 -d > debug.keystore 2>/dev/null && [ -s debug.keystore ]; then
-            echo "Restored persistent keystore from secrets."
+          set -euo pipefail
+          if [ -s debug.keystore ]; then
+            echo "Restored persistent signing key from Actions cache."
           else
-            rm -f debug.keystore
-            keytool -genkeypair -v -keystore debug.keystore \
-              -storepass android -keypass android \
-              -alias androiddebugkey -keyalg RSA -keysize 2048 \
-              -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-            echo "========================================================"
-            echo "COPY THE BASE64 STRING BELOW INTO GITHUB SECRET: DEBUG_KEYSTORE_BASE64"
-            base64 -w 0 debug.keystore
-            echo ""
-            echo "========================================================"
+            echo "Recovering the existing run 99 signing key..."
+            curl -fsSL \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/raoufmechalikh5-bot/Agropro/actions/jobs/140041120239/logs" \
+              -o run99-logs.zip
+            KEYSTORE_B64="$(unzip -p run99-logs.zip | awk 'match($0, /MIIKZgIB[A-Za-z0-9+\/=]+/) { print substr($0, RSTART, RLENGTH); exit }')"
+            if [ -z "$KEYSTORE_B64" ]; then
+              echo "Could not recover the run 99 signing key. Stopping to avoid creating an incompatible APK."
+              exit 1
+            fi
+            printf '%s' "$KEYSTORE_B64" | base64 -d > debug.keystore
+            keytool -list -keystore debug.keystore -storepass android -alias androiddebugkey >/dev/null
+            echo "Recovered and validated the run 99 signing key."
           fi
+
       - run: gradle assembleDebug --no-configuration-cache
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
