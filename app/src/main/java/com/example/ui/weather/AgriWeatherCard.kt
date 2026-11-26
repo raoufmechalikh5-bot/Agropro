@@ -1,6 +1,9 @@
 package com.example.ui.weather
 
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Air
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
@@ -23,8 +28,6 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -47,13 +50,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -84,7 +90,6 @@ data class AgriWeatherData(
     val diseaseRiskAlert: String?,
     val updatedAtMillis: Long = System.currentTimeMillis()
 ) {
-    /** تقدير التبخر والنتح المرجعي اليومي (ملم/يوم) اعتماداً على الحرارة والرطوبة والرياح */
     fun estimateDailyEt0Mm(): Double {
         val baseEt0 = (0.18 * temperatureC).coerceAtLeast(1.0)
         val drynessFactor = (1.0 + (60 - humidityPercent) * 0.008).coerceIn(0.65, 1.45)
@@ -92,7 +97,6 @@ data class AgriWeatherData(
         return (baseEt0 * drynessFactor * windFactor).coerceIn(1.0, 11.0)
     }
 
-    /** ملخص نصي قصير جاهز للإرفاق في سجل التجارب والملاحظات */
     fun toFieldNoteSummary(): String {
         return "الطقس (${locationName}): ${temperatureC.toInt()}°م | رطوبة ${humidityPercent}% | رياح ${windSpeedKmh.toInt()} كم/س ($conditionText)"
     }
@@ -185,16 +189,6 @@ object WeatherRepository {
         }
     }
 
-    suspend fun getOrFetchWeather(context: Context, maxAgeMinutes: Int = 30): Result<AgriWeatherData> {
-        val cached = getCachedWeather(context)
-        val now = System.currentTimeMillis()
-        if (cached != null && (now - cached.updatedAtMillis) < maxAgeMinutes * 60 * 1000L) {
-            return Result.success(cached)
-        }
-        val loc = getSavedLocation(context)
-        return fetchAgriWeather(loc).onSuccess { saveCachedWeather(context, it) }
-    }
-
     suspend fun searchCity(query: String): List<AgriLocation> = withContext(Dispatchers.IO) {
         val clean = query.trim()
         if (clean.length < 2) return@withContext emptyList()
@@ -283,7 +277,7 @@ object WeatherRepository {
             isRaining -> SpraySuitability.UNSUITABLE to "غير مناسب للرش: تساقط أمطار قد يغسل المبيد."
             wind > 18.0 -> SpraySuitability.UNSUITABLE to "غير مناسب للرش: رياح قوية (${wind.toInt()} كم/س) تسبب انجراف الرذاذ."
             temp > 33.0 -> SpraySuitability.UNSUITABLE to "غير مناسب للرش: حرارة مرتفعة تسبب تبخر المحلول واحتراق الأوراق."
-            wind in 12.0..18.0 -> SpraySuitability.CAUTION to "رش بحذر: رياح متوسطة، استخدم فوهات قطرات خشنة."
+            wind in 12.0..18.0 -> SpraySuitability.CAUTION to "رش بحذر: رياح متوسطة (${wind.toInt()} كم/س)، استخدم فوهات خشنة."
             humidity < 40 -> SpraySuitability.CAUTION to "رش بحذر: جفاف الجو يسرّع تبخر الرذاذ، يُفضل الرش صباحاً."
             else -> SpraySuitability.OPTIMAL to "مناسب جداً للرش والتسميد الورقي الآن."
         }
@@ -331,6 +325,7 @@ fun AgriWeatherCard(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var refreshTrigger by remember { mutableIntStateOf(0) }
     var showLocationDialog by remember { mutableStateOf(false) }
+    var isExpanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(selectedLocation, refreshTrigger) {
         isLoading = true
@@ -341,25 +336,26 @@ fun AgriWeatherCard(
             WeatherRepository.saveCachedWeather(context, data)
             isLoading = false
         }.onFailure {
-            errorMessage = "تعذر تحديث الطقس. تحقق من الاتصال بالإنترنت."
+            errorMessage = "تعذر تحديث الطقس"
             isLoading = false
         }
     }
 
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { if (weatherData != null) isExpanded = !isExpanded },
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        tonalElevation = 1.dp
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
+            // الشريط العلوي المدمج (سطر واحد فقط)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -368,22 +364,22 @@ fun AgriWeatherCard(
                 Surface(
                     onClick = { showLocationDialog = true },
                     shape = RoundedCornerShape(50),
-                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f)
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.75f)
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(3.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
                             contentDescription = "تغيير المنطقة",
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(14.dp)
                         )
                         Text(
                             text = selectedLocation.name,
-                            style = MaterialTheme.typography.labelMedium,
+                            style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             maxLines = 1,
@@ -392,138 +388,122 @@ fun AgriWeatherCard(
                     }
                 }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (weatherData != null && !isLoading) {
-                        Text(
-                            text = weatherData!!.conditionText,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                    }
-                    IconButton(
-                        onClick = { refreshTrigger++ },
-                        modifier = Modifier.size(34.dp)
+                if (isLoading && weatherData == null) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                } else if (weatherData != null) {
+                    val data = weatherData!!
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        CompactMetric(Icons.Default.WbSunny, "${data.temperatureC.toInt()}°")
+                        CompactMetric(Icons.Default.WaterDrop, "${data.humidityPercent}%")
+                        CompactMetric(Icons.Default.Air, "${data.windSpeedKmh.toInt()}")
+
+                        IconButton(
+                            onClick = { refreshTrigger++ },
+                            modifier = Modifier.size(26.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "تحديث الطقس",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(15.dp)
+                            )
+                        }
                         Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "تحديث الطقس",
-                            tint = MaterialTheme.colorScheme.primary,
+                            imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(18.dp)
                         )
                     }
+                } else if (errorMessage != null) {
+                    Text(
+                        text = errorMessage!!,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
 
-            if (isLoading && weatherData == null) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "جاري جلب بيانات الطقس الزراعي...",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            } else if (errorMessage != null && weatherData == null) {
-                Text(
-                    text = errorMessage!!,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error
-                )
-            } else if (weatherData != null) {
+            // شريط حالة الرش المختصر
+            if (weatherData != null) {
                 val data = weatherData!!
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    WeatherMetricChip(
-                        icon = Icons.Default.WbSunny,
-                        label = "الحرارة",
-                        value = "${data.temperatureC.toInt()}°م",
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    WeatherMetricChip(
-                        icon = Icons.Default.WaterDrop,
-                        label = "الرطوبة",
-                        value = "${data.humidityPercent}%",
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    WeatherMetricChip(
-                        icon = Icons.Default.Air,
-                        label = "الرياح",
-                        value = "${data.windSpeedKmh.toInt()} كم/س",
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
                 val (badgeBg, badgeText, badgeIcon) = when (data.sprayStatus) {
                     SpraySuitability.OPTIMAL -> Triple(
-                        Color(0xFF1B5E20).copy(alpha = 0.14f),
+                        Color(0xFF1B5E20).copy(alpha = 0.12f),
                         Color(0xFF2E7D32),
                         Icons.Default.CheckCircle
                     )
                     SpraySuitability.CAUTION -> Triple(
-                        Color(0xFFE65100).copy(alpha = 0.14f),
+                        Color(0xFFE65100).copy(alpha = 0.12f),
                         Color(0xFFEF6C00),
                         Icons.Default.Warning
                     )
                     SpraySuitability.UNSUITABLE -> Triple(
-                        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f),
+                        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.65f),
                         MaterialTheme.colorScheme.error,
                         Icons.Default.Warning
                     )
                 }
 
                 Surface(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(10.dp),
                     color = badgeBg,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Icon(
                             imageVector = badgeIcon,
                             contentDescription = null,
                             tint = badgeText,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(14.dp)
                         )
                         Text(
                             text = data.sprayAdvice,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.SemiBold,
-                            color = badgeText
+                            color = badgeText,
+                            maxLines = if (isExpanded) 3 else 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
 
-                if (data.diseaseRiskAlert != null) {
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.65f),
-                        modifier = Modifier.fillMaxWidth()
+                // التفاصيل الإضافية تظهر فقط عند الضغط لتوسيع البطاقة
+                AnimatedVisibility(
+                    visible = isExpanded,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(top = 4.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Text(
-                            text = data.diseaseRiskAlert,
+                            text = "الحالة: ${data.conditionText} • الرياح: ${data.windSpeedKmh.toInt()} كم/س • التبخر اليومي ET₀ ≈ ${String.format(Locale.US, "%.1f", data.estimateDailyEt0Mm())} ملم",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                        if (data.diseaseRiskAlert != null) {
+                            Surface(
+                                shape = RoundedCornerShape(10.dp),
+                                color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.65f),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = data.diseaseRiskAlert,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -544,40 +524,23 @@ fun AgriWeatherCard(
 }
 
 @Composable
-private fun WeatherMetricChip(
-    icon: ImageVector,
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surface
+private fun CompactMetric(icon: ImageVector, text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 6.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(16.dp)
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(13.dp)
+        )
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
@@ -670,6 +633,7 @@ private fun LocationPickerDialog(
         }
     )
 }
+
 enum class WeatherContextMode {
     IRRIGATION,
     FERTILIZER,
@@ -683,87 +647,110 @@ fun WeatherContextBanner(
 ) {
     val context = LocalContext.current
     val weather = remember { WeatherRepository.getCachedWeather(context) } ?: return
-    val clipboard = androidx.compose.ui.platform.LocalClipboardManager.current
+    val clipboard = LocalClipboardManager.current
     var copied by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
 
-    val (title, advice, accentColor) = when (mode) {
+    val (compactTitle, fullAdvice, accentColor) = when (mode) {
         WeatherContextMode.IRRIGATION -> {
-            val et0 = String.format(java.util.Locale.US, "%.1f", weather.estimateDailyEt0Mm())
+            val et0 = String.format(Locale.US, "%.1f", weather.estimateDailyEt0Mm())
             val rainNote = if (weather.precipitationMm > 0.5) {
-                " • أمطار مسجلة: ${weather.precipitationMm} ملم (اخفض كمية الري)"
+                " • أمطار ${weather.precipitationMm} ملم (اخفض الري)"
             } else {
-                " • أدخل $et0 ملم/يوم في خانة التبخر (ET₀)"
+                " • التبخر ET₀ ≈ $et0 ملم/يوم"
             }
             Triple(
-                "مؤشر الري من طقس ${weather.locationName}: ET₀ ≈ $et0 ملم/يوم",
-                "الحرارة ${weather.temperatureC.toInt()}°م | الرطوبة ${weather.humidityPercent}%$rainNote",
+                "${weather.locationName}: ${weather.temperatureC.toInt()}°م$rainNote",
+                "الرطوبة ${weather.humidityPercent}% والرياح ${weather.windSpeedKmh.toInt()} كم/س. يُنصح بضبط التبخر اليومي على $et0 ملم/يوم.",
                 MaterialTheme.colorScheme.primary
             )
         }
         WeatherContextMode.FERTILIZER -> {
-            val tip = when {
-                weather.precipitationMm > 2.0 ->
-                    "أمطار مسجلة: قسّم دفعات النيتروجين (N) لتجنب غسله في التربة."
-                weather.sprayStatus == SpraySuitability.UNSUITABLE ->
-                    "تنبيه التسميد الورقي: ${weather.sprayAdvice}"
-                else ->
-                    "الظروف الجوية مناسبة للتسميد الأرضي والورقي (${weather.temperatureC.toInt()}°م)."
+            val isUnsuitable = weather.sprayStatus == SpraySuitability.UNSUITABLE
+            val shortStatus = when {
+                weather.precipitationMm > 2.0 -> "أمطار: قسّم دفعات النيتروجين (N)"
+                isUnsuitable -> "تنبيه: الجو غير مناسب للرش الورقي"
+                else -> "الطقس مناسب للتسميد (${weather.temperatureC.toInt()}°م)"
+            }
+            val detail = when {
+                weather.precipitationMm > 2.0 -> "الأمطار المسجلة (${weather.precipitationMm} ملم) قد تغسل النيتروجين؛ قسّم السماد على دفعات."
+                isUnsuitable -> weather.sprayAdvice
+                else -> "درجة الحرارة (${weather.temperatureC.toInt()}°م) والرطوبة (${weather.humidityPercent}%) مناسبتان للتسميد الأرضي والورقي."
             }
             Triple(
-                "توصية التسميد حسب طقس ${weather.locationName}",
-                tip,
-                if (weather.sprayStatus == SpraySuitability.UNSUITABLE) MaterialTheme.colorScheme.error else Color(0xFF2E7D32)
+                "${weather.locationName} • $shortStatus",
+                detail,
+                if (isUnsuitable) MaterialTheme.colorScheme.error else Color(0xFF2E7D32)
             )
         }
         WeatherContextMode.NOTEBOOK -> {
             Triple(
-                "الظروف الجوية الحالية للتوثيق الميداني",
                 weather.toFieldNoteSummary(),
+                "اضغط «نسخ» لإرفاق هذه الظروف الجوية في ملاحظات التجربة أو المعاملة الحقلية.",
                 MaterialTheme.colorScheme.secondary
             )
         }
     }
 
     Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
-        color = accentColor.copy(alpha = 0.10f)
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { expanded = !expanded },
+        shape = RoundedCornerShape(12.dp),
+        color = accentColor.copy(alpha = 0.09f)
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        Column(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.WbSunny,
-                contentDescription = null,
-                tint = accentColor,
-                modifier = Modifier.size(20.dp)
-            )
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = accentColor
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WbSunny,
+                    contentDescription = null,
+                    tint = accentColor,
+                    modifier = Modifier.size(16.dp)
                 )
                 Text(
-                    text = advice,
+                    text = compactTitle,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = accentColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+                if (mode == WeatherContextMode.NOTEBOOK) {
+                    Text(
+                        text = if (copied) "تم ✓" else "نسخ",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = accentColor,
+                        modifier = Modifier
+                            .clickable {
+                                clipboard.setText(AnnotatedString(weather.toFieldNoteSummary()))
+                                copied = true
+                            }
+                            .padding(horizontal = 4.dp, vertical = 2.dp)
+                    )
+                }
+                Icon(
+                    imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = null,
+                    tint = accentColor,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+
+            AnimatedVisibility(visible = expanded) {
+                Text(
+                    text = fullAdvice,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            if (mode == WeatherContextMode.NOTEBOOK) {
-                TextButton(
-                    onClick = {
-                        clipboard.setText(androidx.compose.ui.text.AnnotatedString(weather.toFieldNoteSummary()))
-                        copied = true
-                    }
-                ) {
-                    Text(if (copied) "تم النسخ ✓" else "نسخ")
-                }
-            }
         }
     }
 }
-
