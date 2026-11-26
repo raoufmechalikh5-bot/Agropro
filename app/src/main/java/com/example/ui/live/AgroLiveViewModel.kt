@@ -100,7 +100,15 @@ class AgroLiveViewModel : ViewModel() {
         if (!_uiState.value.connected || !_uiState.value.cameraEnabled) return
         viewModelScope.launch {
             try {
-                val scaled = Bitmap.createScaledBitmap(bitmap, 768, 768, true)
+                val scale = minOf(1f, 768f / maxOf(bitmap.width, bitmap.height))
+                val scaled = if (scale < 1f) {
+                    Bitmap.createScaledBitmap(
+                        bitmap,
+                        (bitmap.width * scale).toInt().coerceAtLeast(1),
+                        (bitmap.height * scale).toInt().coerceAtLeast(1),
+                        true
+                    )
+                } else bitmap
                 val output = ByteArrayOutputStream()
                 scaled.compress(Bitmap.CompressFormat.JPEG, 78, output)
                 liveSession?.sendVideoRealtime(InlineData(output.toByteArray(), "image/jpeg"))
