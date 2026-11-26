@@ -25,6 +25,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Warning
@@ -392,12 +396,24 @@ fun RemindersDialog(onDismiss: () -> Unit) {
                     }
                 }
 
-                // برامج زراعية جاهزة بضغطة زر (الميزة 5)
-                Text(
-                    text = "برامج زراعية سريعة (توليد تلقائي):",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f))
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(Icons.Default.NotificationsActive, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text("مركز التذكيرات الزراعية", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+                            Text("أنشئ برنامجاً جاهزاً أو أضف مهمة خاصة بك", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                }
+                Text("برامج جاهزة حسب المحصول", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -443,6 +459,7 @@ fun RemindersDialog(onDismiss: () -> Unit) {
 
                 HorizontalDivider()
 
+                Text("إنشاء تذكير جديد", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
@@ -497,33 +514,38 @@ fun RemindersDialog(onDismiss: () -> Unit) {
                     )
                 }
 
+                if (reminders.isNotEmpty()) {
+                    Text("مواعيدك القادمة", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+                }
                 reminders.forEach { r ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 2.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
                     ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = r.title,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Text(
-                                text = formatter.format(Date(r.timeMillis)) + " • " + repeatLabel(r.repeat),
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                        IconButton(onClick = {
-                            ReminderScheduler.cancel(context, r.id)
-                            val updated = reminders.filter { it.id != r.id }
-                            ReminderStore.save(context, updated)
-                            reminders = updated
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "حذف التذكير"
-                            )
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(start = 14.dp, end = 6.dp, top = 12.dp, bottom = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Surface(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(12.dp), modifier = Modifier.size(42.dp)) {
+                                androidx.compose.foundation.layout.Box(contentAlignment = Alignment.Center) {
+                                    Icon(Icons.Default.Event, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                }
+                            }
+                            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(r.title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+                                Text(formatter.format(Date(r.timeMillis)), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(repeatLabel(r.repeat), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                            }
+                            IconButton(onClick = {
+                                ReminderScheduler.cancel(context, r.id)
+                                val updated = reminders.filter { it.id != r.id }
+                                ReminderStore.save(context, updated)
+                                reminders = updated
+                            }) {
+                                Icon(Icons.Default.Delete, contentDescription = "حذف التذكير", tint = MaterialTheme.colorScheme.error)
+                            }
                         }
                     }
                 }
