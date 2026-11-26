@@ -46,12 +46,14 @@ import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Grass
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.outlined.Biotech
 import androidx.compose.material.icons.outlined.Calculate
 import androidx.compose.material.icons.outlined.Grass
 import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Science
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -63,13 +65,16 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -185,6 +190,7 @@ fun AgriProApp() {
     val context = LocalContext.current
     val view = LocalView.current
     val scope = rememberCoroutineScope()
+    var showReminders by remember { mutableStateOf(false) }
 
     val themePrefsRepo = remember { ThemePreferencesRepository(context) }
     val themePref by themePrefsRepo.themePreference.collectAsStateWithLifecycle(
@@ -223,7 +229,7 @@ fun AgriProApp() {
         FertilizerCalculationRepository(database.fertilizerCalculationDao())
     }
     val aiRepo = remember { PlantDoctorRepository() }
-        val hazeState = remember { HazeState() }
+    val hazeState = remember { HazeState() }
 
     val plantDoctorViewModel: PlantDoctorViewModel = viewModel(
         factory = PlantDoctorViewModel.Factory(aiRepo, experimentRepo)
@@ -293,7 +299,7 @@ fun AgriProApp() {
                                     )
                                 },
                                 actions = {
-                                                                        IconButton(
+                                    IconButton(
                                         onClick = { showReminders = true },
                                         modifier = Modifier.size(48.dp)
                                     ) {
@@ -331,7 +337,7 @@ fun AgriProApp() {
                                 destinations = destinations,
                                 currentRoute = currentRoute,
                                 useDarkTheme = useDarkTheme,
-                                                                hazeState = hazeState,
+                                hazeState = hazeState,
                                 onSelectDestination = { dest ->
                                     if (currentRoute != dest.route) {
                                         navController.navigate(dest.route) {
@@ -395,7 +401,7 @@ fun AgriProApp() {
                         NavHost(
                             navController = navController,
                             startDestination = AgriDestination.PlantDoctor.route,
-                                                        modifier = Modifier.weight(1f).hazeSource(state = hazeState),
+                            modifier = Modifier.weight(1f).hazeSource(state = hazeState),
                             enterTransition = {
                                 val fromIndex = destinations.indexOfFirst { it.route == initialState.destination.route }
                                 val toIndex = destinations.indexOfFirst { it.route == targetState.destination.route }
@@ -481,6 +487,19 @@ fun AgriProApp() {
                         }
                     }
                 }
+
+                if (showReminders) {
+                    AlertDialog(
+                        onDismissRequest = { showReminders = false },
+                        title = { Text(text = "التذكيرات") },
+                        text = { Text(text = "لا توجد تذكيرات نشطة حالياً.") },
+                        confirmButton = {
+                            TextButton(onClick = { showReminders = false }) {
+                                Text(text = "حسناً")
+                            }
+                        }
+                    )
+                }
             }
         }
     }
@@ -491,7 +510,7 @@ private fun LiquidGlassNavigationBar(
     destinations: List<AgriDestination>,
     currentRoute: String,
     useDarkTheme: Boolean,
-        hazeState: HazeState,
+    hazeState: HazeState,
     onSelectDestination: (AgriDestination) -> Unit
 ) {
     val glassShape = RoundedCornerShape(32.dp)
@@ -546,7 +565,7 @@ private fun LiquidGlassNavigationBar(
                     spotColor = Color.Black.copy(alpha = 0.22f)
                 )
                 .clip(glassShape)
-                                .hazeEffect(
+                .hazeEffect(
                     state = hazeState,
                     style = HazeStyle(
                         backgroundColor = MaterialTheme.colorScheme.surface,
