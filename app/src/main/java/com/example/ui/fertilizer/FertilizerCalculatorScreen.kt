@@ -193,32 +193,7 @@ fun FertilizerCalculatorScreen(
                             }
                         }
 
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            items(FertilizerCrop.entries) { crop ->
-                                FilterChip(
-                                    selected = state.selectedCrop == crop,
-                                    onClick = { viewModel.selectCrop(crop) },
-                                    label = {
-                                        Text(
-                                            text = crop.titleAr.substringBefore(" ("),
-                                            maxLines = 1
-                                        )
-                                    },
-                                    leadingIcon = if (state.selectedCrop == crop) {
-                                        {
-                                            Icon(
-                                                imageVector = Icons.Default.Eco,
-                                                contentDescription = null,
-                                                modifier = Modifier.size(16.dp)
-                                            )
-                                        }
-                                    } else null,
-                                    modifier = Modifier.testTag("fertilizer_crop_chip_${crop.name}")
-                                )
-                            }
-                        }
-
-                        Text(
+Text(
                             text = stringResource(R.string.fertilizer_calc_stage_label),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
