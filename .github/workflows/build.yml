@@ -3,10 +3,6 @@ on:
   push:
   workflow_dispatch:
 
-permissions:
-  contents: read
-  actions: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,38 +15,22 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 9.3.1
-
-      # Keep the exact signing key used by the APK currently installed on the phone.
       - name: Restore persistent debug keystore
-        uses: actions/cache@v4
-        with:
-          path: debug.keystore
-          key: agropro-debug-keystore-run99-v1
-
-      - name: Recover signing key from run 99 when cache is empty
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          KEYSTORE_B64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
         run: |
           set -euo pipefail
-          if [ -s debug.keystore ]; then
-            echo "Restored persistent signing key from Actions cache."
-          else
-            echo "Recovering the existing run 99 signing key..."
-            curl -fsSL \
-              -H "Authorization: Bearer ${GH_TOKEN}" \
-              -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/raoufmechalikh5-bot/Agropro/actions/jobs/140041120239/logs" \
-              -o run99-logs.zip
-            KEYSTORE_B64="$(unzip -p run99-logs.zip | awk 'match($0, /MIIKZgIB[A-Za-z0-9+\/=]+/) { print substr($0, RSTART, RLENGTH); exit }')"
-            if [ -z "$KEYSTORE_B64" ]; then
-              echo "Could not recover the run 99 signing key. Stopping to avoid creating an incompatible APK."
-              exit 1
-            fi
-            printf '%s' "$KEYSTORE_B64" | base64 -d > debug.keystore
-            keytool -list -keystore debug.keystore -storepass android -alias androiddebugkey >/dev/null
-            echo "Recovered and validated the run 99 signing key."
+          if [ -z "${KEYSTORE_B64:-}" ]; then
+            echo "::error::Missing DEBUG_KEYSTORE_BASE64 repository secret."
+            exit 1
           fi
-
+          printf '%s' "$KEYSTORE_B64" | tr -d '[:space:]' | base64 -d > debug.keystore
+          if [ ! -s debug.keystore ]; then
+            echo "::error::DEBUG_KEYSTORE_BASE64 is invalid."
+            exit 1
+          fi
+          keytool -list -keystore debug.keystore -storepass android -alias androiddebugkey >/dev/null
+          echo "Persistent signing key restored and validated."
       - run: gradle assembleDebug --no-configuration-cache
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
