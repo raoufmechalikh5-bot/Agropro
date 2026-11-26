@@ -69,6 +69,7 @@ import com.example.data.catalog.CropProfile
 import com.example.data.catalog.GrowthStage
 import com.example.data.catalog.IrrigationMethod
 import com.example.ui.theme.AgriTheme
+import com.example.ui.theme.AgriPageHero
 import java.util.Locale
 import kotlin.math.max
 import com.example.ui.weather.WeatherContextBanner
@@ -99,7 +100,15 @@ fun CalculatorScreen(
 contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 120.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-                       item {
+            item {
+                AgriPageHero(
+                    eyebrow = "AGROPRO • SMART FARMING",
+                    title = "إدارة الري والتسميد",
+                    subtitle = "خطط احتياجات محاصيلك بدقة",
+                    icon = Icons.Default.Calculate
+                )
+            }
+            item {
                 WeatherContextBanner(mode = WeatherContextMode.IRRIGATION)
             }
 
