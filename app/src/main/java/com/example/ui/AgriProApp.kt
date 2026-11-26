@@ -20,6 +20,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.DrawerValue
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -108,9 +115,6 @@ import com.example.data.local.ThemePreferencesRepository
 import com.example.reminders.RemindersDialog
 import androidx.compose.material.icons.filled.CalendarMonth
 import com.example.ui.calendar.AgriCalendarDialog
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import com.example.ui.calculator.CalculatorScreen
 import com.example.ui.calculator.CalculatorViewModel
 import com.example.ui.encyclopedia.EncyclopediaScreen
@@ -257,10 +261,127 @@ fun AgriProApp() {
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route ?: AgriDestination.PlantDoctor.route
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                 val useNavigationRail = maxWidth >= 680.dp
 
+                ModalNavigationDrawer(
+                    drawerState = drawerState,
+                    gesturesEnabled = true,
+                    drawerContent = {
+                        ModalDrawerSheet(
+                            drawerContainerColor = MaterialTheme.colorScheme.surface
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .verticalScroll(rememberScrollState())
+                                    .padding(horizontal = 14.dp, vertical = 18.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Text(
+                                    text = "Agro pro",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                                )
+                                Text(
+                                    text = "إدارة المزرعة",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                                )
+                                destinations.forEach { dest ->
+                                    val label = stringResource(dest.labelRes)
+                                    NavigationDrawerItem(
+                                        label = { Text(label) },
+                                        selected = currentRoute == dest.route,
+                                        icon = {
+                                            Icon(
+                                                imageVector = if (currentRoute == dest.route) dest.selectedIcon else dest.unselectedIcon,
+                                                contentDescription = null
+                                            )
+                                        },
+                                        onClick = {
+                                            scope.launch {
+                                                drawerState.close()
+                                                navController.navigate(dest.route) {
+                                                    popUpTo(navController.graph.findStartDestination().id) {
+                                                        saveState = true
+                                                    }
+                                                    launchSingleTop = true
+                                                    restoreState = true
+                                                }
+                                            }
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(vertical = 8.dp),
+                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
+                                )
+                                Text(
+                                    text = "التخطيط والتنبيهات",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                                )
+                                NavigationDrawerItem(
+                                    label = { Text("التقويم الزراعي") },
+                                    selected = false,
+                                    icon = { Icon(Icons.Default.CalendarMonth, contentDescription = null) },
+                                    onClick = {
+                                        scope.launch {
+                                            drawerState.close()
+                                            showCalendar = true
+                                        }
+                                    }
+                                )
+                                NavigationDrawerItem(
+                                    label = { Text("التنبيهات والتذكيرات") },
+                                    selected = false,
+                                    icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
+                                    onClick = {
+                                        scope.launch {
+                                            drawerState.close()
+                                            showReminders = true
+                                        }
+                                    }
+                                )
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(vertical = 8.dp),
+                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
+                                )
+                                Text(
+                                    text = "التخصيص",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                                )
+                                NavigationDrawerItem(
+                                    label = { Text(if (useDarkTheme) "التبديل إلى الوضع النهاري" else "التبديل إلى الوضع الليلي") },
+                                    selected = false,
+                                    icon = {
+                                        Icon(
+                                            if (useDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                                            contentDescription = null
+                                        )
+                                    },
+                                    onClick = {
+                                        scope.launch {
+                                            drawerState.close()
+                                            val next = if (useDarkTheme) ThemePreference.LIGHT else ThemePreference.DARK
+                                            themePrefsRepo.setThemePreference(next)
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                ) {
                 Scaffold(
                     contentWindowInsets = WindowInsets.safeDrawing,
                     topBar = {
@@ -277,67 +398,37 @@ fun AgriProApp() {
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                 },
+                                navigationIcon = {
+                                    IconButton(
+                                        onClick = { scope.launch { drawerState.open() } },
+                                        modifier = Modifier
+                                            .size(48.dp)
+                                            .testTag("top_menu_button")
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Menu,
+                                            contentDescription = "فتح القائمة الرئيسية"
+                                        )
+                                    }
+                                },
                                 actions = {
-                                    var menuExpanded by remember { mutableStateOf(false) }
-                                    Box {
-                                        IconButton(
-                                            onClick = { menuExpanded = true },
-                                            modifier = Modifier
-                                                .size(48.dp)
-                                                .testTag("top_menu_button")
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.MoreVert,
-                                                contentDescription = "المزيد"
-                                            )
-                                        }
-                                        DropdownMenu(
-                                            expanded = menuExpanded,
-                                            onDismissRequest = { menuExpanded = false }
-                                        ) {
-                                            DropdownMenuItem(
-                                                text = { Text("التذكيرات") },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Notifications,
-                                                        contentDescription = null
-                                                    )
-                                                },
-                                                onClick = {
-                                                    menuExpanded = false
-                                                    showReminders = true
-                                                }
-                                            )
-                                            DropdownMenuItem(
-                                                text = { Text("التقويم الزراعي") },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        imageVector = Icons.Default.CalendarMonth,
-                                                        contentDescription = null
-                                                    )
-                                                },
-                                                onClick = {
-                                                    menuExpanded = false
-                                                    showCalendar = true
-                                                }
-                                            )
-                                            DropdownMenuItem(
-                                                text = { Text(if (useDarkTheme) "الوضع النهاري" else "الوضع الليلي") },
-                                                leadingIcon = {
-                                                    Icon(
-                                                        imageVector = if (useDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
-                                                        contentDescription = null
-                                                    )
-                                                },
-                                                onClick = {
-                                                    menuExpanded = false
-                                                    scope.launch {
-                                                        val next = if (useDarkTheme) ThemePreference.LIGHT else ThemePreference.DARK
-                                                        themePrefsRepo.setThemePreference(next)
-                                                    }
-                                                }
-                                            )
-                                        }
+                                    IconButton(
+                                        onClick = { showReminders = true },
+                                        modifier = Modifier.testTag("top_notifications_button")
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Notifications,
+                                            contentDescription = "التنبيهات والتذكيرات"
+                                        )
+                                    }
+                                    IconButton(
+                                        onClick = { showCalendar = true },
+                                        modifier = Modifier.testTag("top_calendar_button")
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.CalendarMonth,
+                                            contentDescription = "التقويم الزراعي"
+                                        )
                                     }
                                 }
                             )
@@ -500,6 +591,7 @@ fun AgriProApp() {
                 }
                 if (showCalendar) {
                     AgriCalendarDialog(onDismiss = { showCalendar = false })
+                }
                 }
             }
         }
