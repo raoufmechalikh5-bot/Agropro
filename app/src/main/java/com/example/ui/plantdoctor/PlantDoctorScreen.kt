@@ -118,6 +118,8 @@ import com.example.util.PhotoStorageHelper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.example.ui.weather.AgriWeatherCard
+
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -269,9 +271,13 @@ fun PlantDoctorScreen(
             contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 120.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+           
             item {
                 AgriHeroBanner()
             }
+item {
+    AgriWeatherCard()
+}
 
             item {
                 SingleChoiceSegmentedButtonRow(
