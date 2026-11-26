@@ -280,38 +280,60 @@ item {
 }
 
             item {
-                SingleChoiceSegmentedButtonRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("plant_doctor_mode_toggle")
+                Row(
+                    modifier = Modifier.fillMaxWidth().testTag("plant_doctor_mode_toggle"),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    SegmentedButton(
-                        selected = !isFlashcardMode,
-                        onClick = { viewModel.setFlashcardMode(false) },
-                        shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Default.Biotech,
-                                contentDescription = null
-                            )
-                        },
-                        modifier = Modifier.testTag("tab_ai_diagnosis")
+                    val diagnosisSelected = !isFlashcardMode
+                    Surface(
+                        modifier = Modifier.weight(1f).height(76.dp).clip(RoundedCornerShape(22.dp))
+                            .clickable { viewModel.setFlashcardMode(false) }
+                            .testTag("tab_ai_diagnosis"),
+                        color = if (diagnosisSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
+                        shape = RoundedCornerShape(22.dp),
+                        border = BorderStroke(1.dp, if (diagnosisSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant)
                     ) {
-                        Text("التشخيص الذكي", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(9.dp)
+                        ) {
+                            Icon(Icons.Default.Biotech, null,
+                                tint = if (diagnosisSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(25.dp))
+                            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                Text("التشخيص الذكي", fontWeight = FontWeight.Bold,
+                                    color = if (diagnosisSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                    style = MaterialTheme.typography.titleSmall)
+                                Text("افحص صحة نباتك", color = if (diagnosisSelected) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f) else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.labelSmall)
+                            }
+                        }
                     }
-                    SegmentedButton(
-                        selected = isFlashcardMode,
-                        onClick = { viewModel.setFlashcardMode(true) },
-                        shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Default.School,
-                                contentDescription = null
-                            )
-                        },
-                        modifier = Modifier.testTag("tab_student_flashcards")
+                    Surface(
+                        modifier = Modifier.weight(1f).height(76.dp).clip(RoundedCornerShape(22.dp))
+                            .clickable { viewModel.setFlashcardMode(true) }
+                            .testTag("tab_student_flashcards"),
+                        color = if (isFlashcardMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
+                        shape = RoundedCornerShape(22.dp),
+                        border = BorderStroke(1.dp, if (isFlashcardMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant)
                     ) {
-                        Text("بطاقات المراجعة", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(9.dp)
+                        ) {
+                            Icon(Icons.Default.School, null,
+                                tint = if (isFlashcardMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(25.dp))
+                            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                Text("بطاقات المراجعة", fontWeight = FontWeight.Bold,
+                                    color = if (isFlashcardMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                    style = MaterialTheme.typography.titleSmall)
+                                Text("تعلّم أمراض المحاصيل", color = if (isFlashcardMode) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f) else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.labelSmall)
+                            }
+                        }
                     }
                 }
             }
@@ -366,25 +388,35 @@ item {
                         when (state) {
                             PlantDoctorUiState.Idle -> {
                                 Surface(
-                                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                                    shape = MaterialTheme.shapes.medium,
+                                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
+                                    shape = RoundedCornerShape(22.dp),
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Row(
-                                        modifier = Modifier.padding(16.dp),
+                                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
                                         verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                        horizontalArrangement = Arrangement.spacedBy(14.dp)
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Default.LocalHospital,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                        Text(
-                                            text = "أرفق من 1 إلى 3 صور للعينة النباتية (ورقة قريبة، ساق، أو مظهر عام) ثم اضغط «تحليل وتشخيص الحالة» للحصول على تقرير دقيق.",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
+                                        Surface(
+                                            color = MaterialTheme.colorScheme.primary,
+                                            shape = RoundedCornerShape(15.dp),
+                                            modifier = Modifier.size(46.dp)
+                                        ) {
+                                            Box(contentAlignment = Alignment.Center) {
+                                                Icon(Icons.Default.AutoAwesome, null,
+                                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                                    modifier = Modifier.size(23.dp))
+                                            }
+                                        }
+                                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                            Text("كيف تحصل على تشخيص أدق؟",
+                                                style = MaterialTheme.typography.titleSmall,
+                                                fontWeight = FontWeight.Bold)
+                                            Text("صوّر الورقة المصابة بوضوح، ثم أضف صورة للساق أو النبات كاملاً. يمكنك إرفاق 3 صور.",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                        }
                                     }
                                 }
                             }
@@ -724,7 +756,7 @@ private fun PlantCaptureCard(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(18.dp),
+            modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Row(
@@ -732,10 +764,11 @@ private fun PlantCaptureCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "إرفاق عينات نباتية للفحص",
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                    Text("ابدأ فحص محصولك", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    Text("أضف صوراً واضحة للأجزاء المصابة", style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
                 Surface(
                     color = MaterialTheme.colorScheme.secondaryContainer,
                     shape = RoundedCornerShape(50)
@@ -838,42 +871,34 @@ private fun PlantCaptureCard(
                     }
                 }
             } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(152.dp)
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(MaterialTheme.colorScheme.surfaceContainerLow),
-                    contentAlignment = Alignment.Center
+                Surface(
+                    modifier = Modifier.fillMaxWidth().height(174.dp),
+                    shape = RoundedCornerShape(22.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.24f))
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.padding(16.dp)
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(18.dp)
                     ) {
                         Surface(
                             color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = CircleShape,
-                            modifier = Modifier.size(52.dp)
+                            shape = RoundedCornerShape(18.dp),
+                            modifier = Modifier.size(58.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Default.Eco,
-                                    contentDescription = null,
+                                Icon(Icons.Default.AddPhotoAlternate, null,
                                     tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(28.dp)
-                                )
+                                    modifier = Modifier.size(29.dp))
                             }
                         }
-                        Text(
-                            text = "لم يتم اختيار صور بعد",
-                            style = MaterialTheme.typography.titleSmall
-                        )
-                        Text(
-                            text = "التقط حتى 3 صور (ورقة قريبة + ساق + النبات كاملاً) لتشخيص فائق الدقة",
+                        Spacer(Modifier.height(10.dp))
+                        Text("من أين نبدأ؟ أضف أول صورة",
+                            style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                        Text("صورة الورقة المصابة تساعدنا على تحديد المشكلة",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
