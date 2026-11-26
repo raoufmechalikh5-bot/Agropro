@@ -85,6 +85,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.R
 import com.example.data.local.FertilizerCalculationEntity
 import com.example.ui.theme.AgriTheme
+import com.example.ui.theme.AgriPageHero
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -120,7 +121,12 @@ fun FertilizerCalculatorScreen(
             }
 
             item {
-                FertilizerHeroHeader()
+                AgriPageHero(
+                    eyebrow = "AGROPRO • NUTRITION",
+                    title = "حاسبة NPK الذكية",
+                    subtitle = "احسب احتياجات التسميد حسب محصولك ومساحة أرضك",
+                    icon = Icons.Default.Grass
+                )
             }
 
             // Crop Type & Stage Input Card
