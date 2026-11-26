@@ -707,23 +707,16 @@ private fun AgriHeroBanner() {
                 color = Color.White.copy(alpha = 0.86f)
             )
             Spacer(Modifier.height(12.dp))
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Surface(
+                color = Color(0xFFB7E4C7),
+                shape = RoundedCornerShape(50)
             ) {
-                Surface(color = Color(0xFFB7E4C7), shape = RoundedCornerShape(50)) {
-                    Text(
-                        text = "التشخيص الذكي",
-                        color = Color(0xFF0B2B13),
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                    )
-                }
                 Text(
-                    text = "•  حتى 3 صور لكل فحص",
-                    color = Color.White.copy(alpha = 0.82f),
-                    style = MaterialTheme.typography.labelSmall
+                    text = "التشخيص الذكي",
+                    color = Color(0xFF0B2B13),
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp)
                 )
             }
         }
@@ -761,24 +754,48 @@ private fun PlantCaptureCard(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                    Text("ابدأ فحص محصولك", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                    Text("أضف صوراً واضحة للأجزاء المصابة", style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.AutoAwesome,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(25.dp)
+                        )
+                    }
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    Text(
+                        "مساعد التشخيص الذكي",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        "دع الذكاء الاصطناعي يفحص حالة نباتك",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
                 Surface(
                     color = MaterialTheme.colorScheme.secondaryContainer,
                     shape = RoundedCornerShape(50)
                 ) {
                     Text(
-                        text = "${selectedImages.size} / 3 صور",
-                        style = MaterialTheme.typography.labelSmall,
+                        text = "${selectedImages.size}/3",
+                        style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                        modifier = Modifier.padding(horizontal = 11.dp, vertical = 7.dp)
                     )
                 }
             }
@@ -872,10 +889,17 @@ private fun PlantCaptureCard(
                 }
             } else {
                 Surface(
-                    modifier = Modifier.fillMaxWidth().height(174.dp),
-                    shape = RoundedCornerShape(22.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.24f))
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(190.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .clickable(enabled = !isLoading, onClick = onPickFromGallery),
+                    shape = RoundedCornerShape(24.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    border = BorderStroke(
+                        1.5.dp,
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.34f)
+                    )
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -884,21 +908,55 @@ private fun PlantCaptureCard(
                     ) {
                         Surface(
                             color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = RoundedCornerShape(18.dp),
-                            modifier = Modifier.size(58.dp)
+                            shape = CircleShape,
+                            modifier = Modifier.size(62.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
-                                Icon(Icons.Default.AddPhotoAlternate, null,
+                                Icon(
+                                    imageVector = Icons.Default.AddPhotoAlternate,
+                                    contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(29.dp))
+                                    modifier = Modifier.size(30.dp)
+                                )
                             }
                         }
-                        Spacer(Modifier.height(10.dp))
-                        Text("من أين نبدأ؟ أضف أول صورة",
-                            style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-                        Text("صورة الورقة المصابة تساعدنا على تحديد المشكلة",
+                        Spacer(Modifier.height(12.dp))
+                        Text(
+                            "أضف صورة النبات هنا",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            "اضغط لاختيار صورة من معرض الهاتف",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.height(10.dp))
+                        Surface(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(50)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(7.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.PhotoLibrary,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier.size(17.dp)
+                                )
+                                Text(
+                                    "اختيار صورة",
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
                     }
                 }
             }
