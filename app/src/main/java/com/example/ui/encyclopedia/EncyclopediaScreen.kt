@@ -89,6 +89,7 @@ import com.example.data.catalog.CompatibilityLevel
 import com.example.data.catalog.TankMixResult
 import com.example.data.local.PesticideNoteEntity
 import com.example.ui.theme.AgriTheme
+import com.example.ui.theme.AgriPageHero
 import com.example.util.PhotoStorageHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -118,6 +119,14 @@ fun EncyclopediaScreen(
             contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 120.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            item {
+                AgriPageHero(
+                    eyebrow = "AGROPRO • KNOWLEDGE",
+                    title = "الموسوعة الزراعية",
+                    subtitle = "ابحث عن الآفات والمواد الفعالة وطرق المكافحة",
+                    icon = Icons.Default.Science
+                )
+            }
             item {
                 TankMixCheckerCard(
                     allItems = state.allItems,
