@@ -293,6 +293,15 @@ fun AgriProApp() {
                                     )
                                 },
                                 actions = {
+                                                                        IconButton(
+                                        onClick = { showReminders = true },
+                                        modifier = Modifier.size(48.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Notifications,
+                                            contentDescription = "التذكيرات"
+                                        )
+                                    }
                                     IconButton(
                                         onClick = {
                                             scope.launch {
