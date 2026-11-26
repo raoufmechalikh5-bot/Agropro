@@ -3,11 +3,14 @@ package com.example.ui.live
 import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageFormat
+import android.graphics.Rect
+import android.graphics.YuvImage
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageProxy
-import androidx.camera.core.toBitmap
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.AnimatedVisibility
@@ -61,6 +64,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicLong
 
@@ -110,7 +114,7 @@ fun AgroLiveScreen(
             val now = System.currentTimeMillis()
             if (now - lastFrameAt.get() >= 1_000L && latestState.cameraEnabled && latestState.connected) {
                 lastFrameAt.set(now)
-                val frame: Bitmap? = runCatching { image.toBitmap() }.getOrNull()
+                val frame: Bitmap? = runCatching { image.toAgroBitmap() }.getOrNull()
                 frame?.let(viewModel::sendVideoFrame)
             }
             image.close()
@@ -198,7 +202,7 @@ fun AgroLiveScreen(
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
-                                    Icons.Default.CameraOff,
+                                    Icons.Default.NoPhotography,
                                     contentDescription = null,
                                     tint = Color(0xFFBFE8CC),
                                     modifier = Modifier.size(42.dp)
@@ -307,7 +311,7 @@ fun AgroLiveScreen(
             )
             ControlButton(
                 modifier = Modifier.weight(1f),
-                icon = if (state.cameraEnabled) Icons.Default.CameraAlt else Icons.Default.CameraOff,
+                icon = if (state.cameraEnabled) Icons.Default.CameraAlt else Icons.Default.NoPhotography,
                 label = if (state.cameraEnabled) "إيقاف الكاميرا" else "تشغيل الكاميرا",
                 active = state.cameraEnabled,
                 enabled = state.connected,
@@ -375,3 +379,34 @@ private fun Context.hasPermission(permission: String): Boolean =
         this,
         permission
     ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+
+private fun ImageProxy.toAgroBitmap(): Bitmap? {
+    if (format != ImageFormat.YUV_420_888) return null
+    val yPlane = planes[0]
+    val uPlane = planes[1]
+    val vPlane = planes[2]
+    val yBuffer = yPlane.buffer
+    val uBuffer = uPlane.buffer
+    val vBuffer = vPlane.buffer
+    val nv21 = ByteArray(width * height * 3 / 2)
+    var outputIndex = 0
+
+    for (row in 0 until height) {
+        for (column in 0 until width) {
+            nv21[outputIndex++] = yBuffer.get(row * yPlane.rowStride + column * yPlane.pixelStride)
+        }
+    }
+    for (row in 0 until height / 2) {
+        for (column in 0 until width / 2) {
+            nv21[outputIndex++] = vBuffer.get(row * vPlane.rowStride + column * vPlane.pixelStride)
+            nv21[outputIndex++] = uBuffer.get(row * uPlane.rowStride + column * uPlane.pixelStride)
+        }
+    }
+
+    val jpeg = ByteArrayOutputStream()
+    val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
+    if (!yuvImage.compressToJpeg(Rect(0, 0, width, height), 82, jpeg)) return null
+    val bytes = jpeg.toByteArray()
+    return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+}
