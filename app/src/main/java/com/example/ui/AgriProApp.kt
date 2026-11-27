@@ -707,8 +707,8 @@ private fun LiquidGlassNavigationBar(
     val glassBackgroundBrush = if (useDarkTheme) {
         Brush.verticalGradient(
             colors = listOf(
-                Color(0xFF263B2D).copy(alpha = 0.42f),
-                Color(0xFF101A13).copy(alpha = 0.72f)
+                Color(0xFF164023).copy(alpha = 0.56f),
+                Color(0xFF071A0D).copy(alpha = 0.82f)
             )
         )
     } else {
@@ -723,7 +723,7 @@ private fun LiquidGlassNavigationBar(
     val specularBorderBrush = if (useDarkTheme) {
         Brush.verticalGradient(
             colors = listOf(
-                Color(0xFFB7E4C7).copy(alpha = 0.30f),
+                Color(0xFFB8F52A).copy(alpha = 0.42f),
                 Color.White.copy(alpha = 0.045f)
             )
         )
@@ -863,14 +863,16 @@ private fun LiquidGlassNavigationBar(
                             tint = contentColor,
                             modifier = Modifier.size(22.dp)
                         )
-                        Text(
-                            text = label,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-                            color = contentColor
-                        )
+                        if (selected) {
+                            Text(
+                                text = label,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = contentColor
+                            )
+                        }
                     }
                 }
             }
