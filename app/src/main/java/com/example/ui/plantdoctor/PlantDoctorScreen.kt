@@ -280,7 +280,7 @@ fun PlantDoctorScreen(
         contentAlignment = Alignment.TopCenter
     ) {
         Image(
-            painter = painterResource(id = R.drawable.agri_field_background),
+            painter = painterResource(id = R.drawable.img_agri_hero),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
