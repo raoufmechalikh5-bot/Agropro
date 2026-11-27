@@ -1832,8 +1832,6 @@ private fun DiseaseFlashcardItem(
                     Spacer(Modifier.width(6.dp))
                     Text(if (isFlipped) "إخفاء الإجابة العلمية" else "اكشف التصنيف العلمي")
                 }
-                }
-            }
             }
         }
     }
