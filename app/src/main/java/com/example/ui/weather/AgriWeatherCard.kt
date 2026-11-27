@@ -5,6 +5,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.matchParentSize
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -347,15 +353,40 @@ fun AgriWeatherCard(
             .fillMaxWidth()
             .clickable { if (weatherData != null) isExpanded = !isExpanded },
         shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        color = Color(0xFF1B4D78),
         tonalElevation = 2.dp
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 11.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Canvas(modifier = Modifier.matchParentSize()) {
+                val cloud = Color.White.copy(alpha = 0.13f)
+                // Soft cloud silhouettes in the blue-sky background.
+                drawOval(
+                    color = cloud,
+                    topLeft = Offset(size.width * 0.58f, size.height * 0.10f),
+                    size = Size(size.width * 0.38f, size.height * 0.16f)
+                )
+                drawCircle(cloud, size.height * 0.085f, Offset(size.width * 0.67f, size.height * 0.20f))
+                drawCircle(cloud, size.height * 0.11f, Offset(size.width * 0.78f, size.height * 0.17f))
+                drawCircle(cloud, size.height * 0.075f, Offset(size.width * 0.88f, size.height * 0.20f))
+                drawOval(
+                    color = Color.White.copy(alpha = 0.09f),
+                    topLeft = Offset(-size.width * 0.12f, size.height * 0.66f),
+                    size = Size(size.width * 0.42f, size.height * 0.14f)
+                )
+                drawCircle(Color.White.copy(alpha = 0.09f), size.height * 0.07f, Offset(size.width * 0.13f, size.height * 0.72f))
+                drawCircle(Color.White.copy(alpha = 0.09f), size.height * 0.09f, Offset(size.width * 0.23f, size.height * 0.70f))
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color(0xFF163B63), Color(0xFF245F8B), Color(0xFF173F68))
+                        )
+                    )
+                    .padding(horizontal = 14.dp, vertical = 11.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
             // الشريط العلوي المدمج (سطر واحد فقط)
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -365,7 +396,7 @@ fun AgriWeatherCard(
                 Surface(
                     onClick = { showLocationDialog = true },
                     shape = RoundedCornerShape(50),
-                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.75f)
+                    color = Color.White.copy(alpha = 0.16f)
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -375,14 +406,14 @@ fun AgriWeatherCard(
                         Icon(
                             imageVector = Icons.Default.LocationOn,
                             contentDescription = "تغيير المنطقة",
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = Color.White,
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
                             text = selectedLocation.name,
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            color = Color.White,
                             maxLines = 2
                         )
                     }
@@ -407,14 +438,14 @@ fun AgriWeatherCard(
                             Icon(
                                 imageVector = Icons.Default.Refresh,
                                 contentDescription = "تحديث الطقس",
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = Color.White,
                                 modifier = Modifier.size(15.dp)
                             )
                         }
                         Icon(
                             imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = Color.White.copy(alpha = 0.9f),
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -487,7 +518,7 @@ fun AgriWeatherCard(
                         Text(
                             text = "الحالة: ${data.conditionText} • الرياح: ${data.windSpeedKmh.toInt()} كم/س • التبخر اليومي ET₀ ≈ ${String.format(Locale.US, "%.1f", data.estimateDailyEt0Mm())} ملم",
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = Color.White.copy(alpha = 0.88f)
                         )
                         if (data.diseaseRiskAlert != null) {
                             Surface(
@@ -505,6 +536,7 @@ fun AgriWeatherCard(
                         }
                     }
                 }
+            }
             }
         }
     }
@@ -531,14 +563,14 @@ private fun CompactMetric(icon: ImageVector, text: String) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = Color.White.copy(alpha = 0.92f),
             modifier = Modifier.size(13.dp)
         )
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = Color.White
         )
     }
 }
