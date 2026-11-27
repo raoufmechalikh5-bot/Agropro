@@ -1,5 +1,6 @@
 package com.example.ui.encyclopedia
 
+import com.example.ui.agroText
 import com.example.ui.components.ExpandableSuggestions
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -133,8 +134,8 @@ fun EncyclopediaScreen(
                 OutlinedTextField(
                     value = state.searchQuery,
                     onValueChange = viewModel::updateSearchQuery,
-                    label = { Text("ابحث بالاسم التجاري، المادة الفعالة، الآفة، أو ملاحظاتك") },
-                    placeholder = { Text("مثال: أزوكسيستروبين، عين الطاووس، المن...") },
+                    label = { Text(agroText("ابحث بالاسم التجاري، المادة الفعالة، الآفة، أو ملاحظاتك")) },
+                    placeholder = { Text(agroText("مثال: أزوكسيستروبين، عين الطاووس، المن...")) },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                     trailingIcon = {
                         if (state.searchQuery.isNotEmpty()) {
@@ -142,7 +143,7 @@ fun EncyclopediaScreen(
                                 onClick = { viewModel.updateSearchQuery("") },
                                 modifier = Modifier.size(48.dp)
                             ) {
-                                Icon(Icons.Default.Clear, contentDescription = "مسح البحث")
+                                Icon(Icons.Default.Clear, contentDescription = agroText("مسح البحث"))
                             }
                         }
                     },
@@ -192,7 +193,7 @@ item {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "المركبات المتوفرة (${state.filteredItems.size} • محفوظة محلياً)",
+                        text = agroText("المركبات المتوفرة (${state.filteredItems.size} • محفوظة محلياً)"),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f)
@@ -205,7 +206,7 @@ item {
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(4.dp))
-                        Text("إضافة منتج")
+                        Text(agroText("إضافة منتج"))
                     }
                 }
             }
@@ -229,11 +230,11 @@ item {
                                 modifier = Modifier.size(40.dp)
                             )
                             Text(
-                                text = "لا توجد مركبات مطابقة للبحث",
+                                text = agroText("لا توجد مركبات مطابقة للبحث"),
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = "جرّب البحث باسم المادة الفعالة أو اختر تصنيف «الكل».",
+                                text = agroText("جرّب البحث باسم المادة الفعالة أو اختر تصنيف «الكل»."),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -370,11 +371,11 @@ private fun TankMixCheckerCard(
                     )
                     Column {
                         Text(
-                            text = "فحص قابلية الخلط (Tank-Mix)",
+                            text = agroText("فحص قابلية الخلط (Tank-Mix)"),
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = "تحقق من التوافق الكيميائي قبل الخلط في خزان الرش",
+                            text = agroText("تحقق من التوافق الكيميائي قبل الخلط في خزان الرش"),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -406,7 +407,7 @@ private fun TankMixCheckerCard(
                             value = productA.commercialName,
                             onValueChange = {},
                             readOnly = true,
-                            label = { Text("المنتج الأول (أ)") },
+                            label = { Text(agroText("المنتج الأول (أ)")) },
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedA)
                             },
@@ -439,7 +440,7 @@ private fun TankMixCheckerCard(
                             value = productB.commercialName,
                             onValueChange = {},
                             readOnly = true,
-                            label = { Text("المنتج الثاني (ب)") },
+                            label = { Text(agroText("المنتج الثاني (ب)")) },
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedB)
                             },
@@ -554,7 +555,7 @@ private fun AgrochemicalCard(
                     if (savedNote != null) {
                         Icon(
                             imageVector = Icons.Default.StickyNote2,
-                            contentDescription = "توجد ملاحظة محفوظة",
+                            contentDescription = agroText("توجد ملاحظة محفوظة"),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp)
                         )
@@ -590,7 +591,7 @@ private fun AgrochemicalCard(
                     modifier = Modifier.size(16.dp)
                 )
                 Text(
-                    text = "الآفات المستهدفة: ${item.targetPests}",
+                    text = agroText("الآفات المستهدفة: ${item.targetPests}"),
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = if (isExpanded) 8 else 3
                 )
@@ -603,19 +604,19 @@ private fun AgrochemicalCard(
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
                     Text(
-                        text = "المادة الفعالة: ${item.activeIngredient}",
+                        text = agroText("المادة الفعالة: ${item.activeIngredient}"),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold
                     )
 
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            text = "الجرعة الموصى بها: ${item.recommendedDosage}",
+                            text = agroText("الجرعة الموصى بها: ${item.recommendedDosage}"),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "فترة التحريم (PHI): ${item.phiDays}",
+                            text = agroText("فترة التحريم (PHI): ${item.phiDays}"),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.secondary
                         )
@@ -657,7 +658,7 @@ private fun AgrochemicalCard(
                                             modifier = Modifier.size(18.dp)
                                         )
                                         Text(
-                                            text = "ملاحظتك المحفوظة محلياً:",
+                                            text = agroText("ملاحظتك المحفوظة محلياً:"),
                                             style = MaterialTheme.typography.labelMedium,
                                             color = MaterialTheme.colorScheme.primary
                                         )
@@ -668,7 +669,7 @@ private fun AgrochemicalCard(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.DeleteOutline,
-                                            contentDescription = "حذف الملاحظة",
+                                            contentDescription = agroText("حذف الملاحظة"),
                                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                             modifier = Modifier.size(20.dp)
                                         )
@@ -676,7 +677,7 @@ private fun AgrochemicalCard(
                                 }
                                 if (savedNote.customDosageNote.isNotBlank()) {
                                     Text(
-                                        text = "الجرعة الحقلية المعتمدة: ${savedNote.customDosageNote}",
+                                        text = agroText("الجرعة الحقلية المعتمدة: ${savedNote.customDosageNote}"),
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -691,7 +692,7 @@ private fun AgrochemicalCard(
                                 if (!path.isNullOrBlank() && File(path).exists()) {
                                     Image(
                                         painter = rememberAsyncImagePainter(model = File(path)),
-                                        contentDescription = "صورة مرفقة بملاحظة ${item.commercialName}",
+                                        contentDescription = agroText("صورة مرفقة بملاحظة ${item.commercialName}"),
                                         contentScale = ContentScale.Crop,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -715,7 +716,7 @@ private fun AgrochemicalCard(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.DeleteOutline,
-                                    contentDescription = "حذف المنتج المخصص",
+                                    contentDescription = agroText("حذف المنتج المخصص"),
                                     tint = MaterialTheme.colorScheme.error
                                 )
                             }
@@ -778,7 +779,7 @@ private fun PesticideNoteDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("ملاحظات مخصصة: $itemName") },
+        title = { Text(agroText("ملاحظات مخصصة: $itemName")) },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -787,8 +788,8 @@ private fun PesticideNoteDialog(
                 OutlinedTextField(
                     value = customDosage,
                     onValueChange = { customDosage = it },
-                    label = { Text("جرعة مزرعتك المجرّبة (اختياري)") },
-                    placeholder = { Text("مثال: 80 مل / 100 لتر على الزيتون") },
+                    label = { Text(agroText("جرعة مزرعتك المجرّبة (اختياري)")) },
+                    placeholder = { Text(agroText("مثال: 80 مل / 100 لتر على الزيتون")) },
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -797,8 +798,8 @@ private fun PesticideNoteDialog(
                 OutlinedTextField(
                     value = noteText,
                     onValueChange = { noteText = it },
-                    label = { Text("الملاحظات الحقلية والفعالية") },
-                    placeholder = { Text("تاريخ الرش، المورد، نتائج المكافحة...") },
+                    label = { Text(agroText("الملاحظات الحقلية والفعالية")) },
+                    placeholder = { Text(agroText("تاريخ الرش، المورد، نتائج المكافحة...")) },
                     maxLines = 4,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -834,11 +835,11 @@ private fun PesticideNoteDialog(
                 onClick = { onSave(noteText, customDosage, newPhotoUri, existingPhotoPath) },
                 modifier = Modifier.testTag("save_pesticide_note_button")
             ) {
-                Text("حفظ دائم")
+                Text(agroText("حفظ دائم"))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("إلغاء") }
+            TextButton(onClick = onDismiss) { Text(agroText("إلغاء")) }
         }
     )
 }
@@ -868,7 +869,7 @@ private fun AddCustomAgrochemicalDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("إضافة مبيد أو سماد مخصص") },
+        title = { Text(agroText("إضافة مبيد أو سماد مخصص")) },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -877,7 +878,7 @@ private fun AddCustomAgrochemicalDialog(
                 OutlinedTextField(
                     value = commercialName,
                     onValueChange = { commercialName = it },
-                    label = { Text("الاسم التجاري *") },
+                    label = { Text(agroText("الاسم التجاري *")) },
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -886,7 +887,7 @@ private fun AddCustomAgrochemicalDialog(
                 OutlinedTextField(
                     value = activeIngredient,
                     onValueChange = { activeIngredient = it },
-                    label = { Text("المادة الفعالة") },
+                    label = { Text(agroText("المادة الفعالة")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -901,28 +902,28 @@ private fun AddCustomAgrochemicalDialog(
                 OutlinedTextField(
                     value = targetPests,
                     onValueChange = { targetPests = it },
-                    label = { Text("الآفات / الأمراض المستهدفة") },
+                    label = { Text(agroText("الآفات / الأمراض المستهدفة")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = dosage,
                     onValueChange = { dosage = it },
-                    label = { Text("الجرعة الموصى بها") },
+                    label = { Text(agroText("الجرعة الموصى بها")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = phi,
                     onValueChange = { phi = it },
-                    label = { Text("فترة التحريم (PHI)") },
+                    label = { Text(agroText("فترة التحريم (PHI)")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
-                    label = { Text("ملاحظات التحضير") },
+                    label = { Text(agroText("ملاحظات التحضير")) },
                     maxLines = 2,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -936,11 +937,11 @@ private fun AddCustomAgrochemicalDialog(
                 enabled = commercialName.isNotBlank(),
                 modifier = Modifier.testTag("confirm_custom_agro_button")
             ) {
-                Text("حفظ في الموسوعة")
+                Text(agroText("حفظ في الموسوعة"))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("إلغاء") }
+            TextButton(onClick = onDismiss) { Text(agroText("إلغاء")) }
         }
     )
 }
