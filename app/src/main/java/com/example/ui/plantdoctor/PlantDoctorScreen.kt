@@ -12,6 +12,11 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -306,13 +311,23 @@ fun PlantDoctorScreen(
         ) {
             item { AgriWeatherCard(modifier = Modifier.fillMaxWidth()) }
 item {
+                val diagnosisSelected = !isFlashcardMode
+                val diagnosisWeight by animateFloatAsState(
+                    targetValue = if (diagnosisSelected) 1.65f else 0.85f,
+                    animationSpec = spring(dampingRatio = 0.82f, stiffness = 420f),
+                    label = "diagnosis_tab_width"
+                )
+                val flashcardWeight by animateFloatAsState(
+                    targetValue = if (isFlashcardMode) 1.65f else 0.85f,
+                    animationSpec = spring(dampingRatio = 0.82f, stiffness = 420f),
+                    label = "flashcard_tab_width"
+                )
                 Row(
                     modifier = Modifier.fillMaxWidth().testTag("plant_doctor_mode_toggle"),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    val diagnosisSelected = !isFlashcardMode
                     Surface(
-                        modifier = Modifier.weight(1f).height(70.dp).clip(RoundedCornerShape(22.dp))
+                        modifier = Modifier.weight(diagnosisWeight).height(70.dp).clip(RoundedCornerShape(22.dp))
                             .clickable { viewModel.setFlashcardMode(false) }
                             .testTag("tab_ai_diagnosis"),
                         color = if (diagnosisSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
@@ -320,22 +335,35 @@ item {
                         border = BorderStroke(1.dp, if (diagnosisSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant)
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                            modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp, vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(9.dp)
+                            horizontalArrangement = Arrangement.Center
                         ) {
-                            Icon(Icons.Default.Biotech, null,
+                            Icon(
+                                Icons.Default.Biotech,
+                                contentDescription = null,
                                 tint = if (diagnosisSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(25.dp))
-                            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                                Text(agroText("التشخيص الذكي"), fontWeight = FontWeight.Bold,
-                                    color = if (diagnosisSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                    style = MaterialTheme.typography.titleSmall, maxLines = 2)
+                                modifier = Modifier.size(25.dp)
+                            )
+                            AnimatedVisibility(
+                                visible = diagnosisSelected,
+                                enter = fadeIn(spring()) + expandHorizontally(spring()),
+                                exit = fadeOut(spring()) + shrinkHorizontally(spring())
+                            ) {
+                                Text(
+                                    text = agroText("التشخيص الذكي"),
+                                    modifier = Modifier.padding(start = 8.dp),
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
                             }
                         }
                     }
                     Surface(
-                        modifier = Modifier.weight(1f).height(70.dp).clip(RoundedCornerShape(22.dp))
+                        modifier = Modifier.weight(flashcardWeight).height(70.dp).clip(RoundedCornerShape(22.dp))
                             .clickable { viewModel.setFlashcardMode(true) }
                             .testTag("tab_student_flashcards"),
                         color = if (isFlashcardMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
@@ -343,17 +371,30 @@ item {
                         border = BorderStroke(1.dp, if (isFlashcardMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant)
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                            modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp, vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(9.dp)
+                            horizontalArrangement = Arrangement.Center
                         ) {
-                            Icon(Icons.Default.School, null,
+                            Icon(
+                                Icons.Default.School,
+                                contentDescription = null,
                                 tint = if (isFlashcardMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(25.dp))
-                            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                                Text(agroText("بطاقات المراجعة"), fontWeight = FontWeight.Bold,
-                                    color = if (isFlashcardMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                    style = MaterialTheme.typography.titleSmall, maxLines = 2)
+                                modifier = Modifier.size(25.dp)
+                            )
+                            AnimatedVisibility(
+                                visible = isFlashcardMode,
+                                enter = fadeIn(spring()) + expandHorizontally(spring()),
+                                exit = fadeOut(spring()) + shrinkHorizontally(spring())
+                            ) {
+                                Text(
+                                    text = agroText("بطاقات المراجعة"),
+                                    modifier = Modifier.padding(start = 8.dp),
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
                             }
                         }
                     }
