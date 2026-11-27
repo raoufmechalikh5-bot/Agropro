@@ -776,8 +776,7 @@ private fun AgriHeroBanner() {
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    maxLines = 2
                 )
                 Text(
                     text = "مساعدك الزراعي الذكي",
@@ -1230,8 +1229,7 @@ private fun DiagnosisResultCard(
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 fontWeight = FontWeight.Bold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                maxLines = 2
                             )
                         }
                     }
@@ -1415,7 +1413,7 @@ private fun DiagnosisResultCard(
                     onClick = onAddToNotebook,
                     modifier = Modifier
                         .weight(1f)
-                        .height(48.dp)
+                        .defaultMinSize(minHeight = 48.dp)
                         .testTag("add_treatment_to_notebook_button"),
                     shape = MaterialTheme.shapes.medium
                 ) {
@@ -1427,8 +1425,7 @@ private fun DiagnosisResultCard(
                     Spacer(Modifier.width(6.dp))
                     Text(
                         text = "خطة علاج (PHI)",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -1438,7 +1435,7 @@ private fun DiagnosisResultCard(
                     colors = ButtonDefaults.filledTonalButtonColors(),
                     modifier = Modifier
                         .weight(1f)
-                        .height(48.dp)
+                        .defaultMinSize(minHeight = 48.dp)
                         .testTag("open_diagnosis_in_npk_button"),
                     shape = MaterialTheme.shapes.medium
                 ) {
@@ -1450,8 +1447,7 @@ private fun DiagnosisResultCard(
                     Spacer(Modifier.width(6.dp))
                     Text(
                         text = "حاسبة NPK",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2,
                         fontWeight = FontWeight.Bold
                     )
                 }
