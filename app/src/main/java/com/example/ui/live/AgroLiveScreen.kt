@@ -198,8 +198,8 @@ fun AgroLiveScreen(
                 }
             }
             Column(modifier = Modifier.weight(1f).padding(start = 11.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text("AgroPro Live", color = Color.White, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                Text("مساعدك الزراعي المباشر", color = Color(0xFFB9E8C5), style = MaterialTheme.typography.labelMedium)
+                Text("AgroPro Live", color = Color.White, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, maxLines = 1)
+                Text("مساعدك الزراعي المباشر", color = Color(0xFFB9E8C5), style = MaterialTheme.typography.labelMedium, maxLines = 2)
             }
             Surface(
                 shape = RoundedCornerShape(50),
@@ -462,7 +462,7 @@ private fun ControlButton(
     Surface(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.height(64.dp),
+        modifier = modifier.height(72.dp),
         shape = RoundedCornerShape(20.dp),
         color = if (active) Color(0xFF16A34A) else Color(0xFF12351D),
         contentColor = Color.White,
@@ -474,7 +474,7 @@ private fun ControlButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(icon, contentDescription = null)
-            Text(label, modifier = Modifier.padding(start = 8.dp), fontWeight = FontWeight.SemiBold)
+            Text(label, modifier = Modifier.padding(start = 6.dp), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.labelMedium, maxLines = 2)
         }
     }
 }
