@@ -742,19 +742,6 @@ private fun PlantCaptureCard(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                if (recentDiagnosisCount > 0) {
-                    IconButton(
-                        onClick = onToggleDiagnosisHistory,
-                        modifier = Modifier.size(34.dp).testTag("toggle_diagnosis_history")
-                    ) {
-                        Icon(
-                            Icons.Default.History,
-                            contentDescription = agroText("سجل التشخيصات"),
-                            tint = Color(0xFFB9CDBD),
-                            modifier = Modifier.size(21.dp)
-                        )
-                    }
-                }
                 Surface(
                     shape = CircleShape,
                     color = Color(0xFF123D29)
@@ -954,6 +941,25 @@ private fun PlantCaptureCard(
                                 fontWeight = FontWeight.Bold
                             )
                         }
+                    }
+                }
+            }
+
+            if (recentDiagnosisCount > 0) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    IconButton(
+                        onClick = onToggleDiagnosisHistory,
+                        modifier = Modifier.size(34.dp).testTag("toggle_diagnosis_history")
+                    ) {
+                        Icon(
+                            Icons.Default.History,
+                            contentDescription = agroText("سجل التشخيصات"),
+                            tint = Color(0xFFB9CDBD),
+                            modifier = Modifier.size(21.dp)
+                        )
                     }
                 }
             }
