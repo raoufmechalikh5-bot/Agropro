@@ -546,13 +546,13 @@ fun AgriProApp() {
                                 val toIndex = destinations.indexOfFirst { it.route == targetState.destination.route }
                                 val direction = if (toIndex >= fromIndex) -1 else 1
                                 slideInHorizontally(
-                                    animationSpec = tween(durationMillis = 360, easing = UltraSmoothEasing),
-                                    initialOffsetX = { fullWidth -> direction * (fullWidth / 6) }
+                                    animationSpec = tween(durationMillis = 420, easing = UltraSmoothEasing),
+                                    initialOffsetX = { fullWidth -> direction * (fullWidth / 10) }
                                 ) + fadeIn(
-                                    animationSpec = tween(durationMillis = 320, easing = UltraSmoothEasing)
+                                    animationSpec = tween(durationMillis = 360, easing = UltraSmoothEasing)
                                 ) + scaleIn(
                                     initialScale = 0.985f,
-                                    animationSpec = tween(durationMillis = 360, easing = UltraSmoothEasing)
+                                    animationSpec = tween(durationMillis = 420, easing = UltraSmoothEasing)
                                 )
                             },
                             exitTransition = {
@@ -560,20 +560,42 @@ fun AgriProApp() {
                                 val toIndex = destinations.indexOfFirst { it.route == targetState.destination.route }
                                 val direction = if (toIndex >= fromIndex) 1 else -1
                                 slideOutHorizontally(
-                                    animationSpec = tween(durationMillis = 340, easing = UltraSmoothEasing),
-                                    targetOffsetX = { fullWidth -> direction * (fullWidth / 8) }
+                                    animationSpec = tween(durationMillis = 380, easing = UltraSmoothEasing),
+                                    targetOffsetX = { fullWidth -> direction * (fullWidth / 12) }
                                 ) + fadeOut(
-                                    animationSpec = tween(durationMillis = 240, easing = UltraSmoothEasing)
+                                    animationSpec = tween(durationMillis = 300, easing = UltraSmoothEasing)
                                 ) + scaleOut(
-                                    targetScale = 0.99f,
-                                    animationSpec = tween(durationMillis = 340, easing = UltraSmoothEasing)
+                                    targetScale = 0.992f,
+                                    animationSpec = tween(durationMillis = 380, easing = UltraSmoothEasing)
                                 )
                             },
                             popEnterTransition = {
-                                fadeIn(animationSpec = tween(durationMillis = 300, easing = UltraSmoothEasing))
+                                val fromIndex = destinations.indexOfFirst { it.route == initialState.destination.route }
+                                val toIndex = destinations.indexOfFirst { it.route == targetState.destination.route }
+                                val direction = if (toIndex >= fromIndex) -1 else 1
+                                slideInHorizontally(
+                                    animationSpec = tween(durationMillis = 420, easing = UltraSmoothEasing),
+                                    initialOffsetX = { fullWidth -> direction * (fullWidth / 10) }
+                                ) + fadeIn(
+                                    animationSpec = tween(durationMillis = 360, easing = UltraSmoothEasing)
+                                ) + scaleIn(
+                                    initialScale = 0.985f,
+                                    animationSpec = tween(durationMillis = 420, easing = UltraSmoothEasing)
+                                )
                             },
                             popExitTransition = {
-                                fadeOut(animationSpec = tween(durationMillis = 240, easing = UltraSmoothEasing))
+                                val fromIndex = destinations.indexOfFirst { it.route == initialState.destination.route }
+                                val toIndex = destinations.indexOfFirst { it.route == targetState.destination.route }
+                                val direction = if (toIndex >= fromIndex) 1 else -1
+                                slideOutHorizontally(
+                                    animationSpec = tween(durationMillis = 380, easing = UltraSmoothEasing),
+                                    targetOffsetX = { fullWidth -> direction * (fullWidth / 12) }
+                                ) + fadeOut(
+                                    animationSpec = tween(durationMillis = 300, easing = UltraSmoothEasing)
+                                ) + scaleOut(
+                                    targetScale = 0.992f,
+                                    animationSpec = tween(durationMillis = 380, easing = UltraSmoothEasing)
+                                )
                             }
                         ) {
                             composable(AgriDestination.PlantDoctor.route) {
