@@ -355,18 +355,6 @@ fun AgriProApp() {
                                     }
                                 )
                                 NavigationDrawerItem(
-                                    label = { Text(stringResource(R.string.settings_title)) },
-                                    selected = false,
-                                    icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-                                    onClick = {
-                                        scope.launch {
-                                            drawerState.close()
-                                            showSettings = true
-                                        }
-                                    },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                                NavigationDrawerItem(
                                     label = { Text("التنبيهات والتذكيرات") },
                                     selected = false,
                                     icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
@@ -403,6 +391,19 @@ fun AgriProApp() {
                                             themePrefsRepo.setThemePreference(next)
                                         }
                                     }
+                                )
+
+                                NavigationDrawerItem(
+                                    label = { Text(stringResource(R.string.settings_title)) },
+                                    selected = false,
+                                    icon = { Icon(Icons.Default.Settings, contentDescription = null) },
+                                    onClick = {
+                                        scope.launch {
+                                            drawerState.close()
+                                            showSettings = true
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             }
                         }
