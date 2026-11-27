@@ -47,6 +47,7 @@ import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Flip
+import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocalHospital
@@ -56,6 +57,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Science
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.Visibility
@@ -856,7 +858,11 @@ private fun PlantCaptureCard(
                                     color = Color(0xFF172313)
                                 )
                             } else {
-                                Icon(Icons.Default.AutoAwesome, contentDescription = agroText("تحليل وتشخيص الحالة"))
+                                Icon(
+                                    Icons.Default.Send,
+                                    contentDescription = agroText("إرسال"),
+                                    modifier = Modifier.size(22.dp)
+                                )
                             }
                         }
 
@@ -872,8 +878,8 @@ private fun PlantCaptureCard(
                                 horizontalArrangement = Arrangement.spacedBy(7.dp)
                             ) {
                                 Text("Live", color = Color.White, fontWeight = FontWeight.SemiBold)
-                                Icon(Icons.Default.AutoAwesome, null, tint = Color(0xFFBDECCB),
-                                    modifier = Modifier.size(16.dp))
+                                Icon(Icons.Default.GraphicEq, null, tint = Color(0xFFBDECCB),
+                                    modifier = Modifier.size(17.dp))
                             }
                         }
 
@@ -885,7 +891,7 @@ private fun PlantCaptureCard(
                             modifier = Modifier.testTag("camera_capture_button")
                         ) {
                             Icon(Icons.Default.CameraAlt, contentDescription = agroText("التقط صورة"),
-                                tint = Color(0xFFB9CDBD))
+                                tint = Color(0xFFB9CDBD), modifier = Modifier.size(22.dp))
                         }
                         IconButton(
                             onClick = onPickFromGallery,
@@ -893,7 +899,7 @@ private fun PlantCaptureCard(
                             modifier = Modifier.testTag("gallery_pick_button")
                         ) {
                             Icon(Icons.Default.PhotoLibrary, contentDescription = agroText("اختيار من المعرض"),
-                                tint = Color(0xFFB9CDBD))
+                                tint = Color(0xFFB9CDBD), modifier = Modifier.size(22.dp))
                         }
                     }
                 }
