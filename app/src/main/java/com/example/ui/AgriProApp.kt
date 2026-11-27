@@ -464,6 +464,7 @@ fun AgriProApp() {
                     bottomBar = {
                         if (!useNavigationRail && currentRoute != "agro_live") {
                             AgroBottomNavigationBar(
+                                hazeState = hazeState,
                                 destinations = destinations,
                                 currentRoute = currentRoute,
                                 onSelectDestination = { dest ->
@@ -671,6 +672,7 @@ private fun AgroProSplash(onFinished: () -> Unit) {
 
 @Composable
 private fun AgroBottomNavigationBar(
+    hazeState: HazeState,
     destinations: List<AgriDestination>,
     currentRoute: String,
     onSelectDestination: (AgriDestination) -> Unit
@@ -682,7 +684,8 @@ private fun AgroBottomNavigationBar(
             .fillMaxWidth()
             .navigationBarsPadding()
             .padding(horizontal = 14.dp, vertical = 8.dp)
-            .height(78.dp),
+            .height(78.dp)
+            .hazeEffect(state = hazeState),
         shape = barShape,
         color = MaterialTheme.colorScheme.surfaceContainer,
         tonalElevation = 3.dp,
