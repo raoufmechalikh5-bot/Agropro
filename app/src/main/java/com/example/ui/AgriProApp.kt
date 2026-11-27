@@ -137,9 +137,6 @@ import com.example.ui.live.AgroLiveScreen
 import com.example.ui.live.AgroLiveViewModel
 import com.example.ui.theme.AgriProTheme
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
@@ -685,19 +682,9 @@ private fun AgroBottomNavigationBar(
             .navigationBarsPadding()
             .padding(horizontal = 14.dp, vertical = 8.dp)
             .height(78.dp)
-            .hazeEffect(
-                state = hazeState,
-                style = HazeStyle(
-                    backgroundColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.30f),
-                    blurRadius = 28.dp,
-                    tints = emptyList(),
-                    noiseFactor = 0f,
-                    fallbackTint = HazeTint(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.76f))
-                )
-            )
             .clip(barShape),
         shape = barShape,
-        color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.34f),
+        color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.70f),
         tonalElevation = 0.dp,
         shadowElevation = 8.dp
     ) {
