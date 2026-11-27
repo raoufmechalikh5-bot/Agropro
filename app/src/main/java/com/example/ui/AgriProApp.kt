@@ -763,9 +763,9 @@ private fun LiquidGlassNavigationBar(
             // انزلاق الكبسولة الزجاجية السائلة بسلاسة بين الخانات
             val indicatorOffset by animateDpAsState(
                 targetValue = itemWidth * selectedIndex,
-                animationSpec = spring(
-                    dampingRatio = 0.82f,
-                    stiffness = Spring.StiffnessMediumLow
+                animationSpec = tween(
+                    durationMillis = 420,
+                    easing = UltraSmoothEasing
                 ),
                 label = "SlidingLiquidPillOffset"
             )
@@ -811,19 +811,16 @@ private fun LiquidGlassNavigationBar(
                     val interactionSource = remember { MutableInteractionSource() }
                     val pressed by interactionSource.collectIsPressedAsState()
                     val scale by animateFloatAsState(
-                        targetValue = if (pressed) 0.86f else if (selected) 1.08f else 0.96f,
-                        animationSpec = spring(
-                            dampingRatio = 0.52f,
-                            stiffness = 720f
+                        targetValue = if (pressed) 0.94f else if (selected) 1.02f else 1f,
+                        animationSpec = tween(
+                            durationMillis = if (pressed) 110 else 260,
+                            easing = UltraSmoothEasing
                         ),
                         label = "ColorOSIconPressScale"
                     )
                     val iconRotation by animateFloatAsState(
-                        targetValue = if (pressed) -7f else 0f,
-                        animationSpec = spring(
-                            dampingRatio = 0.58f,
-                            stiffness = 680f
-                        ),
+                        targetValue = 0f,
+                        animationSpec = tween(durationMillis = 180, easing = UltraSmoothEasing),
                         label = "ColorOSIconPressRotation"
                     )
 
@@ -853,7 +850,7 @@ private fun LiquidGlassNavigationBar(
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(if (selected) 34.dp else 30.dp)
+                                .size(34.dp)
                                 .shadow(
                                     elevation = if (selected) 5.dp else 0.dp,
                                     shape = CircleShape,
@@ -902,15 +899,27 @@ private fun LiquidGlassNavigationBar(
                                     }
                             )
                         }
-                        if (selected) {
-                            Text(
-                                text = label,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = contentColor
-                            )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(14.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            androidx.compose.animation.AnimatedVisibility(
+                                visible = selected,
+                                enter = fadeIn(animationSpec = tween(220, easing = UltraSmoothEasing)) +
+                                    scaleIn(initialScale = 0.96f, animationSpec = tween(220, easing = UltraSmoothEasing)),
+                                exit = fadeOut(animationSpec = tween(140, easing = UltraSmoothEasing))
+                            ) {
+                                Text(
+                                    text = label,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = contentColor
+                                )
+                            }
                         }
                     }
                 }
@@ -929,10 +938,10 @@ private fun ColorOsIconButton(
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
-        targetValue = if (pressed) 0.84f else 1f,
-        animationSpec = spring(
-            dampingRatio = 0.5f,
-            stiffness = 700f
+        targetValue = if (pressed) 0.94f else 1f,
+        animationSpec = tween(
+            durationMillis = if (pressed) 100 else 220,
+            easing = UltraSmoothEasing
         ),
         label = "ColorOSIconButtonPress"
     )
