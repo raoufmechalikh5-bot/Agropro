@@ -357,7 +357,7 @@ fun AgriWeatherCard(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 210.dp, max = 270.dp)
+            .heightIn(min = 190.dp, max = 230.dp)
             .clickable { if (weatherData != null) isExpanded = !isExpanded },
         shape = RoundedCornerShape(24.dp),
         color = Color(0xFF4A9DE0),
@@ -376,18 +376,23 @@ fun AgriWeatherCard(
                     .background(
                         Brush.verticalGradient(
                             listOf(
-                                Color(0x33143F70),
-                                Color(0x241C5D91),
-                                Color(0x70416F9A)
+                                Color(0x55143F70),
+                                Color(0x481C5D91),
+                                Color(0x75416F9A)
                             )
                         )
                     )
             )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.08f))
+            )
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(horizontal = 14.dp, vertical = 9.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -484,7 +489,7 @@ fun AgriWeatherCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color.White.copy(alpha = 0.20f), RoundedCornerShape(16.dp))
-                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                            .padding(horizontal = 10.dp, vertical = 7.dp),
                         horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -516,7 +521,7 @@ fun AgriWeatherCard(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 11.dp, vertical = 9.dp),
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(7.dp)
                         ) {
