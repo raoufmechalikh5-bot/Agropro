@@ -393,7 +393,8 @@ item {
                                 }
                             }
                         },
-                        onAnalyzeClick = { viewModel.analyzePlantImage(context) }
+                        onAnalyzeClick = { viewModel.analyzePlantImage(context) },
+                        onOpenLiveAssistant = onOpenLiveAssistant
                     )
                 }
                 item {
@@ -780,258 +781,187 @@ private fun PlantCaptureCard(
     onRemoveImage: (Long) -> Unit,
     onPickFromGallery: () -> Unit,
     onCaptureCamera: () -> Unit,
-    onAnalyzeClick: () -> Unit
+    onAnalyzeClick: () -> Unit,
+    onOpenLiveAssistant: () -> Unit
 ) {
-    var showOptionalNotes by rememberSaveable { mutableStateOf(false) }
     ElevatedCard(
         shape = RoundedCornerShape(28.dp),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = Color(0xFF1B3327)
-        ),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
-        modifier = Modifier.fillMaxWidth()
+        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFF10251B)),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+        modifier = Modifier.fillMaxWidth().testTag("plant_capture_card")
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
+            modifier = Modifier.padding(18.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.size(48.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.AutoAwesome,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(25.dp)
-                        )
-                    }
-                }
-                Column(
+                Icon(
+                    Icons.Default.AutoAwesome,
+                    contentDescription = null,
+                    tint = Color(0xFFC8F34A),
+                    modifier = Modifier.size(27.dp)
+                )
+                Text(
+                    text = agroText("مساعد AgroPro الذكي"),
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(3.dp)
-                ) {
-                    Text(
-                        agroText("افحص نباتك بالذكاء الاصطناعي"),
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFC8F34A),
-                        maxLines = 1
-                    )
-                    Text(
-                        agroText("أضف صورة واضحة لبدء التشخيص"),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1
-                    )
-                }
-            }
-
-            if (selectedImages.isNotEmpty()) {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    items(selectedImages, key = { it.id }) { item ->
-                        Box(
-                            modifier = Modifier
-                                .width(180.dp)
-                                .height(160.dp)
-                                .clip(MaterialTheme.shapes.medium)
-                                .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                        ) {
-                            Image(
-                                bitmap = item.bitmap.asImageBitmap(),
-                                contentDescription = item.label,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                            Surface(
-                                color = Color.Black.copy(alpha = 0.65f),
-                                shape = CircleShape,
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .padding(6.dp)
-                                    .size(30.dp)
-                                    .clickable { onRemoveImage(item.id) }
-                            ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = agroText("إزالة الصورة"),
-                                        tint = Color.White,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                }
-                            }
-                            Surface(
-                                color = Color.Black.copy(alpha = 0.68f),
-                                shape = RoundedCornerShape(50),
-                                modifier = Modifier
-                                    .align(Alignment.BottomStart)
-                                    .padding(8.dp)
-                            ) {
-                                Text(
-                                    text = item.label,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = Color.White,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-                                )
-                            }
-                        }
-                    }
-
-                    if (selectedImages.size < 3) {
-                        item {
-                            Surface(
-                                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                                shape = MaterialTheme.shapes.medium,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                                modifier = Modifier
-                                    .width(120.dp)
-                                    .height(160.dp)
-                                    .clickable(onClick = onCaptureCamera)
-                            ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center,
-                                    modifier = Modifier.padding(8.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.AddPhotoAlternate,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(32.dp)
-                                    )
-                                    Spacer(Modifier.height(6.dp))
-                                    Text(
-                                        text = agroText("إضافة زاوية أخرى"),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
+                    color = Color(0xFFF2F7F1),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
                 Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(176.dp)
-                        .clip(RoundedCornerShape(24.dp))
-                        .clickable(enabled = !isLoading, onClick = onPickFromGallery),
-                    shape = RoundedCornerShape(24.dp),
-                    color = Color(0xFF203A2D),
-                    border = BorderStroke(1.dp, Color(0xFF45634A))
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(7.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier.size(100.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            androidx.compose.foundation.Canvas(Modifier.fillMaxSize()) {
-                                val corner = 25.dp.toPx()
-                                val inset = 5.dp.toPx()
-                                val stroke = 2.5.dp.toPx()
-                                val color = Color(0xFFC8F34A)
-                                val path = androidx.compose.ui.graphics.Path().apply {
-                                    moveTo(inset + corner, inset)
-                                    lineTo(inset + 8.dp.toPx(), inset)
-                                    quadraticTo(inset, inset, inset, inset + 8.dp.toPx())
-                                    lineTo(inset, inset + corner)
-                                    moveTo(size.width - inset - corner, inset)
-                                    lineTo(size.width - inset - 8.dp.toPx(), inset)
-                                    quadraticTo(size.width - inset, inset, size.width - inset, inset + 8.dp.toPx())
-                                    lineTo(size.width - inset, inset + corner)
-                                    moveTo(inset, size.height - inset - corner)
-                                    lineTo(inset, size.height - inset - 8.dp.toPx())
-                                    quadraticTo(inset, size.height - inset, inset + 8.dp.toPx(), size.height - inset)
-                                    lineTo(inset + corner, size.height - inset)
-                                    moveTo(size.width - inset - corner, size.height - inset)
-                                    lineTo(size.width - inset - 8.dp.toPx(), size.height - inset)
-                                    quadraticTo(size.width - inset, size.height - inset, size.width - inset, size.height - inset - 8.dp.toPx())
-                                    lineTo(size.width - inset, size.height - inset - corner)
-                                }
-                                drawPath(
-                                    path = path,
-                                    color = color,
-                                    style = androidx.compose.ui.graphics.drawscope.Stroke(
-                                        width = stroke,
-                                        cap = androidx.compose.ui.graphics.StrokeCap.Round
-                                    )
-                                )
-                            }
-                            Icon(
-                                imageVector = Icons.Default.Eco,
-                                contentDescription = null,
-                                tint = Color(0xFFC8F34A),
-                                modifier = Modifier.size(42.dp)
-                            )
-                        }
-                        Text(
-                            text = agroText("وجّه الكاميرا نحو الورقة المصابة"),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFFB9CDBD),
-                            maxLines = 1
-                        )
-                    }
-                }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Surface(
-                    onClick = onPickFromGallery,
-                    enabled = selectedImages.size < 3,
-                    modifier = Modifier.size(54.dp).testTag("gallery_pick_button"),
                     shape = CircleShape,
-                    color = Color(0xFF294333),
-                    border = BorderStroke(1.dp, Color(0xFF597360))
+                    color = Color(0xFF123D29)
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            Icons.Default.PhotoLibrary,
-                            contentDescription = agroText("اختيار من المعرض"),
-                            tint = Color(0xFFDCE9DB),
-                            modifier = Modifier.size(23.dp)
-                        )
-                    }
-                }
-                Button(
-                    onClick = if (selectedImages.isEmpty()) onCaptureCamera else onAnalyzeClick,
-                    enabled = !isLoading && selectedImages.size < 4,
-                    modifier = Modifier.weight(1f).height(54.dp)
-                        .testTag("camera_capture_button"),
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFC8F34A),
-                        contentColor = Color(0xFF172313)
-                    )
-                ) {
-                    Icon(
-                        if (selectedImages.isEmpty()) Icons.Default.CameraAlt else Icons.Default.AutoAwesome,
-                        contentDescription = null
-                    )
-                    Spacer(Modifier.width(8.dp))
                     Text(
-                        agroText(if (selectedImages.isEmpty()) "التقط صورة" else "ابدأ التشخيص"),
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1
+                        agroText("متصل"),
+                        color = Color(0xFF55D98A),
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(horizontal = 11.dp, vertical = 5.dp)
                     )
+                }
+            }
+
+            Text(
+                text = agroText("اسأل عن نباتاتك، الأمراض، الري أو التسميد."),
+                color = Color(0xFFB9CDBD),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(22.dp),
+                color = Color(0xFF202321),
+                border = BorderStroke(1.dp, Color(0xFF38443B))
+            ) {
+                Column(
+                    modifier = Modifier.padding(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedTextField(
+                        value = farmerNotes,
+                        onValueChange = onNotesChange,
+                        placeholder = {
+                            Text(
+                                agroText("اكتب سؤالك أو ملاحظتك عن النبات هنا..."),
+                                color = Color(0xFF9CA69F)
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("diagnosis_notes_input"),
+                        minLines = 2,
+                        maxLines = 4,
+                        shape = RoundedCornerShape(14.dp),
+                        colors = androidx.compose.material3.TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = Color(0xFFC8F34A)
+                        )
+                    )
+
+                    if (selectedImages.isNotEmpty()) {
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(selectedImages, key = { it.id }) { item ->
+                                Box(
+                                    modifier = Modifier
+                                        .size(width = 76.dp, height = 76.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                ) {
+                                    Image(
+                                        bitmap = item.bitmap.asImageBitmap(),
+                                        contentDescription = item.label,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                    Surface(
+                                        color = Color.Black.copy(alpha = 0.72f),
+                                        shape = CircleShape,
+                                        modifier = Modifier.align(Alignment.TopEnd).padding(3.dp)
+                                            .size(23.dp).clickable { onRemoveImage(item.id) }
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Icon(Icons.Default.Close, null, tint = Color.White,
+                                                modifier = Modifier.size(14.dp))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    HorizontalDivider(color = Color(0xFF3B443E))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Button(
+                            onClick = onAnalyzeClick,
+                            enabled = !isLoading && selectedImages.isNotEmpty(),
+                            modifier = Modifier.size(46.dp).testTag("analyze_plant_button"),
+                            shape = CircleShape,
+                            contentPadding = PaddingValues(0.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFC8F34A),
+                                contentColor = Color(0xFF172313)
+                            )
+                        ) {
+                            if (isLoading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(19.dp),
+                                    strokeWidth = 2.dp,
+                                    color = Color(0xFF172313)
+                                )
+                            } else {
+                                Icon(Icons.Default.AutoAwesome, contentDescription = agroText("تحليل وتشخيص الحالة"))
+                            }
+                        }
+
+                        Surface(
+                            onClick = onOpenLiveAssistant,
+                            modifier = Modifier.height(42.dp).testTag("open_agro_live_button"),
+                            shape = CircleShape,
+                            color = Color(0xFF185A3A)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(7.dp)
+                            ) {
+                                Text("Live", color = Color.White, fontWeight = FontWeight.SemiBold)
+                                Icon(Icons.Default.AutoAwesome, null, tint = Color(0xFFBDECCB),
+                                    modifier = Modifier.size(16.dp))
+                            }
+                        }
+
+                        Spacer(Modifier.weight(1f))
+
+                        IconButton(
+                            onClick = onCaptureCamera,
+                            enabled = !isLoading && selectedImages.size < 3,
+                            modifier = Modifier.testTag("camera_capture_button")
+                        ) {
+                            Icon(Icons.Default.CameraAlt, contentDescription = agroText("التقط صورة"),
+                                tint = Color(0xFFB9CDBD))
+                        }
+                        IconButton(
+                            onClick = onPickFromGallery,
+                            enabled = !isLoading && selectedImages.size < 3,
+                            modifier = Modifier.testTag("gallery_pick_button")
+                        ) {
+                            Icon(Icons.Default.PhotoLibrary, contentDescription = agroText("اختيار من المعرض"),
+                                tint = Color(0xFFB9CDBD))
+                        }
+                    }
                 }
             }
 
@@ -1044,108 +974,38 @@ private fun PlantCaptureCard(
                 Surface(
                     color = if (showRationale) semantic.warningContainer else semantic.dangerContainer,
                     shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("camera_permission_banner")
+                    modifier = Modifier.fillMaxWidth().testTag("camera_permission_banner")
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.CameraAlt,
-                            contentDescription = null,
-                            tint = if (showRationale) semantic.warning else semantic.danger
-                        )
+                        Icon(Icons.Default.CameraAlt, contentDescription = null,
+                            tint = if (showRationale) semantic.warning else semantic.danger)
                         Text(
-                            text = if (showRationale) {
-                                stringResource(R.string.camera_permission_rationale_body)
-                            } else {
-                                stringResource(R.string.camera_permission_denied_body)
-                            },
+                            text = if (showRationale) stringResource(R.string.camera_permission_rationale_body)
+                            else stringResource(R.string.camera_permission_denied_body),
                             style = MaterialTheme.typography.bodySmall,
                             color = if (showRationale) semantic.onWarningContainer else semantic.onDangerContainer,
                             modifier = Modifier.weight(1f)
                         )
                         TextButton(
                             onClick = {
-                                if (showRationale) {
-                                    onRequestCameraPermission()
-                                } else {
-                                    onOpenAppSettings()
-                                }
+                                if (showRationale) onRequestCameraPermission() else onOpenAppSettings()
                             },
-                            modifier = Modifier
-                                .height(48.dp)
-                                .testTag(
-                                    if (showRationale) {
-                                        "camera_permission_rationale_button"
-                                    } else {
-                                        "camera_permission_settings_button"
-                                    }
-                                )
+                            modifier = Modifier.testTag(
+                                if (showRationale) "camera_permission_rationale_button"
+                                else "camera_permission_settings_button"
+                            )
                         ) {
                             Text(
-                                text = if (showRationale) {
-                                    stringResource(R.string.camera_permission_grant_action)
-                                } else {
-                                    stringResource(R.string.camera_permission_open_settings)
-                                },
-                                fontWeight = FontWeight.Bold,
-                                color = if (showRationale) semantic.warning else semantic.danger
+                                if (showRationale) stringResource(R.string.camera_permission_grant_action)
+                                else stringResource(R.string.camera_permission_open_settings),
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
-                }
-            }
-
-            TextButton(
-                onClick = { showOptionalNotes = !showOptionalNotes },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(Icons.Default.Info, contentDescription = null)
-                Spacer(Modifier.width(6.dp))
-                Text(if (showOptionalNotes) "إخفاء الملاحظات الاختيارية" else "إضافة ملاحظات اختيارية")
-            }
-            AnimatedVisibility(visible = showOptionalNotes) {
-                OutlinedTextField(
-                    value = farmerNotes,
-                    onValueChange = onNotesChange,
-                    label = { Text(agroText("ملاحظات عن المحصول أو الرطوبة أو عمر النبات")) },
-                    placeholder = { Text(agroText("مثال: طماطم محمية، رطوبة صباحية مرتفعة...")) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("diagnosis_notes_input"),
-                    maxLines = 2
-                )
-            }
-
-            Button(
-                onClick = onAnalyzeClick,
-                enabled = !isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .testTag("analyze_plant_button"),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(20.dp)
-                            .testTag("analyze_button_spinner"),
-                        strokeWidth = 2.5.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                    Spacer(Modifier.width(10.dp))
-                    Text(agroText("جاري التحليل..."))
-                } else {
-                    Icon(Icons.Default.AutoAwesome, contentDescription = null)
-                    Spacer(Modifier.width(8.dp))
-                    Text(agroText("تحليل وتشخيص الحالة"))
                 }
             }
         }
