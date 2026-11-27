@@ -210,6 +210,7 @@ fun AgriProApp() {
     val scope = rememberCoroutineScope()
     var showReminders by remember { mutableStateOf(false) }
     var showCalendar by remember { mutableStateOf(false) }
+    var showSettings by remember { mutableStateOf(false) }
     var showSplash by remember { mutableStateOf(true) }
 
     val themePrefsRepo = remember { ThemePreferencesRepository(context) }
@@ -351,6 +352,18 @@ fun AgriProApp() {
                                             showCalendar = true
                                         }
                                     }
+                                )
+                                NavigationDrawerItem(
+                                    label = { Text(stringResource(R.string.settings_title)) },
+                                    selected = false,
+                                    icon = { Icon(Icons.Default.DarkMode, contentDescription = null) },
+                                    onClick = {
+                                        scope.launch {
+                                            drawerState.close()
+                                            showSettings = true
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                                 NavigationDrawerItem(
                                     label = { Text("التنبيهات والتذكيرات") },
@@ -645,6 +658,17 @@ fun AgriProApp() {
                 }
                 if (showCalendar) {
                     AgriCalendarDialog(onDismiss = { showCalendar = false })
+                }
+                if (showSettings) {
+                    AgroProSettingsDialog(
+                        themePreference = themePref,
+                        onThemeChange = { themePrefsRepo.setThemePreference(it) },
+                        onLanguageChange = { language ->
+                            com.example.LocaleHelper.setLocale(context, language)
+                            (context as? Activity)?.recreate()
+                        },
+                        onDismiss = { showSettings = false }
+                    )
                 }
                 }
                 if (showSplash) {
