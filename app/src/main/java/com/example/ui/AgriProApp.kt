@@ -851,18 +851,57 @@ private fun LiquidGlassNavigationBar(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Icon(
-                            imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,
-                            contentDescription = label,
-                            tint = contentColor,
+                        Box(
                             modifier = Modifier
-                                .size(22.dp)
-                                .graphicsLayer {
-                                    scaleX = scale
-                                    scaleY = scale
-                                    rotationZ = iconRotation
-                                }
-                        )
+                                .size(if (selected) 34.dp else 30.dp)
+                                .shadow(
+                                    elevation = if (selected) 5.dp else 0.dp,
+                                    shape = CircleShape,
+                                    ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.22f),
+                                    spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
+                                )
+                                .clip(CircleShape)
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = if (selected) {
+                                            listOf(
+                                                Color.White.copy(alpha = if (useDarkTheme) 0.20f else 0.72f),
+                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.22f),
+                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)
+                                            )
+                                        } else {
+                                            listOf(
+                                                Color.White.copy(alpha = if (useDarkTheme) 0.055f else 0.38f),
+                                                MaterialTheme.colorScheme.surface.copy(alpha = 0.10f)
+                                            )
+                                        }
+                                    )
+                                )
+                                .border(
+                                    width = 0.8.dp,
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.White.copy(alpha = if (selected) 0.48f else 0.16f),
+                                            MaterialTheme.colorScheme.primary.copy(alpha = if (selected) 0.28f else 0.08f)
+                                        )
+                                    ),
+                                    shape = CircleShape
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,
+                                contentDescription = label,
+                                tint = contentColor,
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .graphicsLayer {
+                                        scaleX = scale
+                                        scaleY = scale
+                                        rotationZ = iconRotation
+                                    }
+                            )
+                        }
                         if (selected) {
                             Text(
                                 text = label,
@@ -899,15 +938,44 @@ private fun ColorOsIconButton(
     )
     IconButton(
         onClick = onClick,
-        modifier = modifier.graphicsLayer {
-            scaleX = scale
-            scaleY = scale
-        },
+        modifier = modifier
+            .size(46.dp)
+            .shadow(
+                elevation = 4.dp,
+                shape = RoundedCornerShape(16.dp),
+                ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.16f),
+                spotColor = Color.Black.copy(alpha = 0.12f)
+            )
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.16f),
+                        MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.58f),
+                        MaterialTheme.colorScheme.surface.copy(alpha = 0.34f)
+                    )
+                )
+            )
+            .border(
+                width = 0.9.dp,
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.38f),
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                    )
+                ),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            },
         interactionSource = interactionSource
     ) {
         Icon(
             imageVector = imageVector,
-            contentDescription = contentDescription
+            contentDescription = contentDescription,
+            tint = MaterialTheme.colorScheme.primary
         )
     }
 }
