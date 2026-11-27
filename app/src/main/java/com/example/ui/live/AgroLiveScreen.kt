@@ -64,9 +64,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -283,28 +285,10 @@ fun AgroLiveScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = Color(0xFF9BE0B0))
                 }
 
-                Surface(
-                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 14.dp),
-                    shape = RoundedCornerShape(50),
-                    color = Color(0xE609160F),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF8ACBA0).copy(alpha = 0.45f))
-                ) {
-                    Row(
-                        modifier = Modifier.padding(start = 8.dp, end = 16.dp, top = 7.dp, bottom = 7.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        LiveAssistantOrb(active = state.connected && state.microphoneEnabled)
-                        Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                            Text("AGRO AI", color = Color(0xFFE4F8EA), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
-                            Text(
-                                if (state.connected && state.microphoneEnabled) "المساعد يستمع" else "مساعدك الذكي",
-                                color = Color(0xFFA8CDB5),
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        }
-                    }
-                }
+                LiveAssistantOrb(
+                    active = state.connected && state.microphoneEnabled,
+                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp)
+                )
             }
         }
 
@@ -389,44 +373,79 @@ private fun LiveAssistantOrb(
     active: Boolean
 ) {
     val transition = rememberInfiniteTransition(label = "live_orb")
-    val pulse = transition.animateFloat(
-        initialValue = 0.94f,
-        targetValue = 1.08f,
+    val ripple = transition.animateFloat(
+        initialValue = 0.18f,
+        targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1250),
+            animation = tween(durationMillis = if (active) 1800 else 2600),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "live_orb_ripple"
+    )
+    val breathe = transition.animateFloat(
+        initialValue = 0.96f,
+        targetValue = 1.045f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1500),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "live_orb_pulse"
+        label = "live_orb_breathe"
     )
-    Surface(
-        modifier = modifier.size(68.dp).graphicsLayer {
-            scaleX = if (active) pulse.value else 1f
-            scaleY = if (active) pulse.value else 1f
-        },
-        shape = CircleShape,
-        color = Color(0xD9153023),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            Color(0xFF9BE0B0).copy(alpha = 0.72f)
-        ),
-        shadowElevation = 12.dp
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.radialGradient(
-                        listOf(Color(0xFF4CA66B), Color(0xFF173D2A), Color(0xFF0B1C13))
+
+    Box(
+        modifier = modifier
+            .size(92.dp)
+            .graphicsLayer {
+                scaleX = breathe.value
+                scaleY = breathe.value
+            }
+            .drawBehind {
+                val baseRadius = size.minDimension * 0.34f
+                val progress = ripple.value
+                for (ring in 0..2) {
+                    val phase = (progress + ring / 3f) % 1f
+                    val radius = baseRadius * (1.05f + phase * 1.05f)
+                    val alpha = (1f - phase) * if (active) 0.48f else 0.25f
+                    drawCircle(
+                        color = Color(0xFF82E6A4).copy(alpha = alpha),
+                        radius = radius,
+                        style = Stroke(width = 1.6.dp.toPx())
                     )
-                ),
-            contentAlignment = Alignment.Center
+                }
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Surface(
+            modifier = Modifier.size(62.dp),
+            shape = CircleShape,
+            color = Color(0xFF173D2A),
+            border = androidx.compose.foundation.BorderStroke(
+                1.5.dp,
+                Color(0xFFB4F3C6).copy(alpha = 0.85f)
+            ),
+            shadowElevation = 18.dp
         ) {
-            Icon(
-                Icons.Default.AutoAwesome,
-                contentDescription = "AgroPro AI",
-                tint = Color(0xFFE0F8E8),
-                modifier = Modifier.size(30.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.radialGradient(
+                            listOf(
+                                Color(0xFF83E6A0),
+                                Color(0xFF32965B),
+                                Color(0xFF123321)
+                            )
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    Icons.Default.AutoAwesome,
+                    contentDescription = "AgroPro AI",
+                    tint = Color.White,
+                    modifier = Modifier.size(29.dp)
+                )
+            }
         }
     }
 }
