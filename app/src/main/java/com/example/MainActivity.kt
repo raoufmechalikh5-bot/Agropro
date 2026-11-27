@@ -44,8 +44,8 @@ class MainActivity : ComponentActivity() {
                 val writer = StringWriter()
                 error.printStackTrace(PrintWriter(writer))
                 File(filesDir, crashReportName).writeText(
-                    "AgroPro crash report\\nThread: ${thread.name}\\n" +
-                        "Time: ${System.currentTimeMillis()}\\n\\n" + writer.toString()
+                    "AgroPro crash report\nThread: ${thread.name}\n" +
+                        "Time: ${System.currentTimeMillis()}\n\n" + writer.toString()
                 )
             } catch (_: Throwable) {
                 // Preserve the original crash even if writing the diagnostic report fails.
