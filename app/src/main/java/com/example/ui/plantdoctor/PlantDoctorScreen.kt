@@ -272,33 +272,10 @@ fun PlantDoctorScreen(
         )
     }
 
-    MaterialTheme(
-        colorScheme = androidx.compose.material3.darkColorScheme(
-            primary = Color(0xFFC8F34A),
-            onPrimary = Color(0xFF172313),
-            primaryContainer = Color(0xFF344D25),
-            onPrimaryContainer = Color(0xFFE4F6B7),
-            secondary = Color(0xFF9CCB83),
-            onSecondary = Color(0xFF142619),
-            secondaryContainer = Color(0xFF294432),
-            onSecondaryContainer = Color(0xFFD8EBD8),
-            background = Color(0xFF081A12),
-            onBackground = Color(0xFFEAF4E9),
-            surface = Color(0xFF14291F),
-            onSurface = Color(0xFFEAF4E9),
-            surfaceVariant = Color(0xFF20382B),
-            onSurfaceVariant = Color(0xFFB9CDBD),
-            surfaceContainerLowest = Color(0xFF07160F),
-            surfaceContainerLow = Color(0xFF172F22),
-            surfaceContainer = Color(0xFF1B3527),
-            surfaceContainerHigh = Color(0xFF254331),
-            outline = Color(0xFF607A65),
-            outlineVariant = Color(0xFF344E3B)
-        )
-    ) {
+    MaterialTheme(colorScheme = MaterialTheme.colorScheme) {
     Box(
         modifier = modifier.fillMaxSize().background(
-            Brush.verticalGradient(listOf(Color(0xFF0B2116), Color(0xFF06160F)))
+            MaterialTheme.colorScheme.background
         ),
         contentAlignment = Alignment.TopCenter
     ) {
@@ -617,7 +594,7 @@ private fun DashboardWelcomeHeader() {
             agroText("افحص نباتك"),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFFEAF4E9)
+            color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             agroText("بالذكاء الاصطناعي"),
@@ -757,7 +734,7 @@ private fun PlantCaptureCard(
 ) {
     ElevatedCard(
         shape = RoundedCornerShape(28.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFF10251B)),
+        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
         modifier = Modifier.fillMaxWidth().testTag("plant_capture_card")
     ) {
@@ -779,17 +756,17 @@ private fun PlantCaptureCard(
                 Text(
                     text = agroText("مساعد AgroPro الذكي"),
                     modifier = Modifier.weight(1f),
-                    color = Color(0xFFF2F7F1),
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Surface(
                     shape = CircleShape,
-                    color = Color(0xFF123D29)
+                    color = MaterialTheme.colorScheme.secondaryContainer
                 ) {
                     Text(
                         agroText("متصل"),
-                        color = Color(0xFF55D98A),
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.padding(horizontal = 11.dp, vertical = 5.dp)
                     )
@@ -798,7 +775,7 @@ private fun PlantCaptureCard(
 
             Text(
                 text = agroText("اسأل عن نباتاتك، الأمراض، الري أو التسميد."),
-                color = Color(0xFFB9CDBD),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -806,8 +783,8 @@ private fun PlantCaptureCard(
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(22.dp),
-                color = Color(0xFF202321),
-                border = BorderStroke(1.dp, Color(0xFF38443B))
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
             ) {
                 Column(
                     modifier = Modifier.padding(14.dp),
@@ -819,7 +796,7 @@ private fun PlantCaptureCard(
                         placeholder = {
                             Text(
                                 agroText("اكتب سؤالك أو ملاحظتك عن النبات هنا..."),
-                                color = Color(0xFF9CA69F)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         },
                         modifier = Modifier
@@ -834,7 +811,7 @@ private fun PlantCaptureCard(
                             disabledContainerColor = Color.Transparent,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
-                            cursorColor = Color(0xFFC8F34A)
+                            cursorColor = MaterialTheme.colorScheme.primary
                         )
                     )
 
@@ -868,7 +845,7 @@ private fun PlantCaptureCard(
                         }
                     }
 
-                    HorizontalDivider(color = Color(0xFF3B443E))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
