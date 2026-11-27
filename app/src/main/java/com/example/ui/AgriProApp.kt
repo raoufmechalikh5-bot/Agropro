@@ -685,7 +685,16 @@ private fun AgroBottomNavigationBar(
             .navigationBarsPadding()
             .padding(horizontal = 14.dp, vertical = 8.dp)
             .height(78.dp)
-            .hazeEffect(state = hazeState),
+            .hazeEffect(
+                state = hazeState,
+                style = HazeStyle(
+                    backgroundColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.78f),
+                    blurRadius = 20.dp,
+                    tints = emptyList(),
+                    noiseFactor = 0f,
+                    fallbackTint = HazeTint(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.78f))
+                )
+            ),
         shape = barShape,
         color = MaterialTheme.colorScheme.surfaceContainer,
         tonalElevation = 3.dp,
