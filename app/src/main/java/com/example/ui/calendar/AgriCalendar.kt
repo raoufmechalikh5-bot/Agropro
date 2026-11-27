@@ -160,6 +160,7 @@ private fun calendarTranslation(text: String, language: String): String {
         "اختر المحصول والشهر لعرض الأعمال المناسبة" to ("Choisissez une culture et un mois pour afficher les travaux adaptés" to "Choose a crop and month to view recommended tasks"),
         "اختر المحصول" to ("Choisir la culture" to "Choose crop"),
         "اختر الشهر" to ("Choisir le mois" to "Choose month"),
+        "متابعة الإنبات" to ("Surveiller la levée" to "Monitor emergence"),
         "التقويم الزراعي" to ("Calendrier agricole" to "Agricultural calendar"),
         "إغلاق" to ("Fermer" to "Close"),
         "إرشادات عامة للمناطق المتوسطية في شمال الجزائر، وتختلف حسب المنطقة والصنف والطقس. راجع مهندساً زراعياً قبل التنفيذ." to ("Conseils généraux pour les régions méditerranéennes du nord de l’Algérie. Ils varient selon la région, la variété et la météo. Consultez un agronome avant application." to "General guidance for Mediterranean areas of northern Algeria. Tasks vary by region, variety and weather. Consult an agronomist before carrying them out.")
@@ -341,7 +342,7 @@ fun AgriCalendarDialog(onDismiss: () -> Unit) {
                         ) {
                             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                                 Text(calendarTranslation(crop.name, language), style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
-                                Text(MONTH_NAMES[month], style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(calendarTranslation(MONTH_NAMES[month], language), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                             Text(
                                 text = "${crop.months[month].size} ${if (language == "fr") "tâches" else if (language == "en") "tasks" else "مهام"}",
