@@ -177,7 +177,7 @@ fun AgroLiveScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color(0xFF071A0D), Color(0xFF0B3D20), Color(0xFF071A0D))
+                    listOf(Color(0xFF0C1510), Color(0xFF183D2A), Color(0xFF0C1510))
                 )
             )
             .padding(horizontal = 16.dp, vertical = 10.dp),
@@ -189,12 +189,12 @@ fun AgroLiveScreen(
         ) {
             Surface(
                 shape = RoundedCornerShape(16.dp),
-                color = Color(0xFF164023),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFB8F52A).copy(alpha = 0.35f)),
+                color = Color(0xFF294332),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF9BCB78).copy(alpha = 0.35f)),
                 modifier = Modifier.size(46.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color(0xFFB8F52A), modifier = Modifier.size(24.dp))
+                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color(0xFF9BCB78), modifier = Modifier.size(24.dp))
                 }
             }
             Column(modifier = Modifier.weight(1f).padding(start = 11.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -203,11 +203,11 @@ fun AgroLiveScreen(
             }
             Surface(
                 shape = RoundedCornerShape(50),
-                color = Color(0xFF164023),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF39E58C).copy(alpha = 0.5f))
+                color = Color(0xFF294332),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF75C5A5).copy(alpha = 0.5f))
             ) {
                 Row(Modifier.padding(horizontal = 10.dp, vertical = 7.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Box(Modifier.size(7.dp).clip(CircleShape).background(if (state.connected) Color(0xFF39E58C) else Color(0xFFFFC46B)))
+                    Box(Modifier.size(7.dp).clip(CircleShape).background(if (state.connected) Color(0xFF75C5A5) else Color(0xFFFFC46B)))
                     Text(if (state.connected) "LIVE" else if (state.connecting) "CONNECTING" else "READY", color = Color(0xFFF0FFD0), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
                 }
             }
@@ -240,7 +240,7 @@ fun AgroLiveScreen(
                 } else {
                     Box(
                         modifier = Modifier.fillMaxSize().background(
-                            Brush.radialGradient(listOf(Color(0xFF16A34A), Color(0xFF0B3D20), Color(0xFF071A0D)))
+                            Brush.radialGradient(listOf(Color(0xFF397A50), Color(0xFF183D2A), Color(0xFF0C1510)))
                         ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -407,7 +407,7 @@ private fun LiveAssistantOrb(
                     val radius = baseRadius * (1.05f + phase * 1.05f)
                     val alpha = (1f - phase) * if (active) 0.48f else 0.25f
                     drawCircle(
-                        color = Color(0xFF82E6A4).copy(alpha = alpha),
+                        color = Color(0xFF8CCAA0).copy(alpha = alpha),
                         radius = radius,
                         style = Stroke(width = 1.6.dp.toPx())
                     )
@@ -431,9 +431,9 @@ private fun LiveAssistantOrb(
                     .background(
                         Brush.radialGradient(
                             listOf(
-                                Color(0xFF83E6A0),
-                                Color(0xFF32965B),
-                                Color(0xFF123321)
+                                Color(0xFF8CCB9A),
+                                Color(0xFF397A50),
+                                Color(0xFF17251B)
                             )
                         )
                     ),
@@ -464,7 +464,7 @@ private fun ControlButton(
         enabled = enabled,
         modifier = modifier.height(72.dp),
         shape = RoundedCornerShape(20.dp),
-        color = if (active) Color(0xFF16A34A) else Color(0xFF12351D),
+        color = if (active) Color(0xFF397A50) else Color(0xFF1C2D21),
         contentColor = Color.White,
         tonalElevation = 4.dp
     ) {
