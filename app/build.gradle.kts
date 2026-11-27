@@ -19,6 +19,7 @@ android {
     versionCode = 1
     versionName = "1.0"
     buildConfigField("String", "GEMINI_API_KEY", "\"${System.getenv("GEMINI_API_KEY") ?: ""}\"")
+    buildConfigField("String", "FIREBASE_APPCHECK_DEBUG_TOKEN", "\"${System.getenv("FIREBASE_APPCHECK_DEBUG_TOKEN") ?: ""}\"")
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
