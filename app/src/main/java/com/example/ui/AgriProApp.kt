@@ -685,23 +685,39 @@ private fun AgroBottomNavigationBar(
             .navigationBarsPadding()
             .padding(horizontal = 14.dp, vertical = 8.dp)
             .height(78.dp)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.18f),
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
+                        MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.20f)
+                    )
+                ),
+                shape = barShape
+            )
             .hazeEffect(
                 state = hazeState,
                 style = HazeStyle(
-                    backgroundColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.78f),
-                    blurRadius = 20.dp,
+                    backgroundColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.30f),
+                    blurRadius = 28.dp,
                     tints = emptyList(),
                     noiseFactor = 0f,
-                    fallbackTint = HazeTint(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.78f))
+                    fallbackTint = HazeTint(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.76f))
                 )
             ),
         shape = barShape,
-        color = MaterialTheme.colorScheme.surfaceContainer,
-        tonalElevation = 3.dp,
-        shadowElevation = 5.dp,
+        color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.34f),
+        tonalElevation = 0.dp,
+        shadowElevation = 8.dp,
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
+            Brush.verticalGradient(
+                colors = listOf(
+                    Color.White.copy(alpha = 0.42f),
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.24f),
+                    Color.White.copy(alpha = 0.12f)
+                )
+            )
         )
     ) {
         Row(
