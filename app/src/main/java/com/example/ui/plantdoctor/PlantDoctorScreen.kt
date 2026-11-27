@@ -285,7 +285,7 @@ item {
                 ) {
                     val diagnosisSelected = !isFlashcardMode
                     Surface(
-                        modifier = Modifier.weight(1f).height(62.dp).clip(RoundedCornerShape(22.dp))
+                        modifier = Modifier.weight(1f).height(84.dp).clip(RoundedCornerShape(22.dp))
                             .clickable { viewModel.setFlashcardMode(false) }
                             .testTag("tab_ai_diagnosis"),
                         color = if (diagnosisSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
@@ -303,14 +303,14 @@ item {
                             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                                 Text("التشخيص الذكي", fontWeight = FontWeight.Bold,
                                     color = if (diagnosisSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                    style = MaterialTheme.typography.titleSmall)
+                                    style = MaterialTheme.typography.titleSmall, maxLines = 2)
                                 Text("افحص صحة نباتك", color = if (diagnosisSelected) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f) else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.labelSmall)
+                                    style = MaterialTheme.typography.labelSmall, maxLines = 2)
                             }
                         }
                     }
                     Surface(
-                        modifier = Modifier.weight(1f).height(76.dp).clip(RoundedCornerShape(22.dp))
+                        modifier = Modifier.weight(1f).height(84.dp).clip(RoundedCornerShape(22.dp))
                             .clickable { viewModel.setFlashcardMode(true) }
                             .testTag("tab_student_flashcards"),
                         color = if (isFlashcardMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
@@ -343,7 +343,7 @@ item {
                         onClick = onOpenLiveAssistant,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(68.dp)
+                            .height(84.dp)
                             .testTag("open_agro_live_button"),
                         shape = RoundedCornerShape(24.dp),
                         color = Color.Transparent,
@@ -386,7 +386,7 @@ item {
                                     Text("AgroPro Live", color = Color.White, fontWeight = FontWeight.Bold,
                                         style = MaterialTheme.typography.titleMedium)
                                     Text("محادثة مباشرة بالصوت والكاميرا", color = Color(0xFFD0EBDD),
-                                        style = MaterialTheme.typography.labelMedium)
+                                        style = MaterialTheme.typography.labelMedium, maxLines = 2)
                                 }
                                 Surface(shape = CircleShape, color = Color(0xFF65D995).copy(alpha = 0.18f)) {
                                     Row(
