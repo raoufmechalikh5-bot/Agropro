@@ -990,11 +990,6 @@ private fun PlantCaptureCard(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            Text(
-                                text = "${selectedImages.size} / 3 ${agroText("صور")}",
-                                color = Color(0xFF9DB5A2),
-                                style = MaterialTheme.typography.labelSmall
-                            )
                             repeat(3) { index ->
                                 Box(
                                     Modifier.size(7.dp).clip(CircleShape).background(
