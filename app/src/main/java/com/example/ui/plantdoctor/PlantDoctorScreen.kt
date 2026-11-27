@@ -832,18 +832,6 @@ private fun PlantCaptureCard(
                         maxLines = 1
                     )
                 }
-                Surface(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(50)
-                ) {
-                    Text(
-                        text = "${selectedImages.size}/3",
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.padding(horizontal = 11.dp, vertical = 7.dp)
-                    )
-                }
             }
 
             if (selectedImages.isNotEmpty()) {
