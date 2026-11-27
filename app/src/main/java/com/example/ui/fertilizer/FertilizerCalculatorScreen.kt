@@ -115,8 +115,8 @@ fun FertilizerCalculatorScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .widthIn(max = 760.dp),
-            contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 120.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            contentPadding = PaddingValues(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 120.dp),
+            verticalArrangement = Arrangement.spacedBy(13.dp)
         ) {
                      item {
                 WeatherContextBanner(mode = WeatherContextMode.FERTILIZER)
@@ -526,11 +526,11 @@ private fun NpkRecommendationCard(
 ) {
     val semantic = AgriTheme.semantic
     Card(
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.22f)),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.32f)),
         modifier = Modifier
             .fillMaxWidth()
             .testTag("fertilizer_npk_result_card")
