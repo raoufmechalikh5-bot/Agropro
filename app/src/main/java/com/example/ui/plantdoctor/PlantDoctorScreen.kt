@@ -338,34 +338,66 @@ item {
 
             if (!isFlashcardMode) {
                 item {
-                    Button(
+                    Surface(
                         onClick = onOpenLiveAssistant,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(68.dp)
+                            .height(82.dp)
                             .testTag("open_agro_live_button"),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-                        )
+                        shape = RoundedCornerShape(24.dp),
+                        color = Color.Transparent,
+                        border = BorderStroke(1.dp, Color(0xFF83D9A2).copy(alpha = 0.42f)),
+                        shadowElevation = 8.dp
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AutoAwesome,
-                                contentDescription = null,
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                Text("AgroPro Live", fontWeight = FontWeight.Bold)
-                                Text(
-                                    "تحدث مع المساعد مباشرة بالصوت والكاميرا",
-                                    style = MaterialTheme.typography.labelSmall
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    Brush.horizontalGradient(
+                                        listOf(Color(0xFF123D2B), Color(0xFF216B45), Color(0xFF123D2B))
+                                    )
                                 )
+                                .padding(horizontal = 17.dp, vertical = 11.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(13.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .clip(CircleShape)
+                                        .background(Color.White.copy(alpha = 0.14f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.AutoAwesome,
+                                        contentDescription = null,
+                                        tint = Color(0xFFB9F4CB),
+                                        modifier = Modifier.size(27.dp)
+                                    )
+                                }
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                                ) {
+                                    Text("AgroPro Live", color = Color.White, fontWeight = FontWeight.Bold,
+                                        style = MaterialTheme.typography.titleMedium)
+                                    Text("محادثة مباشرة بالصوت والكاميرا", color = Color(0xFFD0EBDD),
+                                        style = MaterialTheme.typography.labelMedium)
+                                }
+                                Surface(shape = CircleShape, color = Color(0xFF65D995).copy(alpha = 0.18f)) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        Box(Modifier.size(7.dp).clip(CircleShape).background(Color(0xFF73E6A0)))
+                                        Text("LIVE", color = Color(0xFFB9F4CB), style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold)
+                                    }
+                                }
                             }
                         }
                     }
