@@ -345,15 +345,15 @@ fun AgriWeatherCard(
         modifier = modifier
             .fillMaxWidth()
             .clickable { if (weatherData != null) isExpanded = !isExpanded },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(24.dp),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
-        tonalElevation = 1.dp
+        tonalElevation = 2.dp
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+                .padding(horizontal = 14.dp, vertical = 11.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // الشريط العلوي المدمج (سطر واحد فقط)
             Row(
@@ -449,7 +449,7 @@ fun AgriWeatherCard(
                 }
 
                 Surface(
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(14.dp),
                     color = badgeBg,
                     modifier = Modifier.fillMaxWidth()
                 ) {
