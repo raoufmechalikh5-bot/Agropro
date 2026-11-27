@@ -165,8 +165,8 @@ fun NotebookScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .widthIn(max = 760.dp),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 92.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 92.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 item {
                     AgriPageHero(
@@ -463,7 +463,7 @@ private fun ExperimentSummaryCard(
         SimpleDateFormat("yyyy/MM/dd", Locale.US).format(Date(experiment.startDateMillis))
     }
     ElevatedCard(
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(26.dp),
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
