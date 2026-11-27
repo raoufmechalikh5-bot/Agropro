@@ -59,6 +59,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Science
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Biotech
 import androidx.compose.material.icons.outlined.Calculate
 import androidx.compose.material.icons.outlined.Grass
@@ -269,7 +270,7 @@ fun AgriProApp() {
         factory = NotebookViewModel.Factory(experimentRepo)
     )
 
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+    CompositionLocalProvider(LocalLayoutDirection provides if (com.example.LocaleHelper.getLanguage(context) == "ar") LayoutDirection.Rtl else LayoutDirection.Ltr) {
         AgriProTheme(darkTheme = useDarkTheme) {
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -356,7 +357,7 @@ fun AgriProApp() {
                                 NavigationDrawerItem(
                                     label = { Text(stringResource(R.string.settings_title)) },
                                     selected = false,
-                                    icon = { Icon(Icons.Default.DarkMode, contentDescription = null) },
+                                    icon = { Icon(Icons.Default.Settings, contentDescription = null) },
                                     onClick = {
                                         scope.launch {
                                             drawerState.close()
