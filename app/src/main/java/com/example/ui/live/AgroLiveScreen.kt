@@ -1,6 +1,7 @@
 package com.example.ui.live
 
 import android.Manifest
+import android.os.Build
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -85,8 +86,19 @@ fun AgroLiveScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val state by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(state) {
+        if (state.connected || state.connecting) {
+            AgroLiveNotification.show(context, state)
+        } else {
+            AgroLiveNotification.dismiss(context)
+        }
+    }
+
     DisposableEffect(viewModel) {
-        onDispose { viewModel.endSession() }
+        onDispose {
+            AgroLiveNotification.dismiss(context)
+            viewModel.endSession()
+        }
     }
 
     val microphonePermission = rememberLauncherForActivityResult(
@@ -97,6 +109,15 @@ fun AgroLiveScreen(
             else viewModel.connect()
         }
     }
+    val requestMicOrConnect: () -> Unit = {
+        if (context.hasPermission(Manifest.permission.RECORD_AUDIO)) viewModel.connect()
+        else microphonePermission.launch(Manifest.permission.RECORD_AUDIO)
+    }
+    val notificationPermission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        requestMicOrConnect()
+    }
     val cameraPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -104,10 +125,13 @@ fun AgroLiveScreen(
     }
 
     LaunchedEffect(Unit) {
-        if (context.hasPermission(Manifest.permission.RECORD_AUDIO)) {
-            viewModel.connect()
+        if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            !context.hasPermission(Manifest.permission.POST_NOTIFICATIONS)
+        ) {
+            notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         } else {
-            microphonePermission.launch(Manifest.permission.RECORD_AUDIO)
+            requestMicOrConnect()
         }
     }
 
