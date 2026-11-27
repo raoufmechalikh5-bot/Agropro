@@ -44,9 +44,9 @@ fun AgriPageHero(
             .background(
                 Brush.linearGradient(
                     colors = listOf(
-                        androidx.compose.ui.graphics.Color(0xFF0B3D20),
-                        androidx.compose.ui.graphics.Color(0xFF16A34A),
-                        androidx.compose.ui.graphics.Color(0xFF0B2413)
+                        androidx.compose.ui.graphics.Color(0xFF183D2A),
+                        androidx.compose.ui.graphics.Color(0xFF397A50),
+                        androidx.compose.ui.graphics.Color(0xFF101B14)
                     )
                 )
             )
@@ -60,7 +60,7 @@ fun AgriPageHero(
             Text(
                 text = eyebrow,
                 style = MaterialTheme.typography.labelMedium,
-                color = androidx.compose.ui.graphics.Color(0xFFB8F52A),
+                color = androidx.compose.ui.graphics.Color(0xFF9BCB78),
                 fontWeight = FontWeight.SemiBold
             )
             Text(
@@ -77,7 +77,7 @@ fun AgriPageHero(
         }
         Spacer(Modifier.width(12.dp))
         Surface(
-            color = androidx.compose.ui.graphics.Color(0xFFB8F52A).copy(alpha = 0.18f),
+            color = androidx.compose.ui.graphics.Color(0xFF9BCB78).copy(alpha = 0.18f),
             shape = CircleShape,
             modifier = Modifier.size(54.dp)
         ) {
@@ -85,7 +85,7 @@ fun AgriPageHero(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = androidx.compose.ui.graphics.Color(0xFFB8F52A),
+                    tint = androidx.compose.ui.graphics.Color(0xFF9BCB78),
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -97,13 +97,13 @@ fun AgriPageHero(
 fun Modifier.agriAmbientBackground(): Modifier {
     val scheme = MaterialTheme.colorScheme
     val top = if (scheme.background.red < 0.2f) {
-        androidx.compose.ui.graphics.Color(0xFF0B2413)
+        androidx.compose.ui.graphics.Color(0xFF101B14)
     } else {
         androidx.compose.ui.graphics.Color(0xFFE5EFE3)
     }
     val middle = scheme.background
     val bottom = if (scheme.background.red < 0.2f) {
-        androidx.compose.ui.graphics.Color(0xFF071A0D)
+        androidx.compose.ui.graphics.Color(0xFF0C1510)
     } else {
         androidx.compose.ui.graphics.Color(0xFFF5F7F0)
     }
