@@ -543,8 +543,7 @@ private fun AgrochemicalCard(
                     text = item.commercialName,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
-                    maxLines = if (isExpanded) 2 else 1,
-                    overflow = TextOverflow.Ellipsis,
+                    maxLines = if (isExpanded) 3 else 2,
                     modifier = Modifier.weight(1f)
                 )
                 Spacer(Modifier.width(8.dp))
@@ -593,8 +592,7 @@ private fun AgrochemicalCard(
                 Text(
                     text = "الآفات المستهدفة: ${item.targetPests}",
                     style = MaterialTheme.typography.bodySmall,
-                    maxLines = if (isExpanded) 6 else 2,
-                    overflow = TextOverflow.Ellipsis
+                    maxLines = if (isExpanded) 8 else 3
                 )
             }
 
