@@ -1,5 +1,6 @@
 package com.example.ui.calculator
 
+import com.example.ui.agroText
 import com.example.ui.components.ExpandableSuggestions
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -128,7 +129,7 @@ fun CalculatorScreen(
                             contentDescription = null
                         )
                         Spacer(Modifier.width(8.dp))
-                        Text("فتح حاسبة نسب NPK السريعة حسب المحصول والمساحة")
+                        Text(agroText("فتح حاسبة نسب NPK السريعة حسب المحصول والمساحة"))
                     }
                 }
             }
@@ -137,7 +138,7 @@ fun CalculatorScreen(
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "نماذج تربة متوسطية جاهزة:",
+                        text = agroText("نماذج تربة متوسطية جاهزة:"),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -147,7 +148,7 @@ fun CalculatorScreen(
                                 onClick = {
                                     viewModel.applySoilPreset("22", "12", "130", 7.9f, "2.4", ClimateZone.SEMI_ARID)
                                 },
-                                label = { Text("تربة كلسية شبه جافة") },
+                                label = { Text(agroText("تربة كلسية شبه جافة")) },
                                 modifier = Modifier.testTag("preset_calcareous_soil")
                             )
                         }
@@ -156,7 +157,7 @@ fun CalculatorScreen(
                                 onClick = {
                                     viewModel.applySoilPreset("40", "24", "185", 6.8f, "1.1", ClimateZone.COASTAL)
                                 },
-                                label = { Text("تربة ساحلية خصبة") },
+                                label = { Text(agroText("تربة ساحلية خصبة")) },
                                 modifier = Modifier.testTag("preset_coastal_soil")
                             )
                         }
@@ -165,7 +166,7 @@ fun CalculatorScreen(
                                 onClick = {
                                     viewModel.applySoilPreset("15", "10", "110", 8.2f, "5.2", ClimateZone.ARID_OASIS)
                                 },
-                                label = { Text("تربة واحات مالحة") },
+                                label = { Text(agroText("تربة واحات مالحة")) },
                                 modifier = Modifier.testTag("preset_oasis_soil")
                             )
                         }
@@ -196,7 +197,7 @@ fun CalculatorScreen(
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Text(
-                                text = "بيانات المحصول والمساحة",
+                                text = agroText("بيانات المحصول والمساحة"),
                                 style = MaterialTheme.typography.titleMedium
                             )
                         }
@@ -210,7 +211,7 @@ fun CalculatorScreen(
                                 value = state.selectedCrop.titleAr,
                                 onValueChange = {},
                                 readOnly = true,
-                                label = { Text("نوع المحصول") },
+                                label = { Text(agroText("نوع المحصول")) },
                                 trailingIcon = {
                                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = cropExpanded)
                                 },
@@ -244,7 +245,7 @@ fun CalculatorScreen(
                                 value = state.selectedStage.titleAr,
                                 onValueChange = {},
                                 readOnly = true,
-                                label = { Text("المرحلة الفينولوجية للنمو") },
+                                label = { Text(agroText("المرحلة الفينولوجية للنمو")) },
                                 trailingIcon = {
                                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = stageExpanded)
                                 },
@@ -277,7 +278,7 @@ fun CalculatorScreen(
                             OutlinedTextField(
                                 value = state.areaInput,
                                 onValueChange = viewModel::updateAreaInput,
-                                label = { Text("المساحة") },
+                                label = { Text(agroText("المساحة")) },
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Decimal,
                                     imeAction = ImeAction.Done
@@ -327,7 +328,7 @@ fun CalculatorScreen(
                                 tint = MaterialTheme.colorScheme.secondary
                             )
                             Text(
-                                text = "معطيات تحليل التربة ونظام الري",
+                                text = agroText("معطيات تحليل التربة ونظام الري"),
                                 style = MaterialTheme.typography.titleMedium
                             )
                         }
@@ -339,7 +340,7 @@ fun CalculatorScreen(
                             OutlinedTextField(
                                 value = state.nitrogenPpmText,
                                 onValueChange = viewModel::updateNitrogen,
-                                label = { Text("الآزوت N (ppm)") },
+                                label = { Text(agroText("الآزوت N (ppm)")) },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                 singleLine = true,
                                 modifier = Modifier
@@ -349,7 +350,7 @@ fun CalculatorScreen(
                             OutlinedTextField(
                                 value = state.phosphorusPpmText,
                                 onValueChange = viewModel::updatePhosphorus,
-                                label = { Text("الفوسفور P (ppm)") },
+                                label = { Text(agroText("الفوسفور P (ppm)")) },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                 singleLine = true,
                                 modifier = Modifier
@@ -359,7 +360,7 @@ fun CalculatorScreen(
                             OutlinedTextField(
                                 value = state.potassiumPpmText,
                                 onValueChange = viewModel::updatePotassium,
-                                label = { Text("البوتاسيوم K (ppm)") },
+                                label = { Text(agroText("البوتاسيوم K (ppm)")) },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                 singleLine = true,
                                 modifier = Modifier
@@ -374,7 +375,7 @@ fun CalculatorScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = "درجة حموضة التربة (pH)",
+                                    text = agroText("درجة حموضة التربة (pH)"),
                                     style = MaterialTheme.typography.labelLarge
                                 )
                                 Text(
@@ -394,7 +395,7 @@ fun CalculatorScreen(
                         OutlinedTextField(
                             value = state.soilEcText,
                             onValueChange = viewModel::updateEc,
-                            label = { Text("ملوحة التربة الكهربائية EC (dS/m)") },
+                            label = { Text(agroText("ملوحة التربة الكهربائية EC (dS/m)")) },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Decimal,
                                 imeAction = ImeAction.Done
@@ -409,7 +410,7 @@ fun CalculatorScreen(
                         )
 
                         Text(
-                            text = "نظام الري والمناخ:",
+                            text = agroText("نظام الري والمناخ:"),
                             style = MaterialTheme.typography.labelMedium
                         )
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -458,7 +459,7 @@ private fun CalculatorResultsCard(result: AgronomyCalculationResult) {
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Text(
-                text = "المخرجات التسميدية والمائية المحسوبة",
+                text = agroText("المخرجات التسميدية والمائية المحسوبة"),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -482,19 +483,19 @@ private fun CalculatorResultsCard(result: AgronomyCalculationResult) {
                     )
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "حجم مياه الري اليومي المطلوب (للمساحة الكلية ${formatNum(result.areaHectares)} هكتار)",
+                            text = agroText("حجم مياه الري اليومي المطلوب (للمساحة الكلية ${formatNum(result.areaHectares)} هكتار)"),
                             style = MaterialTheme.typography.labelMedium,
                             color = semantic.water
                         )
                         Text(
-                            text = "${formatNum(result.dailyWaterM3)} م³/يوم  (${formatNum(result.dailyWaterLiters)} لتر/يوم)",
+                            text = agroText("${formatNum(result.dailyWaterM3)} م³/يوم  (${formatNum(result.dailyWaterLiters)} لتر/يوم)"),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = semantic.onWaterContainer
                         )
                         if (result.leachingFractionPercent > 0) {
                             Text(
-                                text = "يتضمن +${result.leachingFractionPercent}% لغسيل الأملاح المتراكمة",
+                                text = agroText("يتضمن +${result.leachingFractionPercent}% لغسيل الأملاح المتراكمة"),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = semantic.warning
                             )
@@ -505,7 +506,7 @@ private fun CalculatorResultsCard(result: AgronomyCalculationResult) {
 
             // Commercial Fertilizer Quantities
             Text(
-                text = "الكميات السمادية الموصى بها (كغ / هكتار):",
+                text = agroText("الكميات السمادية الموصى بها (كغ / هكتار):"),
                 style = MaterialTheme.typography.titleSmall
             )
 
@@ -548,7 +549,7 @@ private fun CalculatorResultsCard(result: AgronomyCalculationResult) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "إجمالي الأسمدة التجارية للمساحة الكلية في هذه المرحلة: ${formatNum(result.totalFertilizerKg)} كغ",
+                    text = agroText("إجمالي الأسمدة التجارية للمساحة الكلية في هذه المرحلة: ${formatNum(result.totalFertilizerKg)} كغ"),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.padding(12.dp)
@@ -640,7 +641,7 @@ private fun FertilizerMetricBox(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "${formatNum(kgHa)} كغ/هـ",
+                text = agroText("${formatNum(kgHa)} كغ/هـ"),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
