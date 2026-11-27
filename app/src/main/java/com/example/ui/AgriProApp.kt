@@ -413,51 +413,12 @@ fun AgriProApp() {
                     contentWindowInsets = WindowInsets.safeDrawing,
                     topBar = {
                         if (currentRoute != "agro_live") {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .hazeEffect(
-                                    state = hazeState,
-                                    style = HazeStyle(
-                                        backgroundColor = MaterialTheme.colorScheme.surface,
-                                        tint = HazeTint(
-                                            MaterialTheme.colorScheme.surface.copy(
-                                                alpha = if (useDarkTheme) 0.38f else 0.52f
-                                            )
-                                        ),
-                                        blurRadius = 28.dp,
-                                        noiseFactor = 0.035f
-                                    )
-                                )
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = if (useDarkTheme) {
-                                            listOf(
-                                                MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.90f),
-                                                MaterialTheme.colorScheme.surface.copy(alpha = 0.94f)
-                                            )
-                                        } else {
-                                            listOf(
-                                                Color.White.copy(alpha = 0.86f),
-                                                Color(0xFFEAF4ED).copy(alpha = 0.78f)
-                                            )
-                                        }
-                                    )
-                                )
-                                .border(
-                                    width = 1.dp,
-                                    brush = Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color.White.copy(alpha = if (useDarkTheme) 0.24f else 0.82f),
-                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)
-                                        )
-                                    ),
-                                    shape = RoundedCornerShape(
-                                        bottomStart = 22.dp,
-                                        bottomEnd = 22.dp
-                                    )
-                                )
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.surfaceContainerLow,
+                            tonalElevation = 2.dp
                         ) {
+                            Column(modifier = Modifier.fillMaxWidth()) {
                             CenterAlignedTopAppBar(
                                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                                     containerColor = Color.Transparent
@@ -494,14 +455,15 @@ fun AgriProApp() {
                                 }
                             )
                             HorizontalDivider(
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f)
                             )
+                            }
                         }
                         }
                     },
                     bottomBar = {
                         if (!useNavigationRail && currentRoute != "agro_live") {
-                            LiquidGlassNavigationBar(
+                            AgroBottomNavigationBar(
                                 destinations = destinations,
                                 currentRoute = currentRoute,
                                 onSelectDestination = { dest ->
@@ -708,7 +670,7 @@ private fun AgroProSplash(onFinished: () -> Unit) {
 }
 
 @Composable
-private fun LiquidGlassNavigationBar(
+private fun AgroBottomNavigationBar(
     destinations: List<AgriDestination>,
     currentRoute: String,
     onSelectDestination: (AgriDestination) -> Unit
@@ -720,7 +682,7 @@ private fun LiquidGlassNavigationBar(
             .fillMaxWidth()
             .navigationBarsPadding()
             .padding(horizontal = 14.dp, vertical = 8.dp)
-            .height(72.dp),
+            .height(78.dp),
         shape = barShape,
         color = MaterialTheme.colorScheme.surfaceContainer,
         tonalElevation = 3.dp,
