@@ -1171,6 +1171,7 @@ private fun DiagnosisResultCard(
     onOpenInNpk: () -> Unit,
     onAddToNotebook: () -> Unit
 ) {
+    var showDetails by remember(result.diseaseNameAr) { mutableStateOf(false) }
     val semantic = AgriTheme.semantic
     val severityColors = when (result.severity) {
         "حرجة", "مرتفعة" -> semantic.danger to semantic.dangerContainer
@@ -1315,6 +1316,25 @@ private fun DiagnosisResultCard(
                 )
             }
 
+            Button(
+                onClick = { showDetails = !showDetails },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            ) {
+                Text(
+                    text = if (showDetails) "إخفاء التوصيات والتفاصيل" else "حلّل واحصل على التوصيات",
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            AnimatedVisibility(visible = showDetails) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             // Severity indicator
             Surface(
                 color = severityColors.second,
@@ -1810,6 +1830,8 @@ private fun DiseaseFlashcardItem(
                     Spacer(Modifier.width(6.dp))
                     Text(if (isFlipped) "إخفاء الإجابة العلمية" else "اكشف التصنيف العلمي")
                 }
+                }
+            }
             }
         }
     }
