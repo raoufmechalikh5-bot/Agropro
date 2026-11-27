@@ -425,8 +425,9 @@ fun AgriProApp() {
                         if (currentRoute != "agro_live") {
                         Surface(
                             modifier = Modifier.fillMaxWidth(),
-                            color = MaterialTheme.colorScheme.surfaceContainerLow,
-                            tonalElevation = 2.dp
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
+                            tonalElevation = 0.dp,
+                            shadowElevation = 4.dp
                         ) {
                             Column(modifier = Modifier.fillMaxWidth()) {
                             CenterAlignedTopAppBar(
@@ -699,9 +700,10 @@ private fun AgroBottomNavigationBar(
             .height(78.dp)
             .clip(barShape),
         shape = barShape,
-        color = MaterialTheme.colorScheme.surfaceContainer,
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.65f)),
         tonalElevation = 0.dp,
-        shadowElevation = 8.dp
+        shadowElevation = 12.dp
     ) {
         Row(
             modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp, vertical = 4.dp),
