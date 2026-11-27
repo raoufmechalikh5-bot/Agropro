@@ -1,5 +1,6 @@
 package com.example.ui.live
 
+import com.example.ui.agroText
 import android.Manifest
 import android.os.Build
 import android.content.Context
@@ -215,7 +216,7 @@ fun AgroLiveScreen(
                 viewModel.endSession()
                 onClose()
             }) {
-                Icon(Icons.Default.Close, contentDescription = "إغلاق", tint = Color(0xFFD7E9DD))
+                Icon(Icons.Default.Close, contentDescription = agroText("إغلاق"), tint = Color(0xFFD7E9DD))
             }
         }
 
