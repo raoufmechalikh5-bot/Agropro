@@ -136,11 +136,6 @@ import com.example.ui.plantdoctor.PlantDoctorViewModel
 import com.example.ui.live.AgroLiveScreen
 import com.example.ui.live.AgroLiveViewModel
 import com.example.ui.theme.AgriProTheme
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 
@@ -151,14 +146,6 @@ sealed class AgriDestination(
     val unselectedIcon: ImageVector,
     val testTag: String
 ) {
-    data object Home : AgriDestination(
-        route = "home",
-        labelRes = R.string.nav_home,
-        selectedIcon = Icons.Filled.Eco,
-        unselectedIcon = Icons.Outlined.Grass,
-        testTag = "nav_home"
-    )
-
     data object PlantDoctor : AgriDestination(
         route = "plant_doctor",
         labelRes = R.string.nav_plant_doctor,
@@ -201,10 +188,9 @@ sealed class AgriDestination(
 }
 
 private val destinations = listOf(
-    AgriDestination.Home,
-    AgriDestination.PlantDoctor,
     AgriDestination.FertilizerCalculator,
     AgriDestination.Calculator,
+    AgriDestination.PlantDoctor,
     AgriDestination.Encyclopedia,
     AgriDestination.Notebook
 )
@@ -260,7 +246,6 @@ fun AgriProApp() {
         FertilizerCalculationRepository(database.fertilizerCalculationDao())
     }
     val aiRepo = remember { PlantDoctorRepository() }
-    val hazeState = remember { HazeState() }
 
     val agroLiveViewModel: AgroLiveViewModel = viewModel()
     val plantDoctorViewModel: PlantDoctorViewModel = viewModel(
@@ -283,7 +268,7 @@ fun AgriProApp() {
         AgriProTheme(darkTheme = useDarkTheme) {
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route ?: AgriDestination.Home.route
+            val currentRoute = navBackStackEntry?.destination?.route ?: AgriDestination.PlantDoctor.route
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -473,7 +458,6 @@ fun AgriProApp() {
                     bottomBar = {
                         if (!useNavigationRail && currentRoute != "agro_live") {
                             AgroBottomNavigationBar(
-                                hazeState = hazeState,
                                 destinations = destinations,
                                 currentRoute = currentRoute,
                                 onSelectDestination = { dest ->
@@ -538,8 +522,8 @@ fun AgriProApp() {
 
                         NavHost(
                             navController = navController,
-                            startDestination = AgriDestination.Home.route,
-                            modifier = Modifier.weight(1f).hazeSource(state = hazeState),
+                            startDestination = AgriDestination.PlantDoctor.route,
+                            modifier = Modifier.weight(1f),
                             enterTransition = {
                                 val fromIndex = destinations.indexOfFirst { it.route == initialState.destination.route }
                                 val toIndex = destinations.indexOfFirst { it.route == targetState.destination.route }
@@ -575,16 +559,6 @@ fun AgriProApp() {
                                 fadeOut(animationSpec = tween(durationMillis = 240, easing = UltraSmoothEasing))
                             }
                         ) {
-                            composable(AgriDestination.Home.route) {
-                                AgroHomeScreen(
-                                    onOpenPlantDoctor = { navController.navigate(AgriDestination.PlantDoctor.route) },
-                                    onOpenLive = { navController.navigate("agro_live") },
-                                    onOpenFertilizer = { navController.navigate(AgriDestination.FertilizerCalculator.route) },
-                                    onOpenCalculator = { navController.navigate(AgriDestination.Calculator.route) },
-                                    onOpenEncyclopedia = { navController.navigate(AgriDestination.Encyclopedia.route) },
-                                    onOpenNotebook = { navController.navigate(AgriDestination.Notebook.route) }
-                                )
-                            }
                             composable(AgriDestination.PlantDoctor.route) {
                                 PlantDoctorScreen(
                                     viewModel = plantDoctorViewModel,
@@ -664,86 +638,6 @@ fun AgriProApp() {
 
 
 @Composable
-private fun AgroHomeScreen(
-    onOpenPlantDoctor: () -> Unit,
-    onOpenLive: () -> Unit,
-    onOpenFertilizer: () -> Unit,
-    onOpenCalculator: () -> Unit,
-    onOpenEncyclopedia: () -> Unit,
-    onOpenNotebook: () -> Unit
-) {
-    val colors = MaterialTheme.colorScheme
-    Column(
-        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-            .padding(horizontal = 18.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp)
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(agroText("مرحباً بك في"), style = MaterialTheme.typography.titleMedium, color = colors.onSurfaceVariant)
-            Text("AgroPro", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, color = colors.primary)
-            Text(agroText("كل أدوات مزرعتك في مكان واحد"), style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
-        }
-        Surface(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(24.dp), color = colors.primaryContainer) {
-            Row(Modifier.padding(horizontal = 18.dp, vertical = 18.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                Box(Modifier.size(48.dp).clip(CircleShape).background(colors.primary.copy(alpha = 0.12f)), contentAlignment = Alignment.Center) {
-                    Icon(Icons.Default.Eco, contentDescription = null, tint = colors.primary, modifier = Modifier.size(28.dp))
-                }
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                    Text(agroText("إدارة زراعية أذكى"), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = colors.onPrimaryContainer)
-                    Text(agroText("تابع محاصيلك واتخذ قراراتك بثقة"), style = MaterialTheme.typography.bodySmall, color = colors.onPrimaryContainer.copy(alpha = 0.78f))
-                }
-            }
-        }
-        Text(agroText("خدماتك الرئيسية"), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = colors.onSurface)
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            HomeFeatureCard(Modifier.weight(1f), Icons.Default.Biotech, agroText("التشخيص الذكي"), agroText("حلّل صور نباتاتك"), onOpenPlantDoctor)
-            HomeFeatureCard(Modifier.weight(1f), Icons.Default.Science, agroText("المساعد الزراعي"), agroText("اسأل واحصل على إرشاد"), onOpenPlantDoctor)
-        }
-        Surface(modifier = Modifier.fillMaxWidth().clickable(onClick = onOpenLive), shape = RoundedCornerShape(22.dp), color = colors.primary) {
-            Row(Modifier.padding(horizontal = 18.dp, vertical = 17.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                Box(Modifier.size(46.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.16f)), contentAlignment = Alignment.Center) {
-                    Icon(Icons.Default.Notifications, contentDescription = null, tint = Color.White, modifier = Modifier.size(25.dp))
-                }
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                    Text("Live", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color.White)
-                    Text(agroText("مساعدك المباشر بالصوت والصورة"), style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.88f))
-                }
-                Icon(Icons.Default.Grass, contentDescription = null, tint = Color.White, modifier = Modifier.size(28.dp))
-            }
-        }
-        Text(agroText("أدواتك الزراعية"), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = colors.onSurface)
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            HomeFeatureCard(Modifier.weight(1f), Icons.Default.Grass, agroText("حاسبة NPK"), agroText("التسميد"), onOpenFertilizer)
-            HomeFeatureCard(Modifier.weight(1f), Icons.Default.Calculate, agroText("الري والتربة"), agroText("الحسابات الزراعية"), onOpenCalculator)
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            HomeFeatureCard(Modifier.weight(1f), Icons.Default.MenuBook, agroText("الموسوعة"), agroText("المعرفة الزراعية"), onOpenEncyclopedia)
-            HomeFeatureCard(Modifier.weight(1f), Icons.Default.Science, agroText("دفتر المزرعة"), agroText("التجارب والقياسات"), onOpenNotebook)
-        }
-        Spacer(Modifier.height(8.dp))
-    }
-}
-
-@Composable
-private fun HomeFeatureCard(
-    modifier: Modifier = Modifier,
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit
-) {
-    val colors = MaterialTheme.colorScheme
-    Surface(modifier = modifier.height(142.dp).clickable(onClick = onClick), shape = RoundedCornerShape(20.dp),
-        color = colors.surfaceContainerLow, tonalElevation = 1.dp, shadowElevation = 2.dp) {
-        Column(Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
-            Icon(icon, contentDescription = null, tint = colors.primary, modifier = Modifier.size(27.dp))
-            Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, color = colors.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
-        }
-    }
-}
-
-@Composable
 private fun AgroProSplash(onFinished: () -> Unit) {
     var contentVisible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -772,7 +666,6 @@ private fun AgroProSplash(onFinished: () -> Unit) {
 
 @Composable
 private fun AgroBottomNavigationBar(
-    hazeState: HazeState,
     destinations: List<AgriDestination>,
     currentRoute: String,
     onSelectDestination: (AgriDestination) -> Unit
@@ -785,19 +678,9 @@ private fun AgroBottomNavigationBar(
             .navigationBarsPadding()
             .padding(horizontal = 14.dp, vertical = 8.dp)
             .height(78.dp)
-            .hazeEffect(
-                state = hazeState,
-                style = HazeStyle(
-                    backgroundColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.78f),
-                    blurRadius = 20.dp,
-                    tints = emptyList(),
-                    noiseFactor = 0f,
-                    fallbackTint = HazeTint(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.78f))
-                )
-            )
             .clip(barShape),
         shape = barShape,
-        color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.34f),
+        color = MaterialTheme.colorScheme.surfaceContainer,
         tonalElevation = 0.dp,
         shadowElevation = 8.dp
     ) {
