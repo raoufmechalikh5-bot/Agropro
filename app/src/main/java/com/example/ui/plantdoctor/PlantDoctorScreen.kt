@@ -885,21 +885,23 @@ private fun PlantCaptureCard(
 
                         Spacer(Modifier.weight(1f))
 
-                        IconButton(
-                            onClick = onCaptureCamera,
-                            enabled = !isLoading && selectedImages.size < 3,
-                            modifier = Modifier.testTag("camera_capture_button")
-                        ) {
-                            Icon(Icons.Default.CameraAlt, contentDescription = agroText("التقط صورة"),
-                                tint = Color(0xFFB9CDBD), modifier = Modifier.size(22.dp))
-                        }
-                        IconButton(
-                            onClick = onPickFromGallery,
-                            enabled = !isLoading && selectedImages.size < 3,
-                            modifier = Modifier.testTag("gallery_pick_button")
-                        ) {
-                            Icon(Icons.Default.PhotoLibrary, contentDescription = agroText("اختيار من المعرض"),
-                                tint = Color(0xFFB9CDBD), modifier = Modifier.size(22.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
+                            IconButton(
+                                onClick = onCaptureCamera,
+                                enabled = !isLoading && selectedImages.size < 3,
+                                modifier = Modifier.size(40.dp).testTag("camera_capture_button")
+                            ) {
+                                Icon(Icons.Default.CameraAlt, contentDescription = agroText("التقط صورة"),
+                                    tint = Color(0xFFB9CDBD), modifier = Modifier.size(22.dp))
+                            }
+                            IconButton(
+                                onClick = onPickFromGallery,
+                                enabled = !isLoading && selectedImages.size < 3,
+                                modifier = Modifier.size(40.dp).testTag("gallery_pick_button")
+                            ) {
+                                Icon(Icons.Default.PhotoLibrary, contentDescription = agroText("اختيار من المعرض"),
+                                    tint = Color(0xFFB9CDBD), modifier = Modifier.size(22.dp))
+                            }
                         }
                     }
                 }
