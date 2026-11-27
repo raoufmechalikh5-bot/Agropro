@@ -669,7 +669,7 @@ private fun ExperimentGrowthChartCard(measurements: List<MeasurementEntity>) {
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = agroText("أقصى ارتفاع: ${String.format(Locale.US, ")%.1f", maxHeight)} سم",
+                        text = agroText("أقصى ارتفاع: ${String.format(Locale.US, "%.1f", maxHeight)} سم"),
                         style = MaterialTheme.typography.labelSmall,
                         color = heightLineColor
                     )
