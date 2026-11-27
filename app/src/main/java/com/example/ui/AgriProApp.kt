@@ -20,6 +20,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.NavigationDrawerItem
@@ -818,13 +819,23 @@ private fun LiquidGlassNavigationBar(
                     val selected = currentRoute == dest.route
                     val label = stringResource(dest.labelRes)
 
+                    val interactionSource = remember { MutableInteractionSource() }
+                    val pressed by interactionSource.collectIsPressedAsState()
                     val scale by animateFloatAsState(
-                        targetValue = if (selected) 1.07f else 0.96f,
+                        targetValue = if (pressed) 0.86f else if (selected) 1.08f else 0.96f,
                         animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioNoBouncy,
-                            stiffness = Spring.StiffnessMediumLow
+                            dampingRatio = 0.52f,
+                            stiffness = 720f
                         ),
-                        label = "SmoothIconScale"
+                        label = "ColorOSIconPressScale"
+                    )
+                    val iconRotation by animateFloatAsState(
+                        targetValue = if (pressed) -7f else 0f,
+                        animationSpec = spring(
+                            dampingRatio = 0.58f,
+                            stiffness = 680f
+                        ),
+                        label = "ColorOSIconPressRotation"
                     )
 
                     val contentColor by animateColorAsState(
@@ -837,17 +848,11 @@ private fun LiquidGlassNavigationBar(
                         label = "SmoothContentColor"
                     )
 
-                    val interactionSource = remember { MutableInteractionSource() }
-
                     Column(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
-                            .graphicsLayer {
-                                scaleX = scale
-                                scaleY = scale
-                            }
-                            .clip(CircleShape)
+.clip(CircleShape)
                             .clickable(
                                 interactionSource = interactionSource,
                                 indication = null,
@@ -861,7 +866,13 @@ private fun LiquidGlassNavigationBar(
                             imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,
                             contentDescription = label,
                             tint = contentColor,
-                            modifier = Modifier.size(22.dp)
+                            modifier = Modifier
+                                .size(22.dp)
+                                .graphicsLayer {
+                                    scaleX = scale
+                                    scaleY = scale
+                                    rotationZ = iconRotation
+                                }
                         )
                         if (selected) {
                             Text(
