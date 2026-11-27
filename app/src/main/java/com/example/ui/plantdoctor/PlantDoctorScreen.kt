@@ -279,6 +279,17 @@ fun PlantDoctorScreen(
         ),
         contentAlignment = Alignment.TopCenter
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.agri_field_background),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.52f))
+        )
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
