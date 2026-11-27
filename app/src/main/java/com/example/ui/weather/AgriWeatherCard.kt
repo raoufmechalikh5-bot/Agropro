@@ -357,7 +357,7 @@ fun AgriWeatherCard(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 250.dp, max = 330.dp)
+            .heightIn(min = 210.dp, max = 270.dp)
             .clickable { if (weatherData != null) isExpanded = !isExpanded },
         shape = RoundedCornerShape(24.dp),
         color = Color(0xFF4A9DE0),
