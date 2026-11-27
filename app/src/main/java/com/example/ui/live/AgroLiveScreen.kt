@@ -151,42 +151,53 @@ fun AgroLiveScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color(0xFF07140F), Color(0xFF10291D), Color(0xFF07140F))
+                    listOf(Color(0xFF06110C), Color(0xFF10251A), Color(0xFF07130D))
                 )
             )
-            .padding(horizontal = 18.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    "AgroPro Live",
-                    color = Color.White,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    "مساعدك الزراعي بالصوت والصورة",
-                    color = Color(0xFFB8D5C3),
-                    style = MaterialTheme.typography.bodySmall
-                )
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = Color(0xFF1B3A29),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF5AA879).copy(alpha = 0.35f)),
+                modifier = Modifier.size(46.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color(0xFFB8F0C9), modifier = Modifier.size(24.dp))
+                }
+            }
+            Column(modifier = Modifier.weight(1f).padding(start = 11.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text("AgroPro Live", color = Color.White, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text("مساعدك الزراعي المباشر", color = Color(0xFFA8C7B3), style = MaterialTheme.typography.labelMedium)
+            }
+            Surface(
+                shape = RoundedCornerShape(50),
+                color = Color(0xFF173A28),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF4FA873).copy(alpha = 0.5f))
+            ) {
+                Row(Modifier.padding(horizontal = 10.dp, vertical = 7.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Box(Modifier.size(7.dp).clip(CircleShape).background(if (state.connected) Color(0xFF57E38C) else Color(0xFFFFC46B)))
+                    Text(if (state.connected) "LIVE" else if (state.connecting) "CONNECTING" else "READY", color = Color(0xFFDDF5E5), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                }
             }
             IconButton(onClick = {
                 viewModel.endSession()
                 onClose()
             }) {
-                Icon(Icons.Default.Close, contentDescription = "إنهاء الجلسة", tint = Color.White)
+                Icon(Icons.Default.Close, contentDescription = "إغلاق", tint = Color(0xFFD7E9DD))
             }
         }
 
         Card(
             modifier = Modifier.fillMaxWidth().weight(1f),
-            shape = RoundedCornerShape(28.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF14251D)),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            shape = RoundedCornerShape(30.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF14271D)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 if (state.cameraEnabled) {
@@ -201,79 +212,80 @@ fun AgroLiveScreen(
                         update = { it.controller = cameraController }
                     )
                 } else {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center).padding(28.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    Box(
+                        modifier = Modifier.fillMaxSize().background(
+                            Brush.radialGradient(listOf(Color(0xFF28543A), Color(0xFF142B1E), Color(0xFF0A1710)))
+                        ),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Surface(
-                            shape = CircleShape,
-                            color = Color(0xFF234A35),
-                            modifier = Modifier.size(104.dp)
+                        Column(
+                            modifier = Modifier.padding(28.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    Icons.Default.NoPhotography,
-                                    contentDescription = null,
-                                    tint = Color(0xFFBFE8CC),
-                                    modifier = Modifier.size(42.dp)
-                                )
+                            Surface(shape = CircleShape, color = Color(0xFF315D42).copy(alpha = 0.75f), modifier = Modifier.size(86.dp)) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(Icons.Default.NoPhotography, contentDescription = null, tint = Color(0xFFD0F1D9), modifier = Modifier.size(36.dp))
+                                }
                             }
+                            Text("الكاميرا متوقفة", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                            Text("فعّل الكاميرا ليشاهد المساعد النبات أو المحصول", color = Color(0xFFB8D5C3), style = MaterialTheme.typography.bodySmall)
                         }
-                        Text("الكاميرا متوقفة", color = Color.White, fontWeight = FontWeight.SemiBold)
-                        Text(
-                            "شغّل الكاميرا ليتمكن المساعد من رؤية النبات أو المحصول مباشرة.",
-                            color = Color(0xFFB8D5C3),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
                     }
                 }
 
                 Surface(
-                    modifier = Modifier.align(Alignment.TopStart).padding(14.dp),
+                    modifier = Modifier.align(Alignment.TopStart).padding(12.dp),
                     shape = RoundedCornerShape(50),
-                    color = Color(0xCC07140F)
+                    color = Color(0xD908160F),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.12f))
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(7.dp)
-                    ) {
-                        Box(
-                            Modifier.size(8.dp).clip(CircleShape)
-                                .background(if (state.connected) Color(0xFF55D98A) else Color(0xFFFFC46B))
-                        )
+                    Row(Modifier.padding(horizontal = 11.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+                        Box(Modifier.size(7.dp).clip(CircleShape).background(if (state.connected) Color(0xFF55D98A) else Color(0xFFFFC46B)))
                         Text(
                             when {
-                                state.connecting -> "جارٍ الاتصال..."
-                                state.connected -> if (state.microphoneEnabled) "المساعد يستمع" else "الصوت متوقف"
-                                else -> "بانتظار الاتصال"
+                                state.connecting -> "جارٍ الاتصال بالمساعد"
+                                state.connected && state.microphoneEnabled -> "أستمع إليك الآن"
+                                state.connected -> "الميكروفون متوقف"
+                                else -> "بانتظار بدء الجلسة"
                             },
                             color = Color.White,
-                            style = MaterialTheme.typography.labelMedium
+                            style = MaterialTheme.typography.labelSmall
                         )
                     }
                 }
 
                 if (state.connecting) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = Color(0xFF9BE0B0)
-                    )
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = Color(0xFF9BE0B0))
                 }
 
-                LiveAssistantOrb(
-                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp),
-                    active = state.connected && state.microphoneEnabled
-                )
+                Surface(
+                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 14.dp),
+                    shape = RoundedCornerShape(50),
+                    color = Color(0xE609160F),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF8ACBA0).copy(alpha = 0.45f))
+                ) {
+                    Row(
+                        modifier = Modifier.padding(start = 8.dp, end = 16.dp, top = 7.dp, bottom = 7.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        LiveAssistantOrb(active = state.connected && state.microphoneEnabled)
+                        Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                            Text("AGRO AI", color = Color(0xFFE4F8EA), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+                            Text(
+                                if (state.connected && state.microphoneEnabled) "المساعد يستمع" else "مساعدك الذكي",
+                                color = Color(0xFFA8CDB5),
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                    }
+                }
             }
         }
 
         AnimatedVisibility(visible = state.error != null) {
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF4A2525)),
-                shape = RoundedCornerShape(16.dp)
-            ) {
+            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF4A2525)), shape = RoundedCornerShape(16.dp)) {
                 Column(Modifier.padding(12.dp)) {
                     Text(state.error.orEmpty(), color = Color.White)
                     TextButton(onClick = viewModel::connect) {
@@ -284,79 +296,65 @@ fun AgroLiveScreen(
             }
         }
 
-        Text(
-            if (state.connected) "يمكنك التحدث بشكل طبيعي، وسيحافظ المساعد على سياق المحادثة." else
-                "اسمح بالوصول إلى الميكروفون لبدء المحادثة المباشرة.",
-            color = Color(0xFFB8D5C3),
-            style = MaterialTheme.typography.bodySmall
-        )
-
         if (!state.connected && !state.connecting) {
             Button(
                 onClick = {
                     if (context.hasPermission(Manifest.permission.RECORD_AUDIO)) viewModel.connect()
                     else microphonePermission.launch(Manifest.permission.RECORD_AUDIO)
                 },
-                modifier = Modifier.fillMaxWidth().height(52.dp),
+                modifier = Modifier.fillMaxWidth().height(48.dp),
                 shape = RoundedCornerShape(18.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2C6844))
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF328052))
             ) {
                 Icon(Icons.Default.Mic, contentDescription = null)
-                Text("بدء المحادثة المباشرة", modifier = Modifier.padding(start = 8.dp))
+                Text("بدء المحادثة المباشرة", modifier = Modifier.padding(start = 8.dp), fontWeight = FontWeight.Bold)
             }
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ControlButton(
                 modifier = Modifier.weight(1f),
                 icon = if (state.microphoneEnabled) Icons.Default.Mic else Icons.Default.MicOff,
-                label = if (state.microphoneEnabled) "كتم الصوت" else "تشغيل الصوت",
+                label = if (state.microphoneEnabled) "الصوت" else "تشغيل الصوت",
                 active = state.microphoneEnabled,
                 enabled = state.connected,
                 onClick = {
-                    if (!context.hasPermission(Manifest.permission.RECORD_AUDIO)) {
-                        microphonePermission.launch(Manifest.permission.RECORD_AUDIO)
-                    } else {
-                        viewModel.setMicrophoneEnabled(!state.microphoneEnabled)
-                    }
+                    if (!context.hasPermission(Manifest.permission.RECORD_AUDIO)) microphonePermission.launch(Manifest.permission.RECORD_AUDIO)
+                    else viewModel.setMicrophoneEnabled(!state.microphoneEnabled)
                 }
             )
             ControlButton(
                 modifier = Modifier.weight(1f),
                 icon = if (state.cameraEnabled) Icons.Default.CameraAlt else Icons.Default.NoPhotography,
-                label = if (state.cameraEnabled) "إيقاف الكاميرا" else "تشغيل الكاميرا",
+                label = if (state.cameraEnabled) "الكاميرا" else "تشغيل الكاميرا",
                 active = state.cameraEnabled,
                 enabled = state.connected,
                 onClick = {
-                    if (state.cameraEnabled) {
-                        viewModel.setCameraEnabled(false)
-                    } else if (context.hasPermission(Manifest.permission.CAMERA)) {
-                        viewModel.setCameraEnabled(true)
-                    } else {
-                        cameraPermission.launch(Manifest.permission.CAMERA)
-                    }
+                    if (state.cameraEnabled) viewModel.setCameraEnabled(false)
+                    else if (context.hasPermission(Manifest.permission.CAMERA)) viewModel.setCameraEnabled(true)
+                    else cameraPermission.launch(Manifest.permission.CAMERA)
                 }
             )
         }
 
-        Button(
+        Surface(
             onClick = {
                 viewModel.endSession()
                 onClose()
             },
-            modifier = Modifier.fillMaxWidth().height(54.dp),
-            shape = RoundedCornerShape(18.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF9B3B35),
-                contentColor = Color.White
-            )
+            modifier = Modifier.fillMaxWidth().height(46.dp),
+            shape = RoundedCornerShape(16.dp),
+            color = Color(0xFF351D1D),
+            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFB65B55).copy(alpha = 0.45f))
         ) {
-            Icon(Icons.Default.Close, contentDescription = null)
-            Text("إنهاء المحادثة", modifier = Modifier.padding(start = 8.dp), fontWeight = FontWeight.Bold)
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                Icon(Icons.Default.Close, contentDescription = null, tint = Color(0xFFFFC4BE), modifier = Modifier.size(18.dp))
+                Text("إنهاء المحادثة", modifier = Modifier.padding(start = 8.dp), color = Color(0xFFFFD7D2), fontWeight = FontWeight.Bold)
+            }
         }
     }
 }
