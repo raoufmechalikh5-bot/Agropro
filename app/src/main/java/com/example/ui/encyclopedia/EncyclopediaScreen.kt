@@ -118,8 +118,8 @@ fun EncyclopediaScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .widthIn(max = 760.dp),
-            contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 120.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            contentPadding = PaddingValues(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 120.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             item {
                 AgriPageHero(
@@ -521,7 +521,7 @@ private fun AgrochemicalCard(
     var isExpanded by remember(item.id) { mutableStateOf(false) }
 
     ElevatedCard(
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(26.dp),
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
