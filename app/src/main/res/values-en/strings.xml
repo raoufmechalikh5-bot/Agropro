@@ -7,6 +7,7 @@
     <string name="camera_permission_denied_body">Camera permission was denied. Enable it in app settings or choose an image from your gallery.</string>
     <string name="camera_permission_open_settings">Open settings</string>
     <string name="camera_permission_dismiss">Cancel</string>
+    <string name="nav_home">Home</string>
     <string name="nav_plant_doctor">Plant Doctor</string>
     <string name="nav_fertilizer_calculator">NPK Calculator</string>
     <string name="nav_calculator">Irrigation &amp; Soil</string>
