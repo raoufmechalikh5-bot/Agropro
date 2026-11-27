@@ -44,7 +44,8 @@ jobs:
             echo "::error::Missing FIREBASE_APPCHECK_DEBUG_TOKEN repository secret."
             exit 1
           fi
-      - run: gradle assembleDebug --no-configuration-cache
+      - name: Run unit tests and assemble debug APK
+        run: gradle testDebugUnitTest assembleDebug --no-configuration-cache
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           FIREBASE_APPCHECK_DEBUG_TOKEN: ${{ secrets.FIREBASE_APPCHECK_DEBUG_TOKEN }}
