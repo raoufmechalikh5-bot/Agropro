@@ -986,18 +986,6 @@ private fun PlantCaptureCard(
                             color = Color(0xFFB9CDBD),
                             maxLines = 1
                         )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            repeat(3) { index ->
-                                Box(
-                                    Modifier.size(7.dp).clip(CircleShape).background(
-                                        if (index < selectedImages.size) Color(0xFFC8F34A) else Color(0xFF52675A)
-                                    )
-                                )
-                            }
-                        }
                     }
                 }
             }
@@ -1157,7 +1145,7 @@ private fun PlantCaptureCard(
                 } else {
                     Icon(Icons.Default.AutoAwesome, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
-                    Text(agroText("تحليل وتشخيص الحالة (${selectedImages.size})"))
+                    Text(agroText("تحليل وتشخيص الحالة"))
                 }
             }
         }
