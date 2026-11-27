@@ -698,11 +698,7 @@ private fun AgroBottomNavigationBar(
         shape = barShape,
         color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.34f),
         tonalElevation = 0.dp,
-        shadowElevation = 8.dp,
-        border = androidx.compose.foundation.BorderStroke(
-            0.7.dp,
-            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.24f)
-        )
+        shadowElevation = 8.dp
     ) {
         Row(
             modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp, vertical = 4.dp),
