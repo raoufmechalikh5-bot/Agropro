@@ -2,6 +2,7 @@ package com.example.ui.weather
 
 import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
@@ -357,7 +358,11 @@ fun AgriWeatherCard(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 190.dp, max = 230.dp)
+            .animateContentSize()
+            .heightIn(
+                min = if (isExpanded) 190.dp else 150.dp,
+                max = if (isExpanded) 210.dp else 175.dp
+            )
             .clickable { if (weatherData != null) isExpanded = !isExpanded },
         shape = RoundedCornerShape(24.dp),
         color = Color(0xFF4A9DE0),
@@ -445,12 +450,17 @@ fun AgriWeatherCard(
                                 )
                             }
                         }
-                        Icon(
-                            imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                            contentDescription = if (isExpanded) "طي البطاقة" else "توسيع البطاقة",
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        IconButton(
+                            onClick = { if (weatherData != null) isExpanded = !isExpanded },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                contentDescription = if (isExpanded) "طي البطاقة" else "توسيع البطاقة",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
                 }
 
@@ -515,6 +525,11 @@ fun AgriWeatherCard(
                             Icons.Default.Warning
                         )
                     }
+                    AnimatedVisibility(
+                        visible = isExpanded,
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
+                    ) {
                     Surface(
                         shape = RoundedCornerShape(14.dp),
                         color = sprayBg,
@@ -539,6 +554,7 @@ fun AgriWeatherCard(
                                 maxLines = if (isExpanded) 4 else 2
                             )
                         }
+                    }
                     }
 
                     AnimatedVisibility(
