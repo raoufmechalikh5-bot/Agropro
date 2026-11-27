@@ -177,7 +177,7 @@ fun AgroLiveScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    listOf(Color(0xFF06110C), Color(0xFF10251A), Color(0xFF07130D))
+                    listOf(Color(0xFF071A0D), Color(0xFF0B3D20), Color(0xFF071A0D))
                 )
             )
             .padding(horizontal = 16.dp, vertical = 10.dp),
@@ -189,26 +189,26 @@ fun AgroLiveScreen(
         ) {
             Surface(
                 shape = RoundedCornerShape(16.dp),
-                color = Color(0xFF1B3A29),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF5AA879).copy(alpha = 0.35f)),
+                color = Color(0xFF164023),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFB8F52A).copy(alpha = 0.35f)),
                 modifier = Modifier.size(46.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color(0xFFB8F0C9), modifier = Modifier.size(24.dp))
+                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = Color(0xFFB8F52A), modifier = Modifier.size(24.dp))
                 }
             }
             Column(modifier = Modifier.weight(1f).padding(start = 11.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text("AgroPro Live", color = Color.White, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                Text("مساعدك الزراعي المباشر", color = Color(0xFFA8C7B3), style = MaterialTheme.typography.labelMedium)
+                Text("مساعدك الزراعي المباشر", color = Color(0xFFB9E8C5), style = MaterialTheme.typography.labelMedium)
             }
             Surface(
                 shape = RoundedCornerShape(50),
-                color = Color(0xFF173A28),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF4FA873).copy(alpha = 0.5f))
+                color = Color(0xFF164023),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF39E58C).copy(alpha = 0.5f))
             ) {
                 Row(Modifier.padding(horizontal = 10.dp, vertical = 7.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Box(Modifier.size(7.dp).clip(CircleShape).background(if (state.connected) Color(0xFF57E38C) else Color(0xFFFFC46B)))
-                    Text(if (state.connected) "LIVE" else if (state.connecting) "CONNECTING" else "READY", color = Color(0xFFDDF5E5), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                    Box(Modifier.size(7.dp).clip(CircleShape).background(if (state.connected) Color(0xFF39E58C) else Color(0xFFFFC46B)))
+                    Text(if (state.connected) "LIVE" else if (state.connecting) "CONNECTING" else "READY", color = Color(0xFFF0FFD0), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
                 }
             }
             IconButton(onClick = {
@@ -222,7 +222,7 @@ fun AgroLiveScreen(
         Card(
             modifier = Modifier.fillMaxWidth().weight(1f),
             shape = RoundedCornerShape(30.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF14271D)),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF102E19)),
             elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -240,7 +240,7 @@ fun AgroLiveScreen(
                 } else {
                     Box(
                         modifier = Modifier.fillMaxSize().background(
-                            Brush.radialGradient(listOf(Color(0xFF28543A), Color(0xFF142B1E), Color(0xFF0A1710)))
+                            Brush.radialGradient(listOf(Color(0xFF16A34A), Color(0xFF0B3D20), Color(0xFF071A0D)))
                         ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -464,7 +464,7 @@ private fun ControlButton(
         enabled = enabled,
         modifier = modifier.height(64.dp),
         shape = RoundedCornerShape(20.dp),
-        color = if (active) Color(0xFF2C6844) else Color(0xFF1B3025),
+        color = if (active) Color(0xFF16A34A) else Color(0xFF12351D),
         contentColor = Color.White,
         tonalElevation = 4.dp
     ) {
