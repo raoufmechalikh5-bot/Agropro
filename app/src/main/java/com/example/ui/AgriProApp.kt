@@ -735,7 +735,7 @@ private fun LiquidGlassNavigationBar(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(62.dp)
+                .height(70.dp)
                 .shadow(
                     elevation = 10.dp,
                     shape = glassShape,
@@ -846,13 +846,13 @@ private fun LiquidGlassNavigationBar(
                             )
                             .testTag(dest.testTag),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically)
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(34.dp)
+                                .size(30.dp)
                                 .shadow(
-                                    elevation = if (selected) 5.dp else 0.dp,
+                                    elevation = if (selected) 2.dp else 0.dp,
                                     shape = CircleShape,
                                     ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.22f),
                                     spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
@@ -891,7 +891,7 @@ private fun LiquidGlassNavigationBar(
                                 contentDescription = label,
                                 tint = contentColor,
                                 modifier = Modifier
-                                    .size(20.dp)
+                                    .size(18.dp)
                                     .graphicsLayer {
                                         scaleX = scale
                                         scaleY = scale
@@ -902,7 +902,7 @@ private fun LiquidGlassNavigationBar(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(14.dp),
+                                .height(16.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             androidx.compose.animation.AnimatedVisibility(
@@ -915,8 +915,8 @@ private fun LiquidGlassNavigationBar(
                                     text = label,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Bold,
+                                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                                    fontWeight = FontWeight.SemiBold,
                                     color = contentColor
                                 )
                             }
