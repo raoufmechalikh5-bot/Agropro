@@ -327,7 +327,7 @@ fun NotebookScreen(
                                 ) {
                                     Icon(Icons.Default.Download, contentDescription = null)
                                     Spacer(Modifier.width(6.dp))
-                                    Text("تصدير CSV / Excel", maxLines = 1)
+                                    Text(agroText("تصدير CSV / Excel"), maxLines = 1)
                                 }
 
                                 OutlinedButton(
@@ -853,7 +853,7 @@ private fun CreateExperimentDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Text("نوع التجربة:", style = MaterialTheme.typography.labelMedium)
+                Text(agroText("نوع التجربة:"), style = MaterialTheme.typography.labelMedium)
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     types.forEach { t ->
                         FilterChip(
@@ -1021,7 +1021,7 @@ private fun AddMeasurementDialog(
                     ) {
                         Icon(Icons.Default.AddAPhoto, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(4.dp))
-                        Text("كاميرا", maxLines = 1)
+                        Text(agroText("كاميرا"), maxLines = 1)
                     }
 
                     OutlinedButton(
