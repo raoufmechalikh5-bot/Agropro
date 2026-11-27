@@ -1,5 +1,6 @@
 package com.example.ui.plantdoctor
 
+import com.example.ui.agroText
 import com.example.ui.components.ExpandableSuggestions
 import android.Manifest
 import android.content.Context
@@ -446,7 +447,7 @@ item {
                         when (state) {
                             PlantDoctorUiState.Idle -> {
                                 Text(
-                                    text = "أضف صورة واضحة للنبات للحصول على تشخيص وتوصيات",
+                                    text = agroText("أضف صورة واضحة للنبات للحصول على تشخيص وتوصيات"),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 2.dp)
@@ -471,12 +472,12 @@ item {
                                             color = MaterialTheme.colorScheme.primary
                                         )
                                         Text(
-                                            text = "جاري فحص الصور وتحديد المسبب المرضي...",
+                                            text = agroText("جاري فحص الصور وتحديد المسبب المرضي..."),
                                             style = MaterialTheme.typography.titleMedium,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
                                         Text(
-                                            text = "يتم تحليل الأعراض عبر الذكاء الاصطناعي وتقدير نسبة الثقة والمادة الفعالة.",
+                                            text = agroText("يتم تحليل الأعراض عبر الذكاء الاصطناعي وتقدير نسبة الثقة والمادة الفعالة."),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -506,7 +507,7 @@ item {
                                                 tint = semantic.danger
                                             )
                                             Text(
-                                                text = "تعذر إتمام التشخيص",
+                                                text = agroText("تعذر إتمام التشخيص"),
                                                 style = MaterialTheme.typography.titleMedium,
                                                 color = semantic.danger
                                             )
@@ -524,7 +525,7 @@ item {
                                         ) {
                                             Icon(Icons.Default.Refresh, contentDescription = null)
                                             Spacer(Modifier.width(8.dp))
-                                            Text("إعادة المحاولة")
+                                            Text(agroText("إعادة المحاولة"))
                                         }
                                     }
                                 }
@@ -695,7 +696,7 @@ private fun AgriHeroBanner() {
     ) {
         Image(
             painter = painterResource(id = R.drawable.img_agri_hero),
-            contentDescription = "منظر زراعي متوسطي لحقول الزيتون والطماطم والقمح",
+            contentDescription = agroText("منظر زراعي متوسطي لحقول الزيتون والطماطم والقمح"),
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
@@ -742,14 +743,14 @@ private fun AgriHeroBanner() {
                     color = Color(0xFF9BCB78)
                 )
                 Text(
-                    text = "اعتنِ بمحصولك بذكاء أكبر",
+                    text = agroText("اعتنِ بمحصولك بذكاء أكبر"),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     maxLines = 2
                 )
                 Text(
-                    text = "مساعدك الزراعي الذكي",
+                    text = agroText("مساعدك الزراعي الذكي"),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White.copy(alpha = 0.88f)
                 )
@@ -866,7 +867,7 @@ private fun PlantCaptureCard(
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = Icons.Default.Close,
-                                        contentDescription = "إزالة الصورة",
+                                        contentDescription = agroText("إزالة الصورة"),
                                         tint = Color.White,
                                         modifier = Modifier.size(16.dp)
                                     )
@@ -913,7 +914,7 @@ private fun PlantCaptureCard(
                                     )
                                     Spacer(Modifier.height(6.dp))
                                     Text(
-                                        text = "إضافة زاوية أخرى",
+                                        text = agroText("إضافة زاوية أخرى"),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.primary
                                     )
@@ -1106,8 +1107,8 @@ private fun PlantCaptureCard(
                 OutlinedTextField(
                     value = farmerNotes,
                     onValueChange = onNotesChange,
-                    label = { Text("ملاحظات عن المحصول أو الرطوبة أو عمر النبات") },
-                    placeholder = { Text("مثال: طماطم محمية، رطوبة صباحية مرتفعة...") },
+                    label = { Text(agroText("ملاحظات عن المحصول أو الرطوبة أو عمر النبات")) },
+                    placeholder = { Text(agroText("مثال: طماطم محمية، رطوبة صباحية مرتفعة...")) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("diagnosis_notes_input"),
@@ -1133,11 +1134,11 @@ private fun PlantCaptureCard(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                     Spacer(Modifier.width(10.dp))
-                    Text("جاري التحليل...")
+                    Text(agroText("جاري التحليل..."))
                 } else {
                     Icon(Icons.Default.AutoAwesome, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
-                    Text("تحليل وتشخيص الحالة (${selectedImages.size})")
+                    Text(agroText("تحليل وتشخيص الحالة (${selectedImages.size})"))
                 }
             }
         }
@@ -1245,7 +1246,7 @@ private fun DiagnosisResultCard(
                             modifier = Modifier.size(15.dp)
                         )
                         Text(
-                            text = "ثقة ${result.confidencePercent}%",
+                            text = agroText("ثقة ${result.confidencePercent}%"),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onTertiaryContainer
@@ -1272,7 +1273,7 @@ private fun DiagnosisResultCard(
                             tint = semantic.warning
                         )
                         Text(
-                            text = "لرفع دقة التشخيص: ${result.clarificationNeeded}",
+                            text = agroText("لرفع دقة التشخيص: ${result.clarificationNeeded}"),
                             style = MaterialTheme.typography.bodySmall,
                             color = semantic.onWarningContainer,
                             modifier = Modifier.weight(1f)
@@ -1329,7 +1330,7 @@ private fun DiagnosisResultCard(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "درجة الخطورة الوبائية",
+                            text = agroText("درجة الخطورة الوبائية"),
                             style = MaterialTheme.typography.labelMedium,
                             color = severityColors.first
                         )
@@ -1405,7 +1406,7 @@ private fun DiagnosisResultCard(
                     )
                     Spacer(Modifier.width(6.dp))
                     Text(
-                        text = "خطة علاج (PHI)",
+                        text = agroText("خطة علاج (PHI)"),
                         maxLines = 2,
                         fontWeight = FontWeight.Bold
                     )
@@ -1427,7 +1428,7 @@ private fun DiagnosisResultCard(
                     )
                     Spacer(Modifier.width(6.dp))
                     Text(
-                        text = "حاسبة NPK",
+                        text = agroText("حاسبة NPK"),
                         maxLines = 2,
                         fontWeight = FontWeight.Bold
                     )
@@ -1450,7 +1451,7 @@ private fun DiagnosisResultCard(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    text = "مشاركة تقرير التشخيص (واتساب / نص)",
+                    text = agroText("مشاركة تقرير التشخيص (واتساب / نص)"),
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -1523,7 +1524,7 @@ private fun DiagnosisHistoryRow(
             if (!savedPath.isNullOrBlank() && java.io.File(savedPath).exists()) {
                 Image(
                     painter = coil.compose.rememberAsyncImagePainter(model = java.io.File(savedPath)),
-                    contentDescription = "صورة التشخيص المحفوظة: ${record.diseaseNameAr}",
+                    contentDescription = agroText("صورة التشخيص المحفوظة: ${record.diseaseNameAr}"),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(56.dp)
@@ -1542,7 +1543,7 @@ private fun DiagnosisHistoryRow(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "المادة الفعالة: ${record.activeIngredient} (تحريم: ${record.phiDays})",
+                    text = agroText("المادة الفعالة: ${record.activeIngredient} (تحريم: ${record.phiDays})"),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -1553,7 +1554,7 @@ private fun DiagnosisHistoryRow(
             ) {
                 Icon(
                     imageVector = Icons.Default.DeleteOutline,
-                    contentDescription = "حذف التشخيص",
+                    contentDescription = agroText("حذف التشخيص"),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -1591,12 +1592,12 @@ private fun FlashcardProgressBanner(
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "وضع مراجعة طلبة العلوم الزراعية",
+                        text = agroText("وضع مراجعة طلبة العلوم الزراعية"),
                         style = MaterialTheme.typography.titleSmall
                     )
                 }
                 Text(
-                    text = "$masteredCount / $totalCount متقنة",
+                    text = agroText("$masteredCount / $totalCount متقنة"),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -1688,7 +1689,7 @@ private fun DiseaseFlashcardItem(
             if (card.drawableRes != null) {
                 Image(
                     painter = painterResource(id = card.drawableRes),
-                    contentDescription = "رسم علمي تشخيصي لمحصول ${card.cropAr}",
+                    contentDescription = agroText("رسم علمي تشخيصي لمحصول ${card.cropAr}"),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1725,11 +1726,11 @@ private fun DiseaseFlashcardItem(
                         }
                         Column {
                             Text(
-                                text = "بطاقة تصنيف مخبرية - ${card.cropAr}",
+                                text = agroText("بطاقة تصنيف مخبرية - ${card.cropAr}"),
                                 style = MaterialTheme.typography.titleSmall
                             )
                             Text(
-                                text = "الخطورة الشائعة: ${card.severityTypical}",
+                                text = agroText("الخطورة الشائعة: ${card.severityTypical}"),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -1739,7 +1740,7 @@ private fun DiseaseFlashcardItem(
             }
 
             Text(
-                text = "الأعراض الحقلية المميزة:",
+                text = agroText("الأعراض الحقلية المميزة:"),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -1775,16 +1776,16 @@ private fun DiseaseFlashcardItem(
                         )
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                         Text(
-                            text = "المؤشر التشخيصي: ${card.diagnosticClue}",
+                            text = agroText("المؤشر التشخيصي: ${card.diagnosticClue}"),
                             style = MaterialTheme.typography.bodySmall
                         )
                         Text(
-                            text = "المادة الفعالة: ${card.activeIngredient}",
+                            text = agroText("المادة الفعالة: ${card.activeIngredient}"),
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "فترة التحريم (PHI): ${card.phiDays}",
+                            text = agroText("فترة التحريم (PHI): ${card.phiDays}"),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.tertiary
                         )
