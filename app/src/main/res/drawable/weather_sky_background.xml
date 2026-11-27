@@ -1,0 +1,39 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="1080dp"
+    android:height="600dp"
+    android:viewportWidth="1080"
+    android:viewportHeight="600">
+    <path android:pathData="M0,0 H1080 V600 H0 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="0"
+                android:endY="600">
+                <item android:color="#2789D9" android:offset="0.0" />
+                <item android:color="#65B8F0" android:offset="0.55" />
+                <item android:color="#A5D9F5" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#BFFFFFFF"
+        android:pathData="M0,145 C22,112 65,105 99,124 C122,75 188,72 222,111 C267,99 307,126 313,164 C350,178 354,220 325,238 L0,238 Z" />
+    <path
+        android:fillColor="#DFFFFFFF"
+        android:pathData="M720,155 C742,116 783,106 818,126 C842,59 928,51 967,112 C1015,94 1068,125 1080,166 L1080,245 C1045,263 1008,259 982,241 C944,274 886,266 864,232 C815,251 760,225 760,190 C741,183 728,171 720,155 Z" />
+    <path
+        android:fillColor="#9FFFFFFF"
+        android:pathData="M0,420 C38,390 91,395 119,424 C150,372 214,365 249,406 C291,393 338,420 344,460 C375,475 376,514 348,530 L0,530 Z" />
+    <path
+        android:fillColor="#CFFFFFFF"
+        android:pathData="M760,465 C787,425 838,418 871,445 C902,392 972,390 1008,431 C1042,418 1070,438 1080,461 L1080,560 C1044,578 1006,566 985,545 C945,575 888,559 873,527 C827,544 777,520 777,489 C769,482 764,474 760,465 Z" />
+    <path
+        android:fillColor="#65FFFFFF"
+        android:pathData="M350,85 C372,62 408,63 426,84 C450,56 493,62 507,93 C533,96 546,118 537,140 L337,140 C328,120 333,99 350,85 Z" />
+    <path
+        android:fillColor="#55FFFFFF"
+        android:pathData="M420,330 C447,302 484,307 502,333 C529,304 573,311 587,344 C615,346 629,370 617,391 L401,391 C392,367 399,344 420,330 Z" />
+</vector>
