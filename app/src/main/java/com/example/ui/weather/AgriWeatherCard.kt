@@ -361,7 +361,7 @@ fun AgriWeatherCard(
             .animateContentSize()
             .heightIn(
                 min = if (isExpanded) 220.dp else 150.dp,
-                max = if (isExpanded) 340.dp else 175.dp
+                max = if (isExpanded) 240.dp else 175.dp
             )
             .clickable { if (weatherData != null) isExpanded = !isExpanded },
         shape = RoundedCornerShape(24.dp),
@@ -396,8 +396,8 @@ fun AgriWeatherCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 9.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(horizontal = 14.dp, vertical = 6.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -499,7 +499,7 @@ fun AgriWeatherCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color.White.copy(alpha = 0.20f), RoundedCornerShape(16.dp))
-                            .padding(horizontal = 10.dp, vertical = 7.dp),
+                            .padding(horizontal = 10.dp, vertical = 5.dp),
                         horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -536,7 +536,7 @@ fun AgriWeatherCard(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(7.dp)
                         ) {
