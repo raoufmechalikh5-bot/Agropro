@@ -31,7 +31,7 @@ class AgroLiveViewModel : ViewModel() {
     val uiState: StateFlow<AgroLiveUiState> = _uiState.asStateFlow()
     private var liveSession: LiveSession? = null
 
-    fun connect() {
+    fun connect(language: String = "ar") {
         if (_uiState.value.connecting || _uiState.value.connected) return
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(connecting = true, error = null)
@@ -47,11 +47,16 @@ class AgroLiveViewModel : ViewModel() {
                 )
                 val session = model.connect()
                 liveSession = session
+                val languageInstruction = when (language) {
+                    "en" -> "Respond only in clear, natural English. Keep all explanations, labels and spoken replies in English."
+                    "fr" -> "Répondez uniquement en français clair et naturel. Gardez toutes les explications et réponses vocales en français."
+                    else -> "تحدث بالعربية الفصحى أو الدارجة الجزائرية حسب أسلوب المستخدم، وأجب بالعربية."
+                }
                 session.send(
-                    "أنت مساعد AgroPro الزراعي الذكي. تحدث مع المستخدم باللغة التي يستعملها: " +
-                        "العربية الفصحى أو الدارجة الجزائرية. افهم الدارجة الجزائرية وأجب بها بشكل طبيعي عند استعمالها. " +
-                        "كن ودوداً ومختصراً ودقيقاً، وركز على الزراعة وتشخيص النباتات والإرشاد العملي. " +
-                        "إذا لم تكن متأكداً من تشخيص نبات فلا تجزم واطلب صورة أو تفاصيل إضافية."
+                    "You are the AgroPro agricultural assistant. $languageInstruction " +
+                        "Be friendly, concise and accurate. Focus on agriculture, plant diagnosis and practical advice. " +
+                        "Never switch languages unless the user explicitly asks. If uncertain about a plant diagnosis, " +
+                        "do not make a definite claim; request a clearer photo or more details."
                 )
                 session.startAudioConversation()
                 _uiState.value = _uiState.value.copy(
