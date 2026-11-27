@@ -456,37 +456,26 @@ fun AgriProApp() {
                                     )
                                 },
                                 navigationIcon = {
-                                    IconButton(
+                                    ColorOsIconButton(
                                         onClick = { scope.launch { drawerState.open() } },
-                                        modifier = Modifier
-                                            .size(48.dp)
-                                            .testTag("top_menu_button")
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Menu,
-                                            contentDescription = "فتح القائمة الرئيسية"
-                                        )
-                                    }
+                                        imageVector = Icons.Default.Menu,
+                                        contentDescription = "فتح القائمة الرئيسية",
+                                        modifier = Modifier.size(48.dp).testTag("top_menu_button")
+                                    )
                                 },
                                 actions = {
-                                    IconButton(
+                                    ColorOsIconButton(
                                         onClick = { showReminders = true },
+                                        imageVector = Icons.Default.Notifications,
+                                        contentDescription = "التنبيهات والتذكيرات",
                                         modifier = Modifier.testTag("top_notifications_button")
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Notifications,
-                                            contentDescription = "التنبيهات والتذكيرات"
-                                        )
-                                    }
-                                    IconButton(
+                                    )
+                                    ColorOsIconButton(
                                         onClick = { showCalendar = true },
+                                        imageVector = Icons.Default.CalendarMonth,
+                                        contentDescription = "التقويم الزراعي",
                                         modifier = Modifier.testTag("top_calendar_button")
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.CalendarMonth,
-                                            contentDescription = "التقويم الزراعي"
-                                        )
-                                    }
+                                    )
                                 }
                             )
                             HorizontalDivider(
@@ -888,5 +877,37 @@ private fun LiquidGlassNavigationBar(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ColorOsIconButton(
+    onClick: () -> Unit,
+    imageVector: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) 0.84f else 1f,
+        animationSpec = spring(
+            dampingRatio = 0.5f,
+            stiffness = 700f
+        ),
+        label = "ColorOSIconButtonPress"
+    )
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+        },
+        interactionSource = interactionSource
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = contentDescription
+        )
     }
 }
