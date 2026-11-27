@@ -270,8 +270,8 @@ fun PlantDoctorScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .widthIn(max = 760.dp),
-            contentPadding = PaddingValues(start = 18.dp, top = 18.dp, end = 18.dp, bottom = 132.dp),
-            verticalArrangement = Arrangement.spacedBy(18.dp)
+            contentPadding = PaddingValues(start = 16.dp, top = 14.dp, end = 16.dp, bottom = 132.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
            
 item {
@@ -284,7 +284,7 @@ item {
                 ) {
                     val diagnosisSelected = !isFlashcardMode
                     Surface(
-                        modifier = Modifier.weight(1f).height(76.dp).clip(RoundedCornerShape(22.dp))
+                        modifier = Modifier.weight(1f).height(62.dp).clip(RoundedCornerShape(22.dp))
                             .clickable { viewModel.setFlashcardMode(false) }
                             .testTag("tab_ai_diagnosis"),
                         color = if (diagnosisSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
@@ -342,11 +342,11 @@ item {
                         onClick = onOpenLiveAssistant,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(82.dp)
+                            .height(68.dp)
                             .testTag("open_agro_live_button"),
                         shape = RoundedCornerShape(24.dp),
                         color = Color.Transparent,
-                        border = BorderStroke(1.dp, Color(0xFF83D9A2).copy(alpha = 0.42f)),
+                        border = BorderStroke(1.dp, Color(0xFFB8F52A).copy(alpha = 0.58f)),
                         shadowElevation = 8.dp
                     ) {
                         Box(
@@ -354,7 +354,7 @@ item {
                                 .fillMaxSize()
                                 .background(
                                     Brush.horizontalGradient(
-                                        listOf(Color(0xFF123D2B), Color(0xFF216B45), Color(0xFF123D2B))
+                                        listOf(Color(0xFF0B3D20), Color(0xFF16A34A), Color(0xFF0B3D20))
                                     )
                                 )
                                 .padding(horizontal = 17.dp, vertical = 11.dp)
@@ -374,7 +374,7 @@ item {
                                     Icon(
                                         imageVector = Icons.Default.AutoAwesome,
                                         contentDescription = null,
-                                        tint = Color(0xFFB9F4CB),
+                                        tint = Color(0xFFB8F52A),
                                         modifier = Modifier.size(27.dp)
                                     )
                                 }
@@ -720,8 +720,8 @@ private fun AgriHeroBanner() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(194.dp)
-            .clip(RoundedCornerShape(30.dp))
+            .height(116.dp)
+            .clip(RoundedCornerShape(26.dp))
     ) {
         Image(
             painter = painterResource(id = R.drawable.img_agri_hero),
@@ -733,89 +733,56 @@ private fun AgriHeroBanner() {
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    Brush.verticalGradient(
-                        colorStops = arrayOf(
-                            0.0f to Color(0x9908120C),
-                            0.42f to Color(0x5508120C),
-                            1.0f to Color(0xF208120C)
+                    Brush.horizontalGradient(
+                        listOf(
+                            Color(0xF20B2413),
+                            Color(0xCC0B3D20),
+                            Color(0x6616A34A)
                         )
                     )
                 )
         )
-        Column(
+        Row(
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .fillMaxWidth()
-                .padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(0.dp)
+                .fillMaxSize()
+                .padding(horizontal = 17.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(13.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(9.dp)
-            ) {
-                Surface(
-                    color = Color(0xFFB7E4C7).copy(alpha = 0.18f),
-                    shape = RoundedCornerShape(13.dp),
-                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.22f))
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Eco,
-                        contentDescription = null,
-                        tint = Color(0xFFB7E4C7),
-                        modifier = Modifier.padding(9.dp).size(22.dp)
-                    )
-                }
-                Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                    Text(
-                        text = "AGROPRO",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color.White
-                    )
-                    Text(
-                        text = "SMART AGRICULTURE",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.White.copy(alpha = 0.72f)
-                    )
-                }
-                Spacer(Modifier.weight(1f))
-                Surface(
-                    color = Color(0xFFB7E4C7).copy(alpha = 0.16f),
-                    shape = RoundedCornerShape(50),
-                    border = BorderStroke(1.dp, Color(0xFFB7E4C7).copy(alpha = 0.38f))
-                ) {
-                    Text(
-                        text = "مساعدك الزراعي",
-                        color = Color(0xFFD8F3DC),
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.padding(horizontal = 11.dp, vertical = 7.dp)
-                    )
-                }
-            }
-            Spacer(Modifier.weight(1f))
-            Text(
-                text = "اعتنِ بمحصولك،\nبذكاء أكبر",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color.White
-            )
-            Spacer(Modifier.height(7.dp))
-            Text(
-                text = "تشخيص أمراض النباتات ومتابعة الحقول في مكان واحد",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.86f)
-            )
-            Spacer(Modifier.height(12.dp))
             Surface(
-                color = Color(0xFFB7E4C7),
-                shape = RoundedCornerShape(50)
+                color = Color(0xFFB8F52A).copy(alpha = 0.18f),
+                shape = RoundedCornerShape(17.dp),
+                border = BorderStroke(1.dp, Color(0xFFB8F52A).copy(alpha = 0.52f))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Eco,
+                    contentDescription = null,
+                    tint = Color(0xFFB8F52A),
+                    modifier = Modifier.padding(12.dp).size(27.dp)
+                )
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = "التشخيص الذكي",
-                    color = Color(0xFF0B2B13),
+                    text = "AGROPRO",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color(0xFFB8F52A)
+                )
+                Text(
+                    text = "اعتنِ بمحصولك بذكاء أكبر",
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "مساعدك الزراعي الذكي",
                     style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp)
+                    color = Color.White.copy(alpha = 0.88f)
                 )
             }
         }
