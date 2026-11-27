@@ -1,8 +1,6 @@
 package com.example.ui.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,14 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.theme.AgriAccentLime
 
 /**
- * Shared translucent card used by the redesigned AgroPro screens.
- * Haze is intentionally not applied here; only selected surfaces should use it.
+ * Shared translucent card. Content is allowed to grow naturally so Arabic
+ * labels and larger accessibility font sizes are not clipped.
  */
 @Composable
 fun GlassCard(
@@ -43,13 +40,11 @@ fun GlassCard(
     Surface(
         modifier = modifier
             .clip(shape)
-            .border(
-                BorderStroke(1.dp, Color.White.copy(alpha = 0.17f)),
-                shape
-            ),
+            .then(Modifier),
         shape = shape,
         color = Color.White.copy(alpha = 0.09f),
-        contentColor = MaterialTheme.colorScheme.onSurface
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.17f))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             content()
@@ -69,17 +64,20 @@ fun MetricTile(
             text = label,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            maxLines = 2
         )
         Spacer(modifier = Modifier.height(6.dp))
-        Row(verticalAlignment = Alignment.Bottom) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom
+        ) {
             Text(
                 text = value,
+                modifier = Modifier.weight(1f, fill = false),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
-                maxLines = 1
+                maxLines = 2
             )
             if (!unit.isNullOrBlank()) {
                 Spacer(modifier = Modifier.width(4.dp))
@@ -87,7 +85,8 @@ fun MetricTile(
                     text = unit,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 3.dp)
+                    modifier = Modifier.padding(bottom = 3.dp),
+                    maxLines = 2
                 )
             }
         }
@@ -145,15 +144,14 @@ fun PillTabs(
                 border = if (selected) null else BorderStroke(1.dp, Color.White.copy(alpha = 0.13f))
             ) {
                 Column(
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 12.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = item,
                         style = MaterialTheme.typography.labelLarge,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        maxLines = 2
                     )
                 }
             }
@@ -181,14 +179,14 @@ fun AccentButton(
             disabledContainerColor = AgriAccentLime.copy(alpha = 0.28f),
             disabledContentColor = Color(0xFF17240A).copy(alpha = 0.55f)
         ),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp, pressedElevation = 2.dp)
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp, pressedElevation = 2.dp),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 18.dp, vertical = 12.dp)
     ) {
         Text(
             text = text,
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            maxLines = 2
         )
     }
 }
