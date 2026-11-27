@@ -200,7 +200,7 @@ fun AgroLiveScreen(
             }
             Column(modifier = Modifier.weight(1f).padding(start = 11.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text("AgroPro Live", color = Color.White, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, maxLines = 1)
-                Text("مساعدك الزراعي المباشر", color = Color(0xFFB9E8C5), style = MaterialTheme.typography.labelMedium, maxLines = 2)
+                Text(agroText("مساعدك الزراعي المباشر"), color = Color(0xFFB9E8C5), style = MaterialTheme.typography.labelMedium, maxLines = 2)
             }
             Surface(
                 shape = RoundedCornerShape(50),
@@ -255,8 +255,8 @@ fun AgroLiveScreen(
                                     Icon(Icons.Default.NoPhotography, contentDescription = null, tint = Color(0xFFD0F1D9), modifier = Modifier.size(36.dp))
                                 }
                             }
-                            Text("الكاميرا متوقفة", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                            Text("فعّل الكاميرا ليشاهد المساعد النبات أو المحصول", color = Color(0xFFB8D5C3), style = MaterialTheme.typography.bodySmall)
+                            Text(agroText("الكاميرا متوقفة"), color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                            Text(agroText("فعّل الكاميرا ليشاهد المساعد النبات أو المحصول"), color = Color(0xFFB8D5C3), style = MaterialTheme.typography.bodySmall)
                         }
                     }
                 }
@@ -299,7 +299,7 @@ fun AgroLiveScreen(
                     Text(state.error.orEmpty(), color = Color.White)
                     TextButton(onClick = viewModel::connect) {
                         Icon(Icons.Default.Refresh, null, tint = Color.White)
-                        Text("إعادة المحاولة", color = Color.White)
+                        Text(agroText("إعادة المحاولة"), color = Color.White)
                     }
                 }
             }
@@ -316,7 +316,7 @@ fun AgroLiveScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF328052))
             ) {
                 Icon(Icons.Default.Mic, contentDescription = null)
-                Text("بدء المحادثة المباشرة", modifier = Modifier.padding(start = 8.dp), fontWeight = FontWeight.Bold)
+                Text(agroText("بدء المحادثة المباشرة"), modifier = Modifier.padding(start = 8.dp), fontWeight = FontWeight.Bold)
             }
         }
 
@@ -362,7 +362,7 @@ fun AgroLiveScreen(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                 Icon(Icons.Default.Close, contentDescription = null, tint = Color(0xFFFFC4BE), modifier = Modifier.size(18.dp))
-                Text("إنهاء المحادثة", modifier = Modifier.padding(start = 8.dp), color = Color(0xFFFFD7D2), fontWeight = FontWeight.Bold)
+                Text(agroText("إنهاء المحادثة"), modifier = Modifier.padding(start = 8.dp), color = Color(0xFFFFD7D2), fontWeight = FontWeight.Bold)
             }
         }
     }
