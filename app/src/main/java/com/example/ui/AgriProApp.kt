@@ -694,7 +694,8 @@ private fun AgroBottomNavigationBar(
                     noiseFactor = 0f,
                     fallbackTint = HazeTint(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.76f))
                 )
-            ),
+            )
+            .clip(barShape),
         shape = barShape,
         color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.34f),
         tonalElevation = 0.dp,
