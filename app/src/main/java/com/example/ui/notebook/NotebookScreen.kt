@@ -1,5 +1,6 @@
 package com.example.ui.notebook
 
+import com.example.ui.agroText
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
@@ -196,11 +197,11 @@ fun NotebookScreen(
                                     modifier = Modifier.size(40.dp)
                                 )
                                 Text(
-                                    text = "لا توجد تجارب مسجلة بعد",
+                                    text = agroText("لا توجد تجارب مسجلة بعد"),
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 Text(
-                                    text = "اضغط على زر «تجربة جديدة» لبدء تتبع تجارب الإنبات أو التسميد.",
+                                    text = agroText("اضغط على زر «تجربة جديدة» لبدء تتبع تجارب الإنبات أو التسميد."),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -233,7 +234,7 @@ fun NotebookScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null)
-                    Text("تجربة جديدة")
+                    Text(agroText("تجربة جديدة"))
                 }
             }
         } else {
@@ -259,7 +260,7 @@ fun NotebookScreen(
                         ) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                             Spacer(Modifier.width(6.dp))
-                            Text("كل التجارب")
+                            Text(agroText("كل التجارب"))
                         }
 
                         FilterChip(
@@ -297,13 +298,13 @@ fun NotebookScreen(
                                 color = MaterialTheme.colorScheme.secondary
                             )
                             Text(
-                                text = "الموقع: ${currentExp.locationOrLab}",
+                                text = agroText("الموقع: ${currentExp.locationOrLab}"),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             if (currentExp.hypothesis.isNotBlank()) {
                                 Text(
-                                    text = "الفرضية: ${currentExp.hypothesis}",
+                                    text = agroText("الفرضية: ${currentExp.hypothesis}"),
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }
@@ -359,9 +360,9 @@ fun NotebookScreen(
                                         .height(48.dp)
                                         .testTag("share_csv_button")
                                 ) {
-                                    Icon(Icons.Default.Share, contentDescription = "مشاركة CSV")
+                                    Icon(Icons.Default.Share, contentDescription = agroText("مشاركة CSV"))
                                     Spacer(Modifier.width(6.dp))
-                                    Text("مشاركة")
+                                    Text(agroText("مشاركة"))
                                 }
                             }
                         }
@@ -380,7 +381,7 @@ fun NotebookScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "سجل القياسات الميدانية (${selectedMeasurements.size})",
+                            text = agroText("سجل القياسات الميدانية (${selectedMeasurements.size})"),
                             style = MaterialTheme.typography.titleMedium
                         )
                     }
@@ -407,7 +408,7 @@ fun NotebookScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null)
-                    Text("إضافة قياس")
+                    Text(agroText("إضافة قياس"))
                 }
             }
         }
@@ -499,7 +500,7 @@ private fun ExperimentSummaryCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.DeleteOutline,
-                        contentDescription = "حذف التجربة",
+                        contentDescription = agroText("حذف التجربة"),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -522,7 +523,7 @@ private fun ExperimentSummaryCard(
                     )
                 }
                 Text(
-                    text = "$measurementCount قياسات مسجلة • بدء $dateStr",
+                    text = agroText("$measurementCount قياسات مسجلة • بدء $dateStr"),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -554,14 +555,14 @@ private fun ExperimentGrowthChartCard(measurements: List<MeasurementEntity>) {
                     tint = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "منحنى تطور النمو والرطوبة",
+                    text = agroText("منحنى تطور النمو والرطوبة"),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
 
             if (measurements.size < 2) {
                 Text(
-                    text = "أضف قياسين على الأقل لعرض الرسم البياني لتطور الارتفاع ورطوبة التربة.",
+                    text = agroText("أضف قياسين على الأقل لعرض الرسم البياني لتطور الارتفاع ورطوبة التربة."),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -577,12 +578,12 @@ private fun ExperimentGrowthChartCard(measurements: List<MeasurementEntity>) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "● ارتفاع النبات (سم)",
+                        text = agroText("● ارتفاع النبات (سم)"),
                         style = MaterialTheme.typography.labelSmall,
                         color = heightLineColor
                     )
                     Text(
-                        text = "● رطوبة التربة (%)",
+                        text = agroText("● رطوبة التربة (%)"),
                         style = MaterialTheme.typography.labelSmall,
                         color = moistureLineColor
                     )
@@ -663,17 +664,17 @@ private fun ExperimentGrowthChartCard(measurements: List<MeasurementEntity>) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "اليوم ${measurements.first().dayNumber}",
+                        text = agroText("اليوم ${measurements.first().dayNumber}"),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "أقصى ارتفاع: ${String.format(Locale.US, "%.1f", maxHeight)} سم",
+                        text = agroText("أقصى ارتفاع: ${String.format(Locale.US, ")%.1f", maxHeight)} سم",
                         style = MaterialTheme.typography.labelSmall,
                         color = heightLineColor
                     )
                     Text(
-                        text = "اليوم ${measurements.last().dayNumber}",
+                        text = agroText("اليوم ${measurements.last().dayNumber}"),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -717,7 +718,7 @@ private fun MeasurementRowCard(
                         shape = RoundedCornerShape(50)
                     ) {
                         Text(
-                            text = "اليوم ${measurement.dayNumber}",
+                            text = agroText("اليوم ${measurement.dayNumber}"),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
@@ -735,7 +736,7 @@ private fun MeasurementRowCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.DeleteOutline,
-                        contentDescription = "حذف القياس",
+                        contentDescription = agroText("حذف القياس"),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -773,7 +774,7 @@ private fun MeasurementRowCard(
             if (!path.isNullOrBlank() && File(path).exists()) {
                 Image(
                     painter = rememberAsyncImagePainter(model = File(path)),
-                    contentDescription = "صورة مرفقة للقياس في اليوم ${measurement.dayNumber}",
+                    contentDescription = agroText("صورة مرفقة للقياس في اليوم ${measurement.dayNumber}"),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -829,7 +830,7 @@ private fun CreateExperimentDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("إنشاء تجربة زراعية جديدة") },
+        title = { Text(agroText("إنشاء تجربة زراعية جديدة")) },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -838,8 +839,8 @@ private fun CreateExperimentDialog(
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("عنوان التجربة *") },
-                    placeholder = { Text("مثال: تأثير هيومات البوتاسيوم على البطاطا") },
+                    label = { Text(agroText("عنوان التجربة *")) },
+                    placeholder = { Text(agroText("مثال: تأثير هيومات البوتاسيوم على البطاطا")) },
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -848,7 +849,7 @@ private fun CreateExperimentDialog(
                 OutlinedTextField(
                     value = crop,
                     onValueChange = { crop = it },
-                    label = { Text("المحصول المدروس") },
+                    label = { Text(agroText("المحصول المدروس")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -865,14 +866,14 @@ private fun CreateExperimentDialog(
                 OutlinedTextField(
                     value = location,
                     onValueChange = { location = it },
-                    label = { Text("الموقع أو المخبر") },
+                    label = { Text(agroText("الموقع أو المخبر")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = hypothesis,
                     onValueChange = { hypothesis = it },
-                    label = { Text("الفرضية العلمية") },
+                    label = { Text(agroText("الفرضية العلمية")) },
                     maxLines = 2,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -884,11 +885,11 @@ private fun CreateExperimentDialog(
                 enabled = title.isNotBlank(),
                 modifier = Modifier.testTag("confirm_create_exp_button")
             ) {
-                Text("حفظ التجربة")
+                Text(agroText("حفظ التجربة"))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("إلغاء") }
+            TextButton(onClick = onDismiss) { Text(agroText("إلغاء")) }
         }
     )
 }
@@ -950,7 +951,7 @@ private fun AddMeasurementDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("إضافة قياس دوري جديد") },
+        title = { Text(agroText("إضافة قياس دوري جديد")) },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -960,7 +961,7 @@ private fun AddMeasurementDialog(
                     OutlinedTextField(
                         value = dayText,
                         onValueChange = { dayText = it },
-                        label = { Text("رقم اليوم") },
+                        label = { Text(agroText("رقم اليوم")) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         modifier = Modifier.weight(1f)
@@ -968,7 +969,7 @@ private fun AddMeasurementDialog(
                     OutlinedTextField(
                         value = heightText,
                         onValueChange = { heightText = it },
-                        label = { Text("الارتفاع (سم)") },
+                        label = { Text(agroText("الارتفاع (سم)")) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         singleLine = true,
                         modifier = Modifier
@@ -980,7 +981,7 @@ private fun AddMeasurementDialog(
                     OutlinedTextField(
                         value = leavesText,
                         onValueChange = { leavesText = it },
-                        label = { Text("عدد الأوراق") },
+                        label = { Text(agroText("عدد الأوراق")) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         modifier = Modifier.weight(1f)
@@ -988,7 +989,7 @@ private fun AddMeasurementDialog(
                     OutlinedTextField(
                         value = moistureText,
                         onValueChange = { moistureText = it },
-                        label = { Text("رطوبة التربة (%)") },
+                        label = { Text(agroText("رطوبة التربة (%)")) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         singleLine = true,
                         modifier = Modifier.weight(1f)
@@ -997,7 +998,7 @@ private fun AddMeasurementDialog(
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
-                    label = { Text("ملاحظات ميدانية") },
+                    label = { Text(agroText("ملاحظات ميدانية")) },
                     maxLines = 2,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -1090,7 +1091,7 @@ private fun AddMeasurementDialog(
                 }
                 if (selectedPhotoUri != null) {
                     Text(
-                        text = "سيتم حفظ الصورة نهائياً في ذاكرة الجهاز مع القياس.",
+                        text = agroText("سيتم حفظ الصورة نهائياً في ذاكرة الجهاز مع القياس."),
                         style = MaterialTheme.typography.labelSmall,
                         color = semantic.safe
                     )
@@ -1113,14 +1114,14 @@ private fun AddMeasurementDialog(
                     .height(48.dp)
                     .testTag("confirm_add_measurement_button")
             ) {
-                Text("تسجيل القياس")
+                Text(agroText("تسجيل القياس"))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismiss,
                 modifier = Modifier.height(48.dp)
-            ) { Text("إلغاء") }
+            ) { Text(agroText("إلغاء")) }
         }
     )
 }
