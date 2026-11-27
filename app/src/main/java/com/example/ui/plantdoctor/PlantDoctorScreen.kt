@@ -396,7 +396,9 @@ item {
                             }
                         },
                         onAnalyzeClick = { viewModel.analyzePlantImage(context) },
-                        onOpenLiveAssistant = onOpenLiveAssistant
+                        onOpenLiveAssistant = onOpenLiveAssistant,
+                        recentDiagnosisCount = recentDiagnoses.size,
+                        onToggleDiagnosisHistory = { showDiagnosisHistory = !showDiagnosisHistory }
                     )
                 }
                 item {
@@ -510,16 +512,6 @@ item {
                 }
 
                 if (recentDiagnoses.isNotEmpty()) {
-                    item {
-                        TextButton(
-                            onClick = { showDiagnosisHistory = !showDiagnosisHistory },
-                            modifier = Modifier.fillMaxWidth().testTag("toggle_diagnosis_history")
-                        ) {
-                            Icon(Icons.Default.History, contentDescription = null)
-                            Spacer(Modifier.width(8.dp))
-                            Text(if (showDiagnosisHistory) "إخفاء سجل التشخيصات" else "عرض سجل التشخيصات (${recentDiagnoses.size})")
-                        }
-                    }
                     item {
                         AnimatedVisibility(visible = showDiagnosisHistory) {
                             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -718,7 +710,9 @@ private fun PlantCaptureCard(
     onPickFromGallery: () -> Unit,
     onCaptureCamera: () -> Unit,
     onAnalyzeClick: () -> Unit,
-    onOpenLiveAssistant: () -> Unit
+    onOpenLiveAssistant: () -> Unit,
+    recentDiagnosisCount: Int,
+    onToggleDiagnosisHistory: () -> Unit
 ) {
     ElevatedCard(
         shape = RoundedCornerShape(28.dp),
@@ -748,6 +742,19 @@ private fun PlantCaptureCard(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
+                if (recentDiagnosisCount > 0) {
+                    IconButton(
+                        onClick = onToggleDiagnosisHistory,
+                        modifier = Modifier.size(34.dp).testTag("toggle_diagnosis_history")
+                    ) {
+                        Icon(
+                            Icons.Default.History,
+                            contentDescription = agroText("سجل التشخيصات"),
+                            tint = Color(0xFFB9CDBD),
+                            modifier = Modifier.size(21.dp)
+                        )
+                    }
+                }
                 Surface(
                     shape = CircleShape,
                     color = Color(0xFF123D29)
