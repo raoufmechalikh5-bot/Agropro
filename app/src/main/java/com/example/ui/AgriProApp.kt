@@ -302,7 +302,7 @@ fun AgriProApp() {
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
                                 )
                                 Text(
-                                    text = "إدارة المزرعة",
+                                    text = agroText("إدارة المزرعة"),
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
@@ -338,13 +338,13 @@ fun AgriProApp() {
                                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
                                 )
                                 Text(
-                                    text = "التخطيط والتنبيهات",
+                                    text = agroText("التخطيط والتنبيهات"),
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                                 )
                                 NavigationDrawerItem(
-                                    label = { Text("التقويم الزراعي") },
+                                    label = { Text(agroText("التقويم الزراعي")) },
                                     selected = false,
                                     icon = { Icon(Icons.Default.CalendarMonth, contentDescription = null) },
                                     onClick = {
@@ -355,7 +355,7 @@ fun AgriProApp() {
                                     }
                                 )
                                 NavigationDrawerItem(
-                                    label = { Text("التنبيهات والتذكيرات") },
+                                    label = { Text(agroText("التنبيهات والتذكيرات")) },
                                     selected = false,
                                     icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
                                     onClick = {
@@ -370,7 +370,7 @@ fun AgriProApp() {
                                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
                                 )
                                 Text(
-                                    text = "التخصيص",
+                                    text = agroText("التخصيص"),
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
@@ -474,7 +474,7 @@ fun AgriProApp() {
                                     ColorOsIconButton(
                                         onClick = { scope.launch { drawerState.open() } },
                                         imageVector = Icons.Default.Menu,
-                                        contentDescription = "فتح القائمة الرئيسية",
+                                        contentDescription = agroText("فتح القائمة الرئيسية"),
                                         modifier = Modifier.size(48.dp).testTag("top_menu_button")
                                     )
                                 },
@@ -482,13 +482,13 @@ fun AgriProApp() {
                                     ColorOsIconButton(
                                         onClick = { showReminders = true },
                                         imageVector = Icons.Default.Notifications,
-                                        contentDescription = "التنبيهات والتذكيرات",
+                                        contentDescription = agroText("التنبيهات والتذكيرات"),
                                         modifier = Modifier.testTag("top_notifications_button")
                                     )
                                     ColorOsIconButton(
                                         onClick = { showCalendar = true },
                                         imageVector = Icons.Default.CalendarMonth,
-                                        contentDescription = "التقويم الزراعي",
+                                        contentDescription = agroText("التقويم الزراعي"),
                                         modifier = Modifier.testTag("top_calendar_button")
                                     )
                                 }
