@@ -303,9 +303,6 @@ fun PlantDoctorScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             item { AgriWeatherCard(modifier = Modifier.fillMaxWidth()) }
-            item {
-                DashboardWelcomeHeader()
-            }
 item {
                 Row(
                     modifier = Modifier.fillMaxWidth().testTag("plant_doctor_mode_toggle"),
@@ -822,14 +819,17 @@ private fun PlantCaptureCard(
                     verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
                     Text(
-                        "أضف صورة النبات",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        agroText("افحص نباتك بالذكاء الاصطناعي"),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFC8F34A),
+                        maxLines = 1
                     )
                     Text(
-                        "صورة واضحة تساعد على تشخيص أدق",
+                        agroText("أضف صورة واضحة لبدء التشخيص"),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1
                     )
                 }
                 Surface(
