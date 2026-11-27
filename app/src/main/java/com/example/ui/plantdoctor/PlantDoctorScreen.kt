@@ -347,7 +347,7 @@ item {
                             .testTag("open_agro_live_button"),
                         shape = RoundedCornerShape(24.dp),
                         color = Color.Transparent,
-                        border = BorderStroke(1.dp, Color(0xFFB8F52A).copy(alpha = 0.58f)),
+                        border = BorderStroke(1.dp, Color(0xFF9BCB78).copy(alpha = 0.58f)),
                         shadowElevation = 8.dp
                     ) {
                         Box(
@@ -355,7 +355,7 @@ item {
                                 .fillMaxSize()
                                 .background(
                                     Brush.horizontalGradient(
-                                        listOf(Color(0xFF0B3D20), Color(0xFF16A34A), Color(0xFF0B3D20))
+                                        listOf(Color(0xFF183D2A), Color(0xFF397A50), Color(0xFF183D2A))
                                     )
                                 )
                                 .padding(horizontal = 17.dp, vertical = 11.dp)
@@ -375,7 +375,7 @@ item {
                                     Icon(
                                         imageVector = Icons.Default.AutoAwesome,
                                         contentDescription = null,
-                                        tint = Color(0xFFB8F52A),
+                                        tint = Color(0xFF9BCB78),
                                         modifier = Modifier.size(27.dp)
                                     )
                                 }
@@ -751,14 +751,14 @@ private fun AgriHeroBanner() {
             horizontalArrangement = Arrangement.spacedBy(13.dp)
         ) {
             Surface(
-                color = Color(0xFFB8F52A).copy(alpha = 0.18f),
+                color = Color(0xFF9BCB78).copy(alpha = 0.18f),
                 shape = RoundedCornerShape(17.dp),
-                border = BorderStroke(1.dp, Color(0xFFB8F52A).copy(alpha = 0.52f))
+                border = BorderStroke(1.dp, Color(0xFF9BCB78).copy(alpha = 0.52f))
             ) {
                 Icon(
                     imageVector = Icons.Default.Eco,
                     contentDescription = null,
-                    tint = Color(0xFFB8F52A),
+                    tint = Color(0xFF9BCB78),
                     modifier = Modifier.padding(12.dp).size(27.dp)
                 )
             }
@@ -770,7 +770,7 @@ private fun AgriHeroBanner() {
                     text = "AGROPRO",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.ExtraBold,
-                    color = Color(0xFFB8F52A)
+                    color = Color(0xFF9BCB78)
                 )
                 Text(
                     text = "اعتنِ بمحصولك بذكاء أكبر",
