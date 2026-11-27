@@ -360,8 +360,8 @@ fun AgriWeatherCard(
             .fillMaxWidth()
             .animateContentSize()
             .heightIn(
-                min = if (isExpanded) 190.dp else 150.dp,
-                max = if (isExpanded) 210.dp else 175.dp
+                min = if (isExpanded) 220.dp else 150.dp,
+                max = if (isExpanded) 340.dp else 175.dp
             )
             .clickable { if (weatherData != null) isExpanded = !isExpanded },
         shape = RoundedCornerShape(24.dp),
@@ -551,7 +551,8 @@ fun AgriWeatherCard(
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = sprayText,
-                                maxLines = if (isExpanded) 4 else 2
+                                maxLines = if (isExpanded) 6 else 2,
+                                overflow = TextOverflow.Clip
                             )
                         }
                     }
