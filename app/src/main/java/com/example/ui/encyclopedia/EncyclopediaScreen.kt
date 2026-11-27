@@ -750,7 +750,7 @@ private fun AgrochemicalCard(
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(Modifier.width(4.dp))
-                            Text("فحص الخلط", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(agroText("فحص الخلط"), maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
                     }
                 }
@@ -825,7 +825,7 @@ private fun PesticideNoteDialog(
                 }
                 if (existingPhotoPath != null && newPhotoUri == null) {
                     TextButton(onClick = { existingPhotoPath = null }) {
-                        Text("إزالة الصورة المرفقة", color = MaterialTheme.colorScheme.error)
+                        Text(agroText("إزالة الصورة المرفقة"), color = MaterialTheme.colorScheme.error)
                     }
                 }
             }
@@ -891,7 +891,7 @@ private fun AddCustomAgrochemicalDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Text("التصنيف:", style = MaterialTheme.typography.labelMedium)
+                Text(agroText("التصنيف:"), style = MaterialTheme.typography.labelMedium)
                 selectableCategories.forEach { cat ->
                     FilterChip(
                         selected = category == cat,
