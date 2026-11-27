@@ -668,7 +668,7 @@ private fun AgroProSplash(onFinished: () -> Unit) {
     }
     val contentAlpha by animateFloatAsState(if (contentVisible) 1f else 0f, tween(420, easing = UltraSmoothEasing), label = "SplashContentAlpha")
     val contentScale by animateFloatAsState(if (contentVisible) 1f else 0.82f, tween(720, easing = UltraSmoothEasing), label = "SplashContentScale")
-    Box(modifier = Modifier.fillMaxSize().background(Brush.radialGradient(listOf(Color(0xFFFFE8DC), Color(0xFFF6F3EF), Color(0xFFECE6DF)))), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.fillMaxSize().background(Brush.radialGradient(listOf(Color(0xFF8A6849), Color(0xFF493729), Color(0xFF211A14)))), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.graphicsLayer {
             alpha = contentAlpha
             scaleX = contentScale
@@ -676,9 +676,9 @@ private fun AgroProSplash(onFinished: () -> Unit) {
         }) {
             Image(painter = painterResource(id = R.drawable.agripro_brand_mark), contentDescription = "AgroPro", modifier = Modifier.size(164.dp))
             Spacer(modifier = Modifier.height(18.dp))
-            Text(text = "AgroPro", color = Color(0xFF242424), fontSize = 34.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.2.sp)
+            Text(text = "AgroPro", color = Color(0xFFF5EBDD), fontSize = 34.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.2.sp)
             Spacer(modifier = Modifier.height(6.dp))
-            Text(text = "SMART AGRICULTURE", color = Color(0xFFD95F32), fontSize = 11.sp, letterSpacing = 3.sp)
+            Text(text = "SMART AGRICULTURE", color = Color(0xFFD5B38C), fontSize = 11.sp, letterSpacing = 3.sp)
         }
     }
 }
