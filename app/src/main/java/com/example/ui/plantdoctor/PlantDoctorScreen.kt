@@ -265,19 +265,45 @@ fun PlantDoctorScreen(
         )
     }
 
+    MaterialTheme(
+        colorScheme = androidx.compose.material3.darkColorScheme(
+            primary = Color(0xFFC8F34A),
+            onPrimary = Color(0xFF172313),
+            primaryContainer = Color(0xFF344D25),
+            onPrimaryContainer = Color(0xFFE4F6B7),
+            secondary = Color(0xFF9CCB83),
+            onSecondary = Color(0xFF142619),
+            secondaryContainer = Color(0xFF294432),
+            onSecondaryContainer = Color(0xFFD8EBD8),
+            background = Color(0xFF081A12),
+            onBackground = Color(0xFFEAF4E9),
+            surface = Color(0xFF14291F),
+            onSurface = Color(0xFFEAF4E9),
+            surfaceVariant = Color(0xFF20382B),
+            onSurfaceVariant = Color(0xFFB9CDBD),
+            surfaceContainerLowest = Color(0xFF07160F),
+            surfaceContainerLow = Color(0xFF172F22),
+            surfaceContainer = Color(0xFF1B3527),
+            surfaceContainerHigh = Color(0xFF254331),
+            outline = Color(0xFF607A65),
+            outlineVariant = Color(0xFF344E3B)
+        )
+    ) {
     Box(
-        modifier = modifier.fillMaxSize().agriAmbientBackground(),
+        modifier = modifier.fillMaxSize().background(
+            Brush.verticalGradient(listOf(Color(0xFF0B2116), Color(0xFF06160F)))
+        ),
         contentAlignment = Alignment.TopCenter
     ) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .widthIn(max = 760.dp),
-            contentPadding = PaddingValues(start = 16.dp, top = 14.dp, end = 16.dp, bottom = 132.dp),
+            contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 132.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-           
-item {
+            item { AgriWeatherCard(modifier = Modifier.fillMaxWidth()) }
+            item {
                 DashboardWelcomeHeader()
             }
 item {
@@ -336,6 +362,43 @@ item {
             }
 
             if (!isFlashcardMode) {
+                item {
+                    PlantCaptureCard(
+                        selectedImages = selectedImages,
+                        farmerNotes = farmerNotes,
+                        isLoading = diagnosisState is PlantDoctorUiState.Loading,
+                        cameraPermissionStatus = cameraPermissionState.status,
+                        hasRequestedCameraPermission = hasRequestedCameraPermission,
+                        onRequestCameraPermission = {
+                            hasRequestedCameraPermission = true
+                            cameraPermissionState.launchPermissionRequest()
+                        },
+                        onOpenAppSettings = openAppSettings,
+                        onNotesChange = viewModel::updateFarmerNotes,
+                        onRemoveImage = viewModel::removeImage,
+                        onPickFromGallery = {
+                            photoPickerLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        },
+                        onCaptureCamera = {
+                            when {
+                                cameraPermissionState.status.isGranted -> launchCameraCapture()
+                                cameraPermissionState.status.shouldShowRationale -> {
+                                    showCameraRationaleDialog = true
+                                }
+                                hasRequestedCameraPermission -> {
+                                    showCameraSettingsDialog = true
+                                }
+                                else -> {
+                                    hasRequestedCameraPermission = true
+                                    cameraPermissionState.launchPermissionRequest()
+                                }
+                            }
+                        },
+                        onAnalyzeClick = { viewModel.analyzePlantImage(context) }
+                    )
+                }
                 item {
                     Surface(
                         onClick = onOpenLiveAssistant,
@@ -400,43 +463,6 @@ item {
                             }
                         }
                     }
-                }
-                item {
-                    PlantCaptureCard(
-                        selectedImages = selectedImages,
-                        farmerNotes = farmerNotes,
-                        isLoading = diagnosisState is PlantDoctorUiState.Loading,
-                        cameraPermissionStatus = cameraPermissionState.status,
-                        hasRequestedCameraPermission = hasRequestedCameraPermission,
-                        onRequestCameraPermission = {
-                            hasRequestedCameraPermission = true
-                            cameraPermissionState.launchPermissionRequest()
-                        },
-                        onOpenAppSettings = openAppSettings,
-                        onNotesChange = viewModel::updateFarmerNotes,
-                        onRemoveImage = viewModel::removeImage,
-                        onPickFromGallery = {
-                            photoPickerLauncher.launch(
-                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                            )
-                        },
-                        onCaptureCamera = {
-                            when {
-                                cameraPermissionState.status.isGranted -> launchCameraCapture()
-                                cameraPermissionState.status.shouldShowRationale -> {
-                                    showCameraRationaleDialog = true
-                                }
-                                hasRequestedCameraPermission -> {
-                                    showCameraSettingsDialog = true
-                                }
-                                else -> {
-                                    hasRequestedCameraPermission = true
-                                    cameraPermissionState.launchPermissionRequest()
-                                }
-                            }
-                        },
-                        onAnalyzeClick = { viewModel.analyzePlantImage(context) }
-                    )
                 }
 
                 item {
@@ -610,44 +636,28 @@ item {
             }
         }
     }
+    }
 }
 
 @Composable
 private fun DashboardWelcomeHeader() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 2.dp, vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 2.dp),
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.spacedBy(1.dp)
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-            Text(
-                "مساعدك الزراعي",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                "تشخيص، تسميد، وريّ في مكان واحد",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        Surface(
-            shape = RoundedCornerShape(17.dp),
-            color = MaterialTheme.colorScheme.primaryContainer,
-            modifier = Modifier.size(48.dp)
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = Icons.Default.Eco,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-        }
+        Text(
+            agroText("افحص نباتك"),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFFEAF4E9)
+        )
+        Text(
+            agroText("بالذكاء الاصطناعي"),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFFC8F34A)
+        )
     }
 }
 
@@ -777,11 +787,11 @@ private fun PlantCaptureCard(
 ) {
     var showOptionalNotes by rememberSaveable { mutableStateOf(false) }
     ElevatedCard(
-        shape = RoundedCornerShape(26.dp),
+        shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            containerColor = Color(0xFF1B3327)
         ),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -927,15 +937,12 @@ private fun PlantCaptureCard(
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(156.dp)
+                         .height(190.dp)
                         .clip(RoundedCornerShape(24.dp))
                         .clickable(enabled = !isLoading, onClick = onPickFromGallery),
                     shape = RoundedCornerShape(24.dp),
-                    color = MaterialTheme.colorScheme.surface,
-                    border = BorderStroke(
-                        1.5.dp,
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.34f)
-                    )
+                    color = Color(0xFF203A2D),
+                    border = BorderStroke(1.dp, Color(0xFF45634A))
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -943,7 +950,7 @@ private fun PlantCaptureCard(
                         modifier = Modifier.padding(18.dp)
                     ) {
                         Surface(
-                            color = MaterialTheme.colorScheme.primaryContainer,
+                            color = Color(0xFF203A2D),
                             shape = CircleShape,
                             modifier = Modifier.size(52.dp)
                         ) {
@@ -951,7 +958,7 @@ private fun PlantCaptureCard(
                                 Icon(
                                     imageVector = Icons.Default.AddPhotoAlternate,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
+                                    tint = Color(0xFFC8F34A),
                                     modifier = Modifier.size(30.dp)
                                 )
                             }
