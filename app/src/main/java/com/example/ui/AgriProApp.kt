@@ -418,8 +418,8 @@ fun AgriProApp() {
                                     Brush.verticalGradient(
                                         colors = if (useDarkTheme) {
                                             listOf(
-                                                Color(0xFF294735).copy(alpha = 0.78f),
-                                                Color(0xFF14251B).copy(alpha = 0.88f)
+                                                MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.90f),
+                                                MaterialTheme.colorScheme.surface.copy(alpha = 0.94f)
                                             )
                                         } else {
                                             listOf(
@@ -708,8 +708,8 @@ private fun LiquidGlassNavigationBar(
     val glassBackgroundBrush = if (useDarkTheme) {
         Brush.verticalGradient(
             colors = listOf(
-                Color(0xFF164023).copy(alpha = 0.56f),
-                Color(0xFF071A0D).copy(alpha = 0.82f)
+                MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.78f),
+                MaterialTheme.colorScheme.surface.copy(alpha = 0.94f)
             )
         )
     } else {
@@ -724,7 +724,7 @@ private fun LiquidGlassNavigationBar(
     val specularBorderBrush = if (useDarkTheme) {
         Brush.verticalGradient(
             colors = listOf(
-                Color(0xFFB8F52A).copy(alpha = 0.42f),
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.36f),
                 Color.White.copy(alpha = 0.045f)
             )
         )
