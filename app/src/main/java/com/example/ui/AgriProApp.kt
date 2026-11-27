@@ -685,16 +685,6 @@ private fun AgroBottomNavigationBar(
             .navigationBarsPadding()
             .padding(horizontal = 14.dp, vertical = 8.dp)
             .height(78.dp)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = 0.18f),
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
-                        MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.20f)
-                    )
-                ),
-                shape = barShape
-            )
             .hazeEffect(
                 state = hazeState,
                 style = HazeStyle(
@@ -710,14 +700,8 @@ private fun AgroBottomNavigationBar(
         tonalElevation = 0.dp,
         shadowElevation = 8.dp,
         border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            Brush.verticalGradient(
-                colors = listOf(
-                    Color.White.copy(alpha = 0.42f),
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.24f),
-                    Color.White.copy(alpha = 0.12f)
-                )
-            )
+            0.7.dp,
+            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.24f)
         )
     ) {
         Row(
