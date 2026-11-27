@@ -28,5 +28,5 @@ object LocaleHelper {
 
     fun getLanguage(context: Context): String =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .getString(LANGUAGE_KEY, "system") ?: "system"
+            .getString(LANGUAGE_KEY, "ar") ?: "ar"
 }
