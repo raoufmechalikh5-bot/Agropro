@@ -504,7 +504,6 @@ fun AgriProApp() {
                             LiquidGlassNavigationBar(
                                 destinations = destinations,
                                 currentRoute = currentRoute,
-                                useDarkTheme = useDarkTheme,
                                 onSelectDestination = { dest ->
                                     if (currentRoute != dest.route) {
                                         navController.navigate(dest.route) {
@@ -712,10 +711,8 @@ private fun AgroProSplash(onFinished: () -> Unit) {
 private fun LiquidGlassNavigationBar(
     destinations: List<AgriDestination>,
     currentRoute: String,
-    useDarkTheme: Boolean,
     onSelectDestination: (AgriDestination) -> Unit
 ) {
-    val selectedIndex = destinations.indexOfFirst { it.route == currentRoute }.coerceAtLeast(0)
     val barShape = RoundedCornerShape(24.dp)
 
     Surface(
