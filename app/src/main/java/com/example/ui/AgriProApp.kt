@@ -722,8 +722,17 @@ private fun AgroBottomNavigationBar(
             .height(78.dp)
             .clip(barShape),
         shape = barShape,
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.94f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.65f)),
+        color = Color.White.copy(alpha = 0.66f),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            Brush.verticalGradient(
+                colors = listOf(
+                    Color.White.copy(alpha = 0.95f),
+                    Color.White.copy(alpha = 0.42f),
+                    Color.White.copy(alpha = 0.72f)
+                )
+            )
+        ),
         tonalElevation = 0.dp,
         shadowElevation = 12.dp
     ) {
