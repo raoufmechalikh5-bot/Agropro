@@ -27,4 +27,14 @@
     <string name="fertilizer_calc_saved_banner">تم حفظ الحساب محلياً في قاعدة البيانات للوصول دون إنترنت</string>
     <string name="fertilizer_calc_history_heading">سجل حسابات المحاصيل المحفوظة (متاح دون إنترنت)</string>
     <string name="fertilizer_calc_history_empty">لم تحفظ أي حسابات بعد. اضغط «حفظ الحساب» للاحتفاظ بتوصيات NPK والعمل دون إنترنت.</string>
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_appearance">المظهر</string>
+    <string name="settings_language">لغة التطبيق</string>
+    <string name="settings_language_ar">العربية</string>
+    <string name="settings_language_fr">Français</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_theme_system">حسب النظام</string>
+    <string name="settings_theme_light">فاتح</string>
+    <string name="settings_theme_dark">داكن</string>
+    <string name="settings_close">إغلاق</string>
 </resources>
