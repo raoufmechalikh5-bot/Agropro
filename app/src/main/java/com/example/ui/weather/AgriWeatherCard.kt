@@ -382,8 +382,7 @@ fun AgriWeatherCard(
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            maxLines = 2
                         )
                     }
                 }
@@ -469,8 +468,7 @@ fun AgriWeatherCard(
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.SemiBold,
                             color = badgeText,
-                            maxLines = if (isExpanded) 3 else 1,
-                            overflow = TextOverflow.Ellipsis
+                            maxLines = if (isExpanded) 4 else 2
                         )
                     }
                 }
@@ -718,8 +716,7 @@ fun WeatherContextBanner(
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = accentColor,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
                     modifier = Modifier.weight(1f)
                 )
                 if (mode == WeatherContextMode.NOTEBOOK) {
