@@ -313,7 +313,8 @@ object WeatherRepository {
 
 @Composable
 fun AgriWeatherCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    expandedByDefault: Boolean = false
 ) {
     val context = LocalContext.current
 
@@ -325,7 +326,7 @@ fun AgriWeatherCard(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var refreshTrigger by remember { mutableIntStateOf(0) }
     var showLocationDialog by remember { mutableStateOf(false) }
-    var isExpanded by remember { mutableStateOf(false) }
+    var isExpanded by remember { mutableStateOf(expandedByDefault) }
 
     LaunchedEffect(selectedLocation, refreshTrigger) {
         isLoading = true
