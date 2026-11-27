@@ -1,7 +1,5 @@
 package com.example.ui.live
 
-import com.example.LocaleHelper
-
 import com.example.ui.agroText
 import android.Manifest
 import android.os.Build
@@ -111,11 +109,11 @@ fun AgroLiveScreen(
     ) { granted ->
         if (granted) {
             if (viewModel.uiState.value.connected) viewModel.setMicrophoneEnabled(true)
-            else viewModel.connect(LocaleHelper.getLanguage(context))
+            else viewModel.connect()
         }
     }
     val requestMicOrConnect: () -> Unit = {
-        if (context.hasPermission(Manifest.permission.RECORD_AUDIO)) viewModel.connect(LocaleHelper.getLanguage(context))
+        if (context.hasPermission(Manifest.permission.RECORD_AUDIO)) viewModel.connect()
         else microphonePermission.launch(Manifest.permission.RECORD_AUDIO)
     }
     val notificationPermission = rememberLauncherForActivityResult(
@@ -310,7 +308,7 @@ fun AgroLiveScreen(
         if (!state.connected && !state.connecting) {
             Button(
                 onClick = {
-                    if (context.hasPermission(Manifest.permission.RECORD_AUDIO)) viewModel.connect(LocaleHelper.getLanguage(context))
+                    if (context.hasPermission(Manifest.permission.RECORD_AUDIO)) viewModel.connect()
                     else microphonePermission.launch(Manifest.permission.RECORD_AUDIO)
                 },
                 modifier = Modifier.fillMaxWidth().height(48.dp),
