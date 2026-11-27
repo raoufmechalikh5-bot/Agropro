@@ -14,6 +14,11 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +34,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.NoPhotography
 import androidx.compose.material.icons.filled.Close
@@ -57,6 +63,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -254,6 +261,11 @@ fun AgroLiveScreen(
                         color = Color(0xFF9BE0B0)
                     )
                 }
+
+                LiveAssistantOrb(
+                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp),
+                    active = state.connected && state.microphoneEnabled
+                )
             }
         }
 
@@ -345,6 +357,54 @@ fun AgroLiveScreen(
         ) {
             Icon(Icons.Default.Close, contentDescription = null)
             Text("إنهاء المحادثة", modifier = Modifier.padding(start = 8.dp), fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+@Composable
+private fun LiveAssistantOrb(
+    modifier: Modifier = Modifier,
+    active: Boolean
+) {
+    val transition = rememberInfiniteTransition(label = "live_orb")
+    val pulse = transition.animateFloat(
+        initialValue = 0.94f,
+        targetValue = 1.08f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1250),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "live_orb_pulse"
+    )
+    Surface(
+        modifier = modifier.size(68.dp).graphicsLayer {
+            scaleX = if (active) pulse.value else 1f
+            scaleY = if (active) pulse.value else 1f
+        },
+        shape = CircleShape,
+        color = Color(0xD9153023),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            Color(0xFF9BE0B0).copy(alpha = 0.72f)
+        ),
+        shadowElevation = 12.dp
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.radialGradient(
+                        listOf(Color(0xFF4CA66B), Color(0xFF173D2A), Color(0xFF0B1C13))
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                Icons.Default.AutoAwesome,
+                contentDescription = "AgroPro AI",
+                tint = Color(0xFFE0F8E8),
+                modifier = Modifier.size(30.dp)
+            )
         }
     }
 }
