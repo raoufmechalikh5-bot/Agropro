@@ -1479,6 +1479,7 @@ private fun DiagnosisResultCard(
             }
         }
     }
+    }
 }
 
 @Composable
