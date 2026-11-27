@@ -303,7 +303,7 @@ item {
                                 tint = if (diagnosisSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(25.dp))
                             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                                Text("التشخيص الذكي", fontWeight = FontWeight.Bold,
+                                Text(agroText("التشخيص الذكي"), fontWeight = FontWeight.Bold,
                                     color = if (diagnosisSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                                     style = MaterialTheme.typography.titleSmall, maxLines = 2)
                             }
@@ -326,7 +326,7 @@ item {
                                 tint = if (isFlashcardMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(25.dp))
                             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                                Text("بطاقات المراجعة", fontWeight = FontWeight.Bold,
+                                Text(agroText("بطاقات المراجعة"), fontWeight = FontWeight.Bold,
                                     color = if (isFlashcardMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                                     style = MaterialTheme.typography.titleSmall, maxLines = 2)
                             }
@@ -383,7 +383,7 @@ item {
                                 ) {
                                     Text("AgroPro Live", color = Color.White, fontWeight = FontWeight.Bold,
                                         style = MaterialTheme.typography.titleMedium, maxLines = 1)
-                                    Text("صوت وصورة مباشرة", color = Color(0xFFD0EBDD),
+                                    Text(agroText("صوت وصورة مباشرة"), color = Color(0xFFD0EBDD),
                                         style = MaterialTheme.typography.labelMedium, maxLines = 1)
                                 }
                                 Surface(shape = CircleShape, color = Color(0xFF65D995).copy(alpha = 0.18f)) {
@@ -1011,7 +1011,7 @@ private fun PlantCaptureCard(
                 ) {
                     Icon(Icons.Default.CameraAlt, contentDescription = null)
                     Spacer(Modifier.width(6.dp))
-                    Text("الكاميرا", maxLines = 1)
+                    Text(agroText("الكاميرا"), maxLines = 1)
                 }
 
                 OutlinedButton(
@@ -1024,7 +1024,7 @@ private fun PlantCaptureCard(
                 ) {
                     Icon(Icons.Default.PhotoLibrary, contentDescription = null)
                     Spacer(Modifier.width(6.dp))
-                    Text("المعرض", maxLines = 1)
+                    Text(agroText("المعرض"), maxLines = 1)
                 }
             }
 
