@@ -32,35 +32,36 @@ val SurfaceContainerHighLight = Color(0xFFE4E9E0)
 val OutlineLight = Color(0xFF73796E)
 val OutlineVariantLight = Color(0xFFC2C9BC)
 
-// Dark Theme - Rich Loam & Luminous Sprout
-val SproutPrimaryDark = Color(0xFF8BD5A2)
-val OnSproutPrimaryDark = Color(0xFF00390D)
-val SproutContainerDark = Color(0xFF173D2B)
-val OnSproutContainerDark = Color(0xFFB7E4C7)
+// Dark Theme - Deep Forest with a single luminous lime accent
+val AgriAccentLime = Color(0xFFC8F04A)
+val SproutPrimaryDark = AgriAccentLime
+val OnSproutPrimaryDark = Color(0xFF17240A)
+val SproutContainerDark = Color(0xFF263B18)
+val OnSproutContainerDark = Color(0xFFE5F6B8)
 
-val TerracottaSecondaryDark = Color(0xFFFFB690)
-val OnTerracottaSecondaryDark = Color(0xFF532104)
-val TerracottaContainerDark = Color(0xFF703312)
-val OnTerracottaContainerDark = Color(0xFFFFDBCA)
+val TerracottaSecondaryDark = Color(0xFFE1B68F)
+val OnTerracottaSecondaryDark = Color(0xFF352315)
+val TerracottaContainerDark = Color(0xFF493522)
+val OnTerracottaContainerDark = Color(0xFFF3DEC9)
 
 val HarvestGoldTertiaryDark = Color(0xFFF2C16A)
 val OnHarvestGoldTertiaryDark = Color(0xFF472F00)
 val HarvestGoldContainerDark = Color(0xFF664500)
 val OnHarvestGoldContainerDark = Color(0xFFFFDFAA)
 
-val BackgroundDark = Color(0xFF0B120D)
-val OnBackgroundDark = Color(0xFFE1E4DC)
-val SurfaceDark = Color(0xFF101A13)
-val OnSurfaceDark = Color(0xFFE1E4DC)
-val SurfaceVariantDark = Color(0xFF42493F)
-val OnSurfaceVariantDark = Color(0xFFC2C9BC)
-val SurfaceContainerLowestDark = Color(0xFF080E0A)
-val SurfaceContainerLowDark = Color(0xFF142019)
-val SurfaceContainerDark = Color(0xFF19261D)
-val SurfaceContainerHighDark = Color(0xFF223126)
+val BackgroundDark = Color(0xFF07140C)
+val OnBackgroundDark = Color(0xFFF0F4E9)
+val SurfaceDark = Color(0xFF0D1B11)
+val OnSurfaceDark = Color(0xFFF0F4E9)
+val SurfaceVariantDark = Color(0xFF293A2D)
+val OnSurfaceVariantDark = Color(0xFFC3D0C2)
+val SurfaceContainerLowestDark = Color(0xFF061009)
+val SurfaceContainerLowDark = Color(0xFF102116)
+val SurfaceContainerDark = Color(0xFF16291B)
+val SurfaceContainerHighDark = Color(0xFF1D3322)
 
-val OutlineDark = Color(0xFF8C9387)
-val OutlineVariantDark = Color(0xFF34483A)
+val OutlineDark = Color(0xFF91A18F)
+val OutlineVariantDark = Color(0xFF354B39)
 
 // Semantic Agronomic Colors - Light
 val SafeGreen = Color(0xFF2D6A4F)
@@ -80,19 +81,19 @@ val WaterBlueContainer = Color(0xFFE1F5FE)
 val OnWaterBlueContainerLight = Color(0xFF013A63)
 
 // Semantic Agronomic Colors - Dark
-val SafeGreenDark = Color(0xFF74C69D)
-val SafeGreenContainerDark = Color(0xFF163828)
-val OnSafeGreenContainerDark = Color(0xFFD8F3DC)
+val SafeGreenDark = Color(0xFF9BD66D)
+val SafeGreenContainerDark = Color(0xFF203A22)
+val OnSafeGreenContainerDark = Color(0xFFE1F5D0)
 
-val WarningAmberDark = Color(0xFFFBBF24)
+val WarningAmberDark = Color(0xFFFFC45C)
 val WarningAmberContainerDark = Color(0xFF452800)
-val OnWarningAmberContainerDark = Color(0xFFFEF3C7)
+val OnWarningAmberContainerDark = Color(0xFFFFE8BD)
 
 val DangerCrimsonDark = Color(0xFFFFB4AB)
 val DangerCrimsonContainerDark = Color(0xFF690005)
 val OnDangerCrimsonContainerDark = Color(0xFFFFDAD6)
 
-val WaterBlueDark = Color(0xFF4FC3F7)
+val WaterBlueDark = Color(0xFF78C8EA)
 val WaterBlueContainerDark = Color(0xFF0A3248)
 val OnWaterBlueContainerDark = Color(0xFFE1F5FE)
 
