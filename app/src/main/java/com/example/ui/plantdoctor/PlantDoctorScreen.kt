@@ -309,7 +309,7 @@ item {
                         }
                     }
                     Surface(
-                        modifier = Modifier.weight(1f).height(84.dp).clip(RoundedCornerShape(22.dp))
+                        modifier = Modifier.weight(1f).height(70.dp).clip(RoundedCornerShape(22.dp))
                             .clickable { viewModel.setFlashcardMode(true) }
                             .testTag("tab_student_flashcards"),
                         color = if (isFlashcardMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
