@@ -21,6 +21,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.example.R
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -354,203 +358,219 @@ fun AgriWeatherCard(
             .fillMaxWidth()
             .clickable { if (weatherData != null) isExpanded = !isExpanded },
         shape = RoundedCornerShape(24.dp),
-        color = Color(0xFF1B4D78),
+        color = Color(0xFF4A9DE0),
         tonalElevation = 2.dp
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                // Layered, soft white cloud banks over a clear blue sky.
-                fun cloudPuff(x: Float, y: Float, radius: Float, alpha: Float) {
-                    val center = Offset(x, y)
-                    drawCircle(
-                        brush = Brush.radialGradient(
-                            colors = listOf(
-                                Color.White.copy(alpha = alpha),
-                                Color(0xFFEAF7FF).copy(alpha = alpha * 0.72f),
-                                Color(0xFFD7EEFF).copy(alpha = 0.02f)
-                            ),
-                            center = center,
-                            radius = radius
-                        ),
-                        radius = radius,
-                        center = center
-                    )
-                }
-                fun cloudBank(x: Float, y: Float, scale: Float, alpha: Float) {
-                    cloudPuff(x, y, size.height * 0.17f * scale, alpha * 0.78f)
-                    cloudPuff(x + size.height * 0.13f * scale, y - size.height * 0.055f * scale, size.height * 0.22f * scale, alpha)
-                    cloudPuff(x + size.height * 0.31f * scale, y, size.height * 0.16f * scale, alpha * 0.82f)
-                    cloudPuff(x + size.height * 0.16f * scale, y + size.height * 0.055f * scale, size.height * 0.19f * scale, alpha * 0.66f)
-                }
-                cloudBank(size.width * 0.79f, size.height * 0.22f, 1.0f, 0.34f)
-                cloudBank(size.width * 0.08f, size.height * 0.77f, 0.78f, 0.25f)
-                cloudBank(size.width * 0.53f, size.height * 0.94f, 0.52f, 0.16f)
-            }
-            Column(
+            Image(
+                painter = painterResource(id = R.drawable.weather_sky_background),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
                             listOf(
-                                Color(0xCC163B63),
-                                Color(0xB3246FA5),
-                                Color(0xD9173F68)
+                                Color(0x33143F70),
+                                Color(0x241C5D91),
+                                Color(0x70416F9A)
                             )
                         )
                     )
-                    .padding(horizontal = 14.dp, vertical = 11.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-            // الشريط العلوي المدمج (سطر واحد فقط)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Surface(
-                    onClick = { showLocationDialog = true },
-                    shape = RoundedCornerShape(50),
-                    color = Color.White.copy(alpha = 0.16f)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    Surface(
+                        onClick = { showLocationDialog = true },
+                        shape = RoundedCornerShape(50),
+                        color = Color.White.copy(alpha = 0.22f)
                     ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "تغيير المنطقة",
+                                tint = Color.White,
+                                modifier = Modifier.size(15.dp)
+                            )
+                            Text(
+                                text = selectedLocation.name,
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (isLoading && weatherData == null) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp,
+                                color = Color.White
+                            )
+                        } else {
+                            IconButton(
+                                onClick = { refreshTrigger++ },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "تحديث الطقس",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
                         Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = "تغيير المنطقة",
+                            imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                            contentDescription = if (isExpanded) "طي البطاقة" else "توسيع البطاقة",
                             tint = Color.White,
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Text(
-                            text = selectedLocation.name,
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            maxLines = 2
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
 
-                if (isLoading && weatherData == null) {
-                    CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
-                } else if (weatherData != null) {
+                if (weatherData != null) {
                     val data = weatherData!!
                     Row(
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        CompactMetric(Icons.Default.WbSunny, "${data.temperatureC.toInt()}°")
-                        CompactMetric(Icons.Default.WaterDrop, "${data.humidityPercent}%")
-                        CompactMetric(Icons.Default.Air, "${data.windSpeedKmh.toInt()}")
-
-                        IconButton(
-                            onClick = { refreshTrigger++ },
-                            modifier = Modifier.size(26.dp)
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = "تحديث الطقس",
-                                tint = Color.White,
-                                modifier = Modifier.size(15.dp)
+                            Text(
+                                text = data.conditionText,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White
+                            )
+                            Text(
+                                text = "الطقس الحالي",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White.copy(alpha = 0.88f)
                             )
                         }
-                        Icon(
-                            imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                            contentDescription = null,
-                            tint = Color.White.copy(alpha = 0.9f),
-                            modifier = Modifier.size(18.dp)
+                        Text(
+                            text = "${data.temperatureC.toInt()}°",
+                            style = MaterialTheme.typography.displayMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
                         )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White.copy(alpha = 0.20f), RoundedCornerShape(16.dp))
+                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CompactMetric(Icons.Default.WaterDrop, "الرطوبة ${data.humidityPercent}%")
+                        CompactMetric(Icons.Default.Air, "الرياح ${data.windSpeedKmh.toInt()} كم/س")
+                        CompactMetric(Icons.Default.WbSunny, "المطر ${String.format(Locale.US, "%.1f", data.precipitationMm)} مم")
+                    }
+
+                    val (sprayBg, sprayText, sprayIcon) = when (data.sprayStatus) {
+                        SpraySuitability.OPTIMAL -> Triple(
+                            Color(0xE51B6B43),
+                            Color.White,
+                            Icons.Default.CheckCircle
+                        )
+                        SpraySuitability.CAUTION -> Triple(
+                            Color(0xE5A85A13),
+                            Color.White,
+                            Icons.Default.Warning
+                        )
+                        SpraySuitability.UNSUITABLE -> Triple(
+                            Color(0xE5A83232),
+                            Color.White,
+                            Icons.Default.Warning
+                        )
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(14.dp),
+                        color = sprayBg,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 11.dp, vertical = 9.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(7.dp)
+                        ) {
+                            Icon(
+                                imageVector = sprayIcon,
+                                contentDescription = null,
+                                tint = sprayText,
+                                modifier = Modifier.size(17.dp)
+                            )
+                            Text(
+                                text = data.sprayAdvice,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = sprayText,
+                                maxLines = if (isExpanded) 4 else 2
+                            )
+                        }
+                    }
+
+                    AnimatedVisibility(
+                        visible = isExpanded,
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(top = 1.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Text(
+                                text = "الرياح: ${data.windSpeedKmh.toInt()} كم/س • التبخر اليومي ET₀ ≈ ${String.format(Locale.US, "%.1f", data.estimateDailyEt0Mm())} ملم",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White
+                            )
+                            if (data.diseaseRiskAlert != null) {
+                                Surface(
+                                    shape = RoundedCornerShape(10.dp),
+                                    color = Color.White.copy(alpha = 0.88f),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = data.diseaseRiskAlert,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = Color(0xFF24415B),
+                                        modifier = Modifier.padding(9.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
                 } else if (errorMessage != null) {
                     Text(
                         text = errorMessage!!,
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.error
+                        color = Color.White
                     )
                 }
-            }
-
-            // شريط حالة الرش المختصر
-            if (weatherData != null) {
-                val data = weatherData!!
-                val (badgeBg, badgeText, badgeIcon) = when (data.sprayStatus) {
-                    SpraySuitability.OPTIMAL -> Triple(
-                        Color(0xFF1B5E20).copy(alpha = 0.12f),
-                        Color(0xFF2E7D32),
-                        Icons.Default.CheckCircle
-                    )
-                    SpraySuitability.CAUTION -> Triple(
-                        Color(0xFFE65100).copy(alpha = 0.12f),
-                        Color(0xFFEF6C00),
-                        Icons.Default.Warning
-                    )
-                    SpraySuitability.UNSUITABLE -> Triple(
-                        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.65f),
-                        MaterialTheme.colorScheme.error,
-                        Icons.Default.Warning
-                    )
-                }
-
-                Surface(
-                    shape = RoundedCornerShape(14.dp),
-                    color = badgeBg,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Icon(
-                            imageVector = badgeIcon,
-                            contentDescription = null,
-                            tint = badgeText,
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Text(
-                            text = data.sprayAdvice,
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF10251A),
-                            maxLines = if (isExpanded) 4 else 2
-                        )
-                    }
-                }
-
-                // التفاصيل الإضافية تظهر فقط عند الضغط لتوسيع البطاقة
-                AnimatedVisibility(
-                    visible = isExpanded,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
-                    Column(
-                        modifier = Modifier.padding(top = 4.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Text(
-                            text = "الحالة: ${data.conditionText} • الرياح: ${data.windSpeedKmh.toInt()} كم/س • التبخر اليومي ET₀ ≈ ${String.format(Locale.US, "%.1f", data.estimateDailyEt0Mm())} ملم",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.White.copy(alpha = 0.88f)
-                        )
-                        if (data.diseaseRiskAlert != null) {
-                            Surface(
-                                shape = RoundedCornerShape(10.dp),
-                                color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.65f),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = data.diseaseRiskAlert,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                                    modifier = Modifier.padding(8.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
             }
         }
     }
