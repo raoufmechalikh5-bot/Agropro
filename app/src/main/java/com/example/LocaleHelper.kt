@@ -10,7 +10,7 @@ object LocaleHelper {
 
     fun wrap(context: Context): Context {
         val language = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .getString(LANGUAGE_KEY, "system") ?: "system"
+            .getString(LANGUAGE_KEY, "ar") ?: "ar"
         if (language == "system") return context
         val locale = Locale.forLanguageTag(language)
         Locale.setDefault(locale)
