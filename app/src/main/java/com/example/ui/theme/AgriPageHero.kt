@@ -44,13 +44,13 @@ fun AgriPageHero(
             .background(
                 Brush.linearGradient(
                     colors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.88f),
-                        androidx.compose.ui.graphics.Color(0xFF102D20)
+                        androidx.compose.ui.graphics.Color(0xFF0B3D20),
+                        androidx.compose.ui.graphics.Color(0xFF16A34A),
+                        androidx.compose.ui.graphics.Color(0xFF0B2413)
                     )
                 )
             )
-            .padding(horizontal = 18.dp, vertical = 20.dp),
+            .padding(horizontal = 17.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
@@ -60,7 +60,7 @@ fun AgriPageHero(
             Text(
                 text = eyebrow,
                 style = MaterialTheme.typography.labelMedium,
-                color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.76f),
+                color = androidx.compose.ui.graphics.Color(0xFFB8F52A),
                 fontWeight = FontWeight.SemiBold
             )
             Text(
@@ -77,7 +77,7 @@ fun AgriPageHero(
         }
         Spacer(Modifier.width(12.dp))
         Surface(
-            color = androidx.compose.ui.graphics.Color.White.copy(alpha = 0.14f),
+            color = androidx.compose.ui.graphics.Color(0xFFB8F52A).copy(alpha = 0.18f),
             shape = CircleShape,
             modifier = Modifier.size(54.dp)
         ) {
@@ -85,7 +85,7 @@ fun AgriPageHero(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = androidx.compose.ui.graphics.Color.White,
+                    tint = androidx.compose.ui.graphics.Color(0xFFB8F52A),
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -97,13 +97,13 @@ fun AgriPageHero(
 fun Modifier.agriAmbientBackground(): Modifier {
     val scheme = MaterialTheme.colorScheme
     val top = if (scheme.background.red < 0.2f) {
-        androidx.compose.ui.graphics.Color(0xFF0B1710)
+        androidx.compose.ui.graphics.Color(0xFF0B2413)
     } else {
         androidx.compose.ui.graphics.Color(0xFFE5EFE3)
     }
     val middle = scheme.background
     val bottom = if (scheme.background.red < 0.2f) {
-        androidx.compose.ui.graphics.Color(0xFF101F16)
+        androidx.compose.ui.graphics.Color(0xFF071A0D)
     } else {
         androidx.compose.ui.graphics.Color(0xFFF5F7F0)
     }
@@ -111,12 +111,12 @@ fun Modifier.agriAmbientBackground(): Modifier {
         .background(Brush.verticalGradient(listOf(top, middle, bottom)))
         .drawBehind {
             drawCircle(
-                color = scheme.primary.copy(alpha = if (scheme.background.red < 0.2f) 0.10f else 0.08f),
+                color = scheme.primary.copy(alpha = if (scheme.background.red < 0.2f) 0.15f else 0.08f),
                 radius = size.minDimension * 0.72f,
                 center = Offset(size.width * 1.04f, size.height * 0.10f)
             )
             drawCircle(
-                color = scheme.tertiary.copy(alpha = if (scheme.background.red < 0.2f) 0.07f else 0.09f),
+                color = scheme.tertiary.copy(alpha = if (scheme.background.red < 0.2f) 0.10f else 0.09f),
                 radius = size.minDimension * 0.58f,
                 center = Offset(size.width * -0.12f, size.height * 0.68f)
             )
