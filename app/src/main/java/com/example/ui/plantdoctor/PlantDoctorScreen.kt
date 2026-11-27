@@ -1477,8 +1477,9 @@ private fun DiagnosisResultCard(
                     fontWeight = FontWeight.Bold
                 )
             }
+                }
+            }
         }
-    }
     }
 }
 
