@@ -7,6 +7,7 @@
     <string name="camera_permission_denied_body">L’autorisation de caméra a été refusée. Activez-la dans les paramètres de l’application ou choisissez une image dans la galerie.</string>
     <string name="camera_permission_open_settings">Ouvrir les paramètres</string>
     <string name="camera_permission_dismiss">Annuler</string>
+    <string name="nav_home">Accueil</string>
     <string name="nav_plant_doctor">Diagnostic des plantes</string>
     <string name="nav_fertilizer_calculator">Calculateur NPK</string>
     <string name="nav_calculator">Irrigation et sol</string>
