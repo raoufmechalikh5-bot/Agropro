@@ -96,6 +96,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -282,13 +283,13 @@ fun PlantDoctorScreen(
         Image(
             painter = painterResource(id = R.drawable.img_agri_hero),
             contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().blur(8.dp),
             contentScale = ContentScale.Crop
         )
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.52f))
+                .background(MaterialTheme.colorScheme.background.copy(alpha = if (MaterialTheme.colorScheme.background.red < 0.3f) 0.76f else 0.40f))
         )
         LazyColumn(
             modifier = Modifier
@@ -746,7 +747,7 @@ private fun PlantCaptureCard(
     ElevatedCard(
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp),
         modifier = Modifier.fillMaxWidth().testTag("plant_capture_card")
     ) {
         Column(
@@ -1022,7 +1023,8 @@ private fun DiagnosisResultCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)),
         modifier = Modifier
             .fillMaxWidth()
             .testTag("diagnosis_result_card")
@@ -1474,6 +1476,7 @@ private fun DiseaseFlashcardItem(
 ) {
     ElevatedCard(
         shape = MaterialTheme.shapes.large,
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp),
         colors = CardDefaults.elevatedCardColors(
             containerColor = if (isMastered) {
                 MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f)
