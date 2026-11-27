@@ -14,6 +14,21 @@ fun agroText(source: String): String {
 }
 
 private val englishText = mapOf(
+    "مرحباً بك في" to "Welcome to",
+    "كل أدوات مزرعتك في مكان واحد" to "All your farm tools in one place",
+    "إدارة زراعية أذكى" to "Smarter farm management",
+    "تابع محاصيلك واتخذ قراراتك بثقة" to "Track your crops and make confident decisions",
+    "خدماتك الرئيسية" to "Main services",
+    "حلّل صور نباتاتك" to "Analyze your plant photos",
+    "اسأل واحصل على إرشاد" to "Ask for expert guidance",
+    "مساعدك المباشر بالصوت والصورة" to "Your live voice and video assistant",
+    "أدواتك الزراعية" to "Your farming tools",
+    "التسميد" to "Fertilization",
+    "الحسابات الزراعية" to "Farm calculations",
+    "المعرفة الزراعية" to "Agricultural knowledge",
+    "التجارب والقياسات" to "Trials and measurements",
+    "الموسوعة" to "Encyclopedia",
+    "دفتر المزرعة" to "Farm notebook",
     "مساعدك الزراعي" to "Your farming assistant",
     "تشخيص، تسميد، وريّ في مكان واحد" to "Diagnosis, fertilization and irrigation in one place",
     "التشخيص الذكي" to "Smart diagnosis",
@@ -158,6 +173,21 @@ private val englishText = mapOf(
 )
 
 private val frenchText = mapOf(
+    "مرحباً بك في" to "Bienvenue sur",
+    "كل أدوات مزرعتك في مكان واحد" to "Tous les outils de votre ferme au même endroit",
+    "إدارة زراعية أذكى" to "Une gestion agricole plus intelligente",
+    "تابع محاصيلك واتخذ قراراتك بثقة" to "Suivez vos cultures et décidez en toute confiance",
+    "خدماتك الرئيسية" to "Services principaux",
+    "حلّل صور نباتاتك" to "Analysez les photos de vos plantes",
+    "اسأل واحصل على إرشاد" to "Posez vos questions et obtenez des conseils",
+    "مساعدك المباشر بالصوت والصورة" to "Votre assistant en direct, audio et vidéo",
+    "أدواتك الزراعية" to "Vos outils agricoles",
+    "التسميد" to "Fertilisation",
+    "الحسابات الزراعية" to "Calculs agricoles",
+    "المعرفة الزراعية" to "Connaissances agricoles",
+    "التجارب والقياسات" to "Essais et mesures",
+    "الموسوعة" to "Encyclopédie",
+    "دفتر المزرعة" to "Carnet de ferme",
     "مساعدك الزراعي" to "Votre assistant agricole",
     "تشخيص، تسميد، وريّ في مكان واحد" to "Diagnostic, fertilisation et irrigation au même endroit",
     "التشخيص الذكي" to "Diagnostic intelligent",
