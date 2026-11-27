@@ -393,6 +393,20 @@ fun AgriWeatherCard(
                     .fillMaxSize()
                     .background(Color.White.copy(alpha = 0.08f))
             )
+            // Subtle dark gradient behind weather labels and readings for stronger contrast.
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colorStops = arrayOf(
+                                0.0f to Color(0x33203345),
+                                0.42f to Color(0x14203345),
+                                1.0f to Color(0x26203345)
+                            )
+                        )
+                    )
+            )
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
