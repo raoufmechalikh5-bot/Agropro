@@ -7,6 +7,7 @@
     <string name="camera_permission_denied_body">تم رفض صلاحية الكاميرا. لتشغيل الكاميرا مباشرة، فعّل إذن الكاميرا من إعدادات التطبيق أو استخدم المعرض لاختيار صورة.</string>
     <string name="camera_permission_open_settings">فتح الإعدادات</string>
     <string name="camera_permission_dismiss">إلغاء</string>
+    <string name="nav_home">الرئيسية</string>
     <string name="nav_plant_doctor">طبيب النبات</string>
     <string name="nav_fertilizer_calculator">حاسبة NPK</string>
     <string name="nav_calculator">الري والتربة</string>
