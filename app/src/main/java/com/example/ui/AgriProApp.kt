@@ -505,7 +505,6 @@ fun AgriProApp() {
                                 destinations = destinations,
                                 currentRoute = currentRoute,
                                 useDarkTheme = useDarkTheme,
-                                hazeState = hazeState,
                                 onSelectDestination = { dest ->
                                     if (currentRoute != dest.route) {
                                         navController.navigate(dest.route) {
@@ -714,239 +713,90 @@ private fun LiquidGlassNavigationBar(
     destinations: List<AgriDestination>,
     currentRoute: String,
     useDarkTheme: Boolean,
-    hazeState: HazeState,
     onSelectDestination: (AgriDestination) -> Unit
 ) {
-    val glassShape = RoundedCornerShape(32.dp)
     val selectedIndex = destinations.indexOfFirst { it.route == currentRoute }.coerceAtLeast(0)
+    val barShape = RoundedCornerShape(24.dp)
 
-    val glassBackgroundBrush = if (useDarkTheme) {
-        Brush.verticalGradient(
-            colors = listOf(
-                MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.78f),
-                MaterialTheme.colorScheme.surface.copy(alpha = 0.94f)
-            )
-        )
-    } else {
-        Brush.verticalGradient(
-            colors = listOf(
-                Color.White.copy(alpha = 0.25f),
-                Color(0xFFF1F7F3).copy(alpha = 0.18f)
-            )
-        )
-    }
-
-    val specularBorderBrush = if (useDarkTheme) {
-        Brush.verticalGradient(
-            colors = listOf(
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.36f),
-                Color.White.copy(alpha = 0.045f)
-            )
-        )
-    } else {
-        Brush.verticalGradient(
-            colors = listOf(
-                Color.White.copy(alpha = 0.95f),
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
-            )
-        )
-    }
-
-    Box(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(horizontal = 14.dp, vertical = 10.dp)
+            .padding(horizontal = 14.dp, vertical = 8.dp)
+            .height(72.dp),
+        shape = barShape,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        tonalElevation = 3.dp,
+        shadowElevation = 5.dp,
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
+        )
     ) {
-        BoxWithConstraints(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp)
-                .shadow(
-                    elevation = 10.dp,
-                    shape = glassShape,
-                    ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f),
-                    spotColor = Color.Black.copy(alpha = 0.22f)
-                )
-                .clip(glassShape)
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeStyle(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(
-                            MaterialTheme.colorScheme.surface.copy(alpha = if (useDarkTheme) 0.35f else 0.45f)
-                        ),
-                        blurRadius = 24.dp,
-                        noiseFactor = 0.04f
-                    )
-                )
-                .background(brush = glassBackgroundBrush)
-                .border(width = 1.2.dp, brush = specularBorderBrush, shape = glassShape)
-                .padding(6.dp)
+        Row(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            val itemWidth = maxWidth / destinations.size
-
-            // انزلاق الكبسولة الزجاجية السائلة بسلاسة بين الخانات
-            val indicatorOffset by animateDpAsState(
-                targetValue = itemWidth * selectedIndex,
-                animationSpec = tween(
-                    durationMillis = 420,
-                    easing = UltraSmoothEasing
-                ),
-                label = "SlidingLiquidPillOffset"
-            )
-
-            // الكبسولة الزجاجية المضيئة المتحركة في الخلفية
-            Box(
-                modifier = Modifier
-                    .offset(x = indicatorOffset)
-                    .width(itemWidth)
-                    .fillMaxHeight()
-                    .clip(CircleShape)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = if (useDarkTheme) {
-                                listOf(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.30f),
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
-                                )
-                            } else {
-                                listOf(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.20f),
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)
-                                )
-                            }
+            destinations.forEachIndexed { index, dest ->
+                val selected = currentRoute == dest.route
+                val label = stringResource(dest.labelRes)
+                val interactionSource = remember { MutableInteractionSource() }
+                val pressed by interactionSource.collectIsPressedAsState()
+                val scale by animateFloatAsState(
+                    targetValue = if (pressed) 0.92f else 1f,
+                    animationSpec = tween(durationMillis = if (pressed) 100 else 220, easing = UltraSmoothEasing),
+                    label = "QuickAccessPressScale"
+                )
+                val contentColor by animateColorAsState(
+                    targetValue = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    animationSpec = tween(durationMillis = 220),
+                    label = "QuickAccessContentColor"
+                )
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(18.dp))
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = { onSelectDestination(dest) }
                         )
-                    )
-                    .border(
-                        width = 0.9.dp,
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
-                        shape = CircleShape
-                    )
-            )
-
-            // الأيقونات والنصوص فوق الكبسولة المتحركة
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                destinations.forEach { dest ->
-                    val selected = currentRoute == dest.route
-                    val label = stringResource(dest.labelRes)
-
-                    val interactionSource = remember { MutableInteractionSource() }
-                    val pressed by interactionSource.collectIsPressedAsState()
-                    val scale by animateFloatAsState(
-                        targetValue = if (pressed) 0.94f else if (selected) 1.02f else 1f,
-                        animationSpec = tween(
-                            durationMillis = if (pressed) 110 else 260,
-                            easing = UltraSmoothEasing
-                        ),
-                        label = "ColorOSIconPressScale"
-                    )
-                    val iconRotation by animateFloatAsState(
-                        targetValue = 0f,
-                        animationSpec = tween(durationMillis = 180, easing = UltraSmoothEasing),
-                        label = "ColorOSIconPressRotation"
-                    )
-
-                    val contentColor by animateColorAsState(
-                        targetValue = if (selected) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                        animationSpec = tween(durationMillis = 300, easing = UltraSmoothEasing),
-                        label = "SmoothContentColor"
-                    )
-
-                    Column(
+                        .testTag(dest.testTag)
+                        .graphicsLayer { scaleX = scale; scaleY = scale },
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Box(
                         modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-.clip(CircleShape)
-                            .clickable(
-                                interactionSource = interactionSource,
-                                indication = null,
-                                onClick = { onSelectDestination(dest) }
-                            )
-                            .testTag(dest.testTag),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically)
+                            .size(34.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (selected) MaterialTheme.colorScheme.primaryContainer
+                                else Color.Transparent
+                            ),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(30.dp)
-                                .shadow(
-                                    elevation = if (selected) 2.dp else 0.dp,
-                                    shape = CircleShape,
-                                    ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.22f),
-                                    spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
-                                )
-                                .clip(CircleShape)
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = if (selected) {
-                                            listOf(
-                                                Color.White.copy(alpha = if (useDarkTheme) 0.20f else 0.72f),
-                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.22f),
-                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.10f)
-                                            )
-                                        } else {
-                                            listOf(
-                                                Color.White.copy(alpha = if (useDarkTheme) 0.055f else 0.38f),
-                                                MaterialTheme.colorScheme.surface.copy(alpha = 0.10f)
-                                            )
-                                        }
-                                    )
-                                )
-                                .border(
-                                    width = 0.8.dp,
-                                    brush = Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color.White.copy(alpha = if (selected) 0.48f else 0.16f),
-                                            MaterialTheme.colorScheme.primary.copy(alpha = if (selected) 0.28f else 0.08f)
-                                        )
-                                    ),
-                                    shape = CircleShape
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,
-                                contentDescription = label,
-                                tint = contentColor,
-                                modifier = Modifier
-                                    .size(18.dp)
-                                    .graphicsLayer {
-                                        scaleX = scale
-                                        scaleY = scale
-                                        rotationZ = iconRotation
-                                    }
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            androidx.compose.animation.AnimatedVisibility(
-                                visible = selected,
-                                enter = fadeIn(animationSpec = tween(220, easing = UltraSmoothEasing)) +
-                                    scaleIn(initialScale = 0.96f, animationSpec = tween(220, easing = UltraSmoothEasing)),
-                                exit = fadeOut(animationSpec = tween(140, easing = UltraSmoothEasing))
-                            ) {
-                                Text(
-                                    text = label,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = contentColor
-                                )
-                            }
-                        }
+                        Icon(
+                            imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,
+                            contentDescription = label,
+                            tint = contentColor,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = selected,
+                        enter = fadeIn(tween(160)) + scaleIn(initialScale = 0.96f, animationSpec = tween(160)),
+                        exit = fadeOut(tween(120))
+                    ) {
+                        Text(
+                            text = label,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                            fontWeight = FontWeight.SemiBold,
+                            color = contentColor
+                        )
                     }
                 }
             }
