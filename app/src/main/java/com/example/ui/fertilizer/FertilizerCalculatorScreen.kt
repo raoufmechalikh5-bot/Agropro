@@ -1,5 +1,6 @@
 package com.example.ui.fertilizer
 
+import com.example.ui.agroText
 import com.example.ui.components.ExpandableSuggestions
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -154,7 +155,7 @@ fun FertilizerCalculatorScreen(
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Text(
-                                text = "1. اختيار نوع المحصول ومرحلة النمو",
+                                text = agroText("1. اختيار نوع المحصول ومرحلة النمو"),
                                 style = MaterialTheme.typography.titleMedium
                             )
                         }
@@ -236,7 +237,7 @@ fun FertilizerCalculatorScreen(
                                 tint = MaterialTheme.colorScheme.secondary
                             )
                             Text(
-                                text = "2. تحديد مساحة الأرض",
+                                text = agroText("2. تحديد مساحة الأرض"),
                                 style = MaterialTheme.typography.titleMedium
                             )
                         }
@@ -252,7 +253,7 @@ fun FertilizerCalculatorScreen(
                             } else {
                                 {
                                     Text(
-                                        text = "المساحة المعادلة: ${formatMetric(state.result.areaHectares)} هكتار",
+                                        text = agroText("المساحة المعادلة: ${formatMetric(state.result.areaHectares)} هكتار"),
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
@@ -321,7 +322,7 @@ fun FertilizerCalculatorScreen(
                                         onClick = { viewModel.updatePlotLabel("") },
                                         modifier = Modifier.size(48.dp)
                                     ) {
-                                        Icon(Icons.Default.Clear, contentDescription = "مسح اسم الحقل")
+                                        Icon(Icons.Default.Clear, contentDescription = agroText("مسح اسم الحقل"))
                                     }
                                 }
                             },
@@ -588,7 +589,7 @@ private fun NpkRecommendationCard(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
-                        text = "النسبة المتوازنة (N : P₂O₅ : K₂O)",
+                        text = agroText("النسبة المتوازنة (N : P₂O₅ : K₂O)"),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -600,7 +601,7 @@ private fun NpkRecommendationCard(
                         modifier = Modifier.testTag("fertilizer_npk_ratio_value")
                     )
                     Text(
-                        text = "التركيبة التجارية المقترحة: ${crop.commercialBlendHint}",
+                        text = agroText("التركيبة التجارية المقترحة: ${crop.commercialBlendHint}"),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -799,13 +800,13 @@ private fun NutrientRatioTile(
                 color = onContainerColor.copy(alpha = 0.8f)
             )
             Text(
-                text = "${formatMetric(totalKg)} كغ",
+                text = agroText("${formatMetric(totalKg)} كغ"),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = onContainerColor
             )
             Text(
-                text = "${formatMetric(perHaKg)} كغ/هـ",
+                text = agroText("${formatMetric(perHaKg)} كغ/هـ"),
                 style = MaterialTheme.typography.labelSmall,
                 color = onContainerColor.copy(alpha = 0.8f)
             )
@@ -869,7 +870,7 @@ private fun CommercialFertilizerBreakdownCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "إجمالي الأسمدة التجارية المطلوبة للمساحة: ${formatMetric(result.totalCommercialKg)} كغ",
+                    text = agroText("إجمالي الأسمدة التجارية المطلوبة للمساحة: ${formatMetric(result.totalCommercialKg)} كغ"),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.padding(12.dp)
@@ -910,14 +911,14 @@ private fun CommercialFertilizerRow(
                     fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = "حوالي $bags25Kg كيس (وزن 25 كغ)",
+                    text = agroText("حوالي $bags25Kg كيس (وزن 25 كغ)"),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "${formatMetric(kg)} كغ",
+                text = agroText("${formatMetric(kg)} كغ"),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = accentColor
@@ -983,12 +984,12 @@ private fun SavedFertilizerCalculationCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "NPK: ${record.npkRatio}  |  إجمالي الأسمدة: ${formatMetric(record.totalCommercialKg)} كغ",
+                    text = agroText("NPK: ${record.npkRatio}  |  إجمالي الأسمدة: ${formatMetric(record.totalCommercialKg)} كغ"),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "$dateStr • اضغط لإعادة التحميل",
+                    text = agroText("$dateStr • اضغط لإعادة التحميل"),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1002,7 +1003,7 @@ private fun SavedFertilizerCalculationCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.DeleteOutline,
-                    contentDescription = "حذف الحساب المحفوظ",
+                    contentDescription = agroText("حذف الحساب المحفوظ"),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
