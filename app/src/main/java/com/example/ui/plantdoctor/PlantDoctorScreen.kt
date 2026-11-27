@@ -328,9 +328,9 @@ item {
                             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                                 Text("بطاقات المراجعة", fontWeight = FontWeight.Bold,
                                     color = if (isFlashcardMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                    style = MaterialTheme.typography.titleSmall)
+                                    style = MaterialTheme.typography.titleSmall, maxLines = 2)
                                 Text("تعلّم أمراض المحاصيل", color = if (isFlashcardMode) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f) else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.labelSmall)
+                                    style = MaterialTheme.typography.labelSmall, maxLines = 2)
                             }
                         }
                     }
@@ -384,7 +384,7 @@ item {
                                     verticalArrangement = Arrangement.spacedBy(3.dp)
                                 ) {
                                     Text("AgroPro Live", color = Color.White, fontWeight = FontWeight.Bold,
-                                        style = MaterialTheme.typography.titleMedium)
+                                        style = MaterialTheme.typography.titleMedium, maxLines = 1)
                                     Text("محادثة مباشرة بالصوت والكاميرا", color = Color(0xFFD0EBDD),
                                         style = MaterialTheme.typography.labelMedium, maxLines = 2)
                                 }
