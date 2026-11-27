@@ -122,6 +122,7 @@ import com.example.data.local.ThemePreference
 import com.example.data.local.ThemePreferencesRepository
 import com.example.reminders.RemindersDialog
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Cloud
 import com.example.ui.calendar.AgriCalendarDialog
 import com.example.ui.calculator.CalculatorScreen
 import com.example.ui.calculator.CalculatorViewModel
@@ -135,6 +136,7 @@ import com.example.ui.plantdoctor.PlantDoctorScreen
 import com.example.ui.plantdoctor.PlantDoctorViewModel
 import com.example.ui.live.AgroLiveScreen
 import com.example.ui.live.AgroLiveViewModel
+import com.example.ui.weather.AgriWeatherScreen
 import com.example.ui.theme.AgriProTheme
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
@@ -327,6 +329,20 @@ fun AgriProApp() {
                                         modifier = Modifier.fillMaxWidth()
                                     )
                                 }
+                                NavigationDrawerItem(
+                                    label = { Text(agroText("الطقس الزراعي")) },
+                                    selected = currentRoute == "agri_weather",
+                                    icon = { Icon(Icons.Default.Cloud, contentDescription = null) },
+                                    onClick = {
+                                        scope.launch {
+                                            drawerState.close()
+                                            navController.navigate("agri_weather") {
+                                                launchSingleTop = true
+                                            }
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
                                 HorizontalDivider(
                                     modifier = Modifier.padding(vertical = 8.dp),
                                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
@@ -581,6 +597,9 @@ fun AgriProApp() {
                                     viewModel = agroLiveViewModel,
                                     onClose = { navController.popBackStack() }
                                 )
+                            }
+                            composable("agri_weather") {
+                                AgriWeatherScreen()
                             }
                             composable(AgriDestination.FertilizerCalculator.route) {
                                 FertilizerCalculatorScreen(viewModel = fertilizerCalculatorViewModel)
