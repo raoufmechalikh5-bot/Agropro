@@ -500,7 +500,7 @@ fun AgriWeatherCard(
                             text = data.sprayAdvice,
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.SemiBold,
-                            color = badgeText,
+                            color = Color(0xFF10251A),
                             maxLines = if (isExpanded) 4 else 2
                         )
                     }
