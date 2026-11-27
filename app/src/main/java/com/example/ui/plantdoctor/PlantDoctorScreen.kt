@@ -147,6 +147,7 @@ fun PlantDoctorScreen(
     var hasRequestedCameraPermission by rememberSaveable { mutableStateOf(false) }
     var showCameraRationaleDialog by remember { mutableStateOf(false) }
     var showCameraSettingsDialog by remember { mutableStateOf(false) }
+    var showDiagnosisHistory by rememberSaveable { mutableStateOf(false) }
 
     val takePictureLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
@@ -276,7 +277,7 @@ fun PlantDoctorScreen(
         ) {
            
 item {
-                AgriHeroBanner()
+                DashboardWelcomeHeader()
             }
 item {
                 Row(
@@ -285,7 +286,7 @@ item {
                 ) {
                     val diagnosisSelected = !isFlashcardMode
                     Surface(
-                        modifier = Modifier.weight(1f).height(84.dp).clip(RoundedCornerShape(22.dp))
+                        modifier = Modifier.weight(1f).height(70.dp).clip(RoundedCornerShape(22.dp))
                             .clickable { viewModel.setFlashcardMode(false) }
                             .testTag("tab_ai_diagnosis"),
                         color = if (diagnosisSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
@@ -304,8 +305,6 @@ item {
                                 Text("التشخيص الذكي", fontWeight = FontWeight.Bold,
                                     color = if (diagnosisSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                                     style = MaterialTheme.typography.titleSmall, maxLines = 2)
-                                Text("افحص صحة نباتك", color = if (diagnosisSelected) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f) else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.labelSmall, maxLines = 2)
                             }
                         }
                     }
@@ -329,8 +328,6 @@ item {
                                 Text("بطاقات المراجعة", fontWeight = FontWeight.Bold,
                                     color = if (isFlashcardMode) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                                     style = MaterialTheme.typography.titleSmall, maxLines = 2)
-                                Text("تعلّم أمراض المحاصيل", color = if (isFlashcardMode) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f) else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.labelSmall, maxLines = 2)
                             }
                         }
                     }
@@ -343,7 +340,7 @@ item {
                         onClick = onOpenLiveAssistant,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(84.dp)
+                            .height(70.dp)
                             .testTag("open_agro_live_button"),
                         shape = RoundedCornerShape(24.dp),
                         color = Color.Transparent,
@@ -385,8 +382,8 @@ item {
                                 ) {
                                     Text("AgroPro Live", color = Color.White, fontWeight = FontWeight.Bold,
                                         style = MaterialTheme.typography.titleMedium, maxLines = 1)
-                                    Text("محادثة مباشرة بالصوت والكاميرا", color = Color(0xFFD0EBDD),
-                                        style = MaterialTheme.typography.labelMedium, maxLines = 2)
+                                    Text("صوت وصورة مباشرة", color = Color(0xFFD0EBDD),
+                                        style = MaterialTheme.typography.labelMedium, maxLines = 1)
                                 }
                                 Surface(shape = CircleShape, color = Color(0xFF65D995).copy(alpha = 0.18f)) {
                                     Row(
@@ -448,38 +445,12 @@ item {
                     ) { state ->
                         when (state) {
                             PlantDoctorUiState.Idle -> {
-                                Surface(
-                                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
-                                    shape = RoundedCornerShape(22.dp),
-                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)),
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(14.dp)
-                                    ) {
-                                        Surface(
-                                            color = MaterialTheme.colorScheme.primary,
-                                            shape = RoundedCornerShape(15.dp),
-                                            modifier = Modifier.size(46.dp)
-                                        ) {
-                                            Box(contentAlignment = Alignment.Center) {
-                                                Icon(Icons.Default.AutoAwesome, null,
-                                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                                    modifier = Modifier.size(23.dp))
-                                            }
-                                        }
-                                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                            Text("كيف تحصل على تشخيص أدق؟",
-                                                style = MaterialTheme.typography.titleSmall,
-                                                fontWeight = FontWeight.Bold)
-                                            Text("صوّر الورقة المصابة بوضوح، ثم أضف صورة للساق أو النبات كاملاً. يمكنك إرفاق 3 صور.",
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                        }
-                                    }
-                                }
+                                Text(
+                                    text = "أضف صورة واضحة للنبات للحصول على تشخيص وتوصيات",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 2.dp)
+                                )
                             }
 
                             PlantDoctorUiState.Loading -> {
@@ -579,28 +550,26 @@ item {
 
                 if (recentDiagnoses.isNotEmpty()) {
                     item {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.padding(top = 4.dp)
+                        TextButton(
+                            onClick = { showDiagnosisHistory = !showDiagnosisHistory },
+                            modifier = Modifier.fillMaxWidth().testTag("toggle_diagnosis_history")
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.History,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                text = "سجل التشخيصات المحفوظة (متاح دون إنترنت)",
-                                style = MaterialTheme.typography.titleMedium
-                            )
+                            Icon(Icons.Default.History, contentDescription = null)
+                            Spacer(Modifier.width(8.dp))
+                            Text(if (showDiagnosisHistory) "إخفاء سجل التشخيصات" else "عرض سجل التشخيصات (${recentDiagnoses.size})")
                         }
                     }
-
-                    items(recentDiagnoses, key = { it.id }) { record ->
-                        DiagnosisHistoryRow(
-                            record = record,
-                            onDelete = { viewModel.deleteDiagnosisRecord(record.id) }
-                        )
+                    item {
+                        AnimatedVisibility(visible = showDiagnosisHistory) {
+                            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                recentDiagnoses.forEach { record ->
+                                    DiagnosisHistoryRow(
+                                        record = record,
+                                        onDelete = { viewModel.deleteDiagnosisRecord(record.id) }
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             } else {
@@ -653,13 +622,13 @@ private fun DashboardWelcomeHeader() {
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
             Text(
-                "مساحتك الزراعية الذكية",
+                "مساعدك الزراعي",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                "تابع محاصيلك واتخذ قرارات أفضل",
+                "تشخيص، تسميد، وريّ في مكان واحد",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -805,6 +774,7 @@ private fun PlantCaptureCard(
     onCaptureCamera: () -> Unit,
     onAnalyzeClick: () -> Unit
 ) {
+    var showOptionalNotes by rememberSaveable { mutableStateOf(false) }
     ElevatedCard(
         shape = RoundedCornerShape(26.dp),
         colors = CardDefaults.elevatedCardColors(
@@ -841,12 +811,12 @@ private fun PlantCaptureCard(
                     verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
                     Text(
-                        "مساعد التشخيص الذكي",
+                        "أضف صورة النبات",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        "دع الذكاء الاصطناعي يفحص حالة نباتك",
+                        "صورة واضحة تساعد على تشخيص أدق",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -956,7 +926,7 @@ private fun PlantCaptureCard(
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(190.dp)
+                        .height(156.dp)
                         .clip(RoundedCornerShape(24.dp))
                         .clickable(enabled = !isLoading, onClick = onPickFromGallery),
                     shape = RoundedCornerShape(24.dp),
@@ -974,7 +944,7 @@ private fun PlantCaptureCard(
                         Surface(
                             color = MaterialTheme.colorScheme.primaryContainer,
                             shape = CircleShape,
-                            modifier = Modifier.size(62.dp)
+                            modifier = Modifier.size(52.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
@@ -1124,16 +1094,26 @@ private fun PlantCaptureCard(
                 }
             }
 
-            OutlinedTextField(
-                value = farmerNotes,
-                onValueChange = onNotesChange,
-                label = { Text("ملاحظات حقلية اختيارية (نوع المحصول، الرطوبة، العمر)") },
-                placeholder = { Text("مثال: طماطم محمية، رطوبة صباحية مرتفعة...") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("diagnosis_notes_input"),
-                maxLines = 2
-            )
+            TextButton(
+                onClick = { showOptionalNotes = !showOptionalNotes },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Default.Info, contentDescription = null)
+                Spacer(Modifier.width(6.dp))
+                Text(if (showOptionalNotes) "إخفاء الملاحظات الاختيارية" else "إضافة ملاحظات اختيارية")
+            }
+            AnimatedVisibility(visible = showOptionalNotes) {
+                OutlinedTextField(
+                    value = farmerNotes,
+                    onValueChange = onNotesChange,
+                    label = { Text("ملاحظات عن المحصول أو الرطوبة أو عمر النبات") },
+                    placeholder = { Text("مثال: طماطم محمية، رطوبة صباحية مرتفعة...") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("diagnosis_notes_input"),
+                    maxLines = 2
+                )
+            }
 
             Button(
                 onClick = onAnalyzeClick,
