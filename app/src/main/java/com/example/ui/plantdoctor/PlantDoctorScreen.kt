@@ -937,7 +937,7 @@ private fun PlantCaptureCard(
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                         .height(190.dp)
+                        .height(176.dp)
                         .clip(RoundedCornerShape(24.dp))
                         .clickable(enabled = !isLoading, onClick = onPickFromGallery),
                     shape = RoundedCornerShape(24.dp),
@@ -945,93 +945,122 @@ private fun PlantCaptureCard(
                     border = BorderStroke(1.dp, Color(0xFF45634A))
                 ) {
                     Column(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(18.dp)
+                        verticalArrangement = Arrangement.spacedBy(7.dp)
                     ) {
-                        Surface(
-                            color = Color(0xFF203A2D),
-                            shape = CircleShape,
-                            modifier = Modifier.size(52.dp)
+                        Box(
+                            modifier = Modifier.size(100.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Default.AddPhotoAlternate,
-                                    contentDescription = null,
-                                    tint = Color(0xFFC8F34A),
-                                    modifier = Modifier.size(30.dp)
+                            androidx.compose.foundation.Canvas(Modifier.fillMaxSize()) {
+                                val corner = 25.dp.toPx()
+                                val inset = 5.dp.toPx()
+                                val stroke = 2.5.dp.toPx()
+                                val color = Color(0xFFC8F34A)
+                                val path = androidx.compose.ui.graphics.Path().apply {
+                                    moveTo(inset + corner, inset)
+                                    lineTo(inset + 8.dp.toPx(), inset)
+                                    quadraticTo(inset, inset, inset, inset + 8.dp.toPx())
+                                    lineTo(inset, inset + corner)
+                                    moveTo(size.width - inset - corner, inset)
+                                    lineTo(size.width - inset - 8.dp.toPx(), inset)
+                                    quadraticTo(size.width - inset, inset, size.width - inset, inset + 8.dp.toPx())
+                                    lineTo(size.width - inset, inset + corner)
+                                    moveTo(inset, size.height - inset - corner)
+                                    lineTo(inset, size.height - inset - 8.dp.toPx())
+                                    quadraticTo(inset, size.height - inset, inset + 8.dp.toPx(), size.height - inset)
+                                    lineTo(inset + corner, size.height - inset)
+                                    moveTo(size.width - inset - corner, size.height - inset)
+                                    lineTo(size.width - inset - 8.dp.toPx(), size.height - inset)
+                                    quadraticTo(size.width - inset, size.height - inset, size.width - inset, size.height - inset - 8.dp.toPx())
+                                    lineTo(size.width - inset, size.height - inset - corner)
+                                }
+                                drawPath(
+                                    path = path,
+                                    color = color,
+                                    style = androidx.compose.ui.graphics.drawscope.Stroke(
+                                        width = stroke,
+                                        cap = androidx.compose.ui.graphics.StrokeCap.Round
+                                    )
                                 )
                             }
+                            Icon(
+                                imageVector = Icons.Default.Eco,
+                                contentDescription = null,
+                                tint = Color(0xFFC8F34A),
+                                modifier = Modifier.size(42.dp)
+                            )
                         }
-                        Spacer(Modifier.height(12.dp))
                         Text(
-                            "أضف صورة النبات هنا",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            "اضغط لاختيار صورة من معرض الهاتف",
+                            text = agroText("وجّه الكاميرا نحو الورقة المصابة"),
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = Color(0xFFB9CDBD),
+                            maxLines = 1
                         )
-                        Spacer(Modifier.height(10.dp))
-                        Surface(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(50)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(7.dp)
-                            ) {
-                                Icon(
-                                    Icons.Default.PhotoLibrary,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier.size(17.dp)
-                                )
-                                Text(
-                                    "اختيار صورة",
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.Bold
+                            Text(
+                                text = "${selectedImages.size} / 3 ${agroText("صور")}",
+                                color = Color(0xFF9DB5A2),
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                            repeat(3) { index ->
+                                Box(
+                                    Modifier.size(7.dp).clip(CircleShape).background(
+                                        if (index < selectedImages.size) Color(0xFFC8F34A) else Color(0xFF52675A)
+                                    )
                                 )
                             }
                         }
                     }
                 }
             }
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                OutlinedButton(
-                    onClick = onCaptureCamera,
-                    enabled = selectedImages.size < 3,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .testTag("camera_capture_button")
-                ) {
-                    Icon(Icons.Default.CameraAlt, contentDescription = null)
-                    Spacer(Modifier.width(6.dp))
-                    Text(agroText("الكاميرا"), maxLines = 1)
-                }
-
-                OutlinedButton(
+                Surface(
                     onClick = onPickFromGallery,
                     enabled = selectedImages.size < 3,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .testTag("gallery_pick_button")
+                    modifier = Modifier.size(54.dp).testTag("gallery_pick_button"),
+                    shape = CircleShape,
+                    color = Color(0xFF294333),
+                    border = BorderStroke(1.dp, Color(0xFF597360))
                 ) {
-                    Icon(Icons.Default.PhotoLibrary, contentDescription = null)
-                    Spacer(Modifier.width(6.dp))
-                    Text(agroText("المعرض"), maxLines = 1)
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            Icons.Default.PhotoLibrary,
+                            contentDescription = agroText("اختيار من المعرض"),
+                            tint = Color(0xFFDCE9DB),
+                            modifier = Modifier.size(23.dp)
+                        )
+                    }
+                }
+                Button(
+                    onClick = if (selectedImages.isEmpty()) onCaptureCamera else onAnalyzeClick,
+                    enabled = !isLoading && selectedImages.size < 4,
+                    modifier = Modifier.weight(1f).height(54.dp)
+                        .testTag("camera_capture_button"),
+                    shape = RoundedCornerShape(50),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFC8F34A),
+                        contentColor = Color(0xFF172313)
+                    )
+                ) {
+                    Icon(
+                        if (selectedImages.isEmpty()) Icons.Default.CameraAlt else Icons.Default.AutoAwesome,
+                        contentDescription = null
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        agroText(if (selectedImages.isEmpty()) "التقط صورة" else "ابدأ التشخيص"),
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1
+                    )
                 }
             }
 
