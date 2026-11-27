@@ -35,9 +35,19 @@ jobs:
           fi
           keytool -list -keystore debug.keystore -storepass android -alias androiddebugkey >/dev/null
           echo "Persistent signing key restored and validated."
+      - name: Validate App Check debug token
+        env:
+          FIREBASE_APPCHECK_DEBUG_TOKEN: ${{ secrets.FIREBASE_APPCHECK_DEBUG_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${FIREBASE_APPCHECK_DEBUG_TOKEN:-}" ]; then
+            echo "::error::Missing FIREBASE_APPCHECK_DEBUG_TOKEN repository secret."
+            exit 1
+          fi
       - run: gradle assembleDebug --no-configuration-cache
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FIREBASE_APPCHECK_DEBUG_TOKEN: ${{ secrets.FIREBASE_APPCHECK_DEBUG_TOKEN }}
       - uses: actions/upload-artifact@v4
         with:
           name: app-debug
