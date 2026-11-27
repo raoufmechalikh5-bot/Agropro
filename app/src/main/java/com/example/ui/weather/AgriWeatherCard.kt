@@ -359,30 +359,43 @@ fun AgriWeatherCard(
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Canvas(modifier = Modifier.fillMaxSize()) {
-                val cloud = Color.White.copy(alpha = 0.13f)
-                // Soft cloud silhouettes in the blue-sky background.
-                drawOval(
-                    color = cloud,
-                    topLeft = Offset(size.width * 0.58f, size.height * 0.10f),
-                    size = Size(size.width * 0.38f, size.height * 0.16f)
-                )
-                drawCircle(cloud, size.height * 0.085f, Offset(size.width * 0.67f, size.height * 0.20f))
-                drawCircle(cloud, size.height * 0.11f, Offset(size.width * 0.78f, size.height * 0.17f))
-                drawCircle(cloud, size.height * 0.075f, Offset(size.width * 0.88f, size.height * 0.20f))
-                drawOval(
-                    color = Color.White.copy(alpha = 0.09f),
-                    topLeft = Offset(-size.width * 0.12f, size.height * 0.66f),
-                    size = Size(size.width * 0.42f, size.height * 0.14f)
-                )
-                drawCircle(Color.White.copy(alpha = 0.09f), size.height * 0.07f, Offset(size.width * 0.13f, size.height * 0.72f))
-                drawCircle(Color.White.copy(alpha = 0.09f), size.height * 0.09f, Offset(size.width * 0.23f, size.height * 0.70f))
+                // Layered, soft white cloud banks over a clear blue sky.
+                fun cloudPuff(x: Float, y: Float, radius: Float, alpha: Float) {
+                    val center = Offset(x, y)
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = alpha),
+                                Color(0xFFEAF7FF).copy(alpha = alpha * 0.72f),
+                                Color(0xFFD7EEFF).copy(alpha = 0.02f)
+                            ),
+                            center = center,
+                            radius = radius
+                        ),
+                        radius = radius,
+                        center = center
+                    )
+                }
+                fun cloudBank(x: Float, y: Float, scale: Float, alpha: Float) {
+                    cloudPuff(x, y, size.height * 0.17f * scale, alpha * 0.78f)
+                    cloudPuff(x + size.height * 0.13f * scale, y - size.height * 0.055f * scale, size.height * 0.22f * scale, alpha)
+                    cloudPuff(x + size.height * 0.31f * scale, y, size.height * 0.16f * scale, alpha * 0.82f)
+                    cloudPuff(x + size.height * 0.16f * scale, y + size.height * 0.055f * scale, size.height * 0.19f * scale, alpha * 0.66f)
+                }
+                cloudBank(size.width * 0.79f, size.height * 0.22f, 1.0f, 0.34f)
+                cloudBank(size.width * 0.08f, size.height * 0.77f, 0.78f, 0.25f)
+                cloudBank(size.width * 0.53f, size.height * 0.94f, 0.52f, 0.16f)
             }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
                         Brush.verticalGradient(
-                            listOf(Color(0xFF163B63), Color(0xFF245F8B), Color(0xFF173F68))
+                            listOf(
+                                Color(0xCC163B63),
+                                Color(0xB3246FA5),
+                                Color(0xD9173F68)
+                            )
                         )
                     )
                     .padding(horizontal = 14.dp, vertical = 11.dp),
