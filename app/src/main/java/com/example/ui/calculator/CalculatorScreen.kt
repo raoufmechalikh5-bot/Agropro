@@ -71,6 +71,7 @@ import com.example.data.catalog.CropProfile
 import com.example.data.catalog.GrowthStage
 import com.example.data.catalog.IrrigationMethod
 import com.example.ui.theme.AgriTheme
+import com.example.ui.theme.AgriBackgroundStyle
 import com.example.ui.theme.AgriPageHero
 import com.example.ui.theme.agriAmbientBackground
 import java.util.Locale
@@ -93,7 +94,7 @@ fun CalculatorScreen(
     var stageExpanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = modifier.fillMaxSize().agriAmbientBackground(),
+        modifier = modifier.fillMaxSize().agriAmbientBackground(AgriBackgroundStyle.CALCULATOR),
         contentAlignment = Alignment.TopCenter
     ) {
         LazyColumn(
