@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.Image
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.example.R
@@ -373,7 +374,7 @@ fun AgriWeatherCard(
                 painter = painterResource(id = R.drawable.weather_sky_background),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().blur(3.dp)
             )
             Box(
                 modifier = Modifier
@@ -392,20 +393,6 @@ fun AgriWeatherCard(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.White.copy(alpha = 0.08f))
-            )
-            // Subtle dark gradient behind weather labels and readings for stronger contrast.
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colorStops = arrayOf(
-                                0.0f to Color(0x33203345),
-                                0.42f to Color(0x14203345),
-                                1.0f to Color(0x26203345)
-                            )
-                        )
-                    )
             )
             Column(
                 modifier = Modifier
@@ -495,27 +482,18 @@ fun AgriWeatherCard(
                             ) {
                                 Text(
                                     text = data.conditionText,
-                                    modifier = Modifier
-                                        .background(Color(0x4430475A), RoundedCornerShape(10.dp))
-                                        .padding(horizontal = 8.dp, vertical = 3.dp),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.White
                                 )
                                 Text(
                                     text = "الطقس الحالي",
-                                    modifier = Modifier
-                                        .background(Color(0x3330475A), RoundedCornerShape(8.dp))
-                                        .padding(horizontal = 7.dp, vertical = 2.dp),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = Color.White
                                 )
                             }
                             Text(
                                 text = "${data.temperatureC.toInt()}°",
-                                modifier = Modifier
-                                    .background(Color(0x4430475A), RoundedCornerShape(12.dp))
-                                    .padding(horizontal = 8.dp, vertical = 2.dp),
                                 style = MaterialTheme.typography.displayMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
