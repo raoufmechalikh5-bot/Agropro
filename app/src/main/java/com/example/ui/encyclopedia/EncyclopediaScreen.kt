@@ -695,7 +695,7 @@ private fun AgrochemicalCard(
                 Text(
                     text = item.commercialName,
                     style = MaterialTheme.typography.titleMedium,
-                    color = androidx.compose.ui.graphics.Color(0xFF1A1A1A),
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = if (isExpanded) 3 else 1,
                     modifier = Modifier.weight(1f)
                 )
