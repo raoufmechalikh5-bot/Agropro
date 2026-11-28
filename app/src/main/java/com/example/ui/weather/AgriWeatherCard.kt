@@ -480,46 +480,54 @@ fun AgriWeatherCard(
 
                 if (weatherData != null) {
                     val data = weatherData!!
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column(
-                            modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                            Text(
-                                text = data.conditionText,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.White
-                            )
-                            Text(
-                                text = "الطقس الحالي",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = Color.White.copy(alpha = 0.88f)
-                            )
-                        }
-                        Text(
-                            text = "${data.temperatureC.toInt()}°",
-                            style = MaterialTheme.typography.displayMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
-
-                    Row(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.White.copy(alpha = 0.20f), RoundedCornerShape(16.dp))
-                            .padding(horizontal = 10.dp, vertical = 5.dp),
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        verticalAlignment = Alignment.CenterVertically
+                            .background(Color(0x6630475A), RoundedCornerShape(18.dp))
+                            .padding(horizontal = 11.dp, vertical = 7.dp),
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
-                        CompactMetric(Icons.Default.WaterDrop, "الرطوبة ${data.humidityPercent}%")
-                        CompactMetric(Icons.Default.Air, "الرياح ${data.windSpeedKmh.toInt()} كم/س")
-                        CompactMetric(Icons.Default.WbSunny, "المطر ${String.format(Locale.US, "%.1f", data.precipitationMm)} مم")
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(2.dp)
+                            ) {
+                                Text(
+                                    text = data.conditionText,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = "الطقس الحالي",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.White.copy(alpha = 0.94f)
+                                )
+                            }
+                            Text(
+                                text = "${data.temperatureC.toInt()}°",
+                                style = MaterialTheme.typography.displayMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color.White.copy(alpha = 0.22f), RoundedCornerShape(14.dp))
+                                .padding(horizontal = 9.dp, vertical = 5.dp),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            CompactMetric(Icons.Default.WaterDrop, "الرطوبة ${data.humidityPercent}%")
+                            CompactMetric(Icons.Default.Air, "الرياح ${data.windSpeedKmh.toInt()} كم/س")
+                            CompactMetric(Icons.Default.WbSunny, "المطر ${String.format(Locale.US, "%.1f", data.precipitationMm)} مم")
+                        }
                     }
 
                     val (sprayBg, sprayText, sprayIcon) = when (data.sprayStatus) {
