@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.ui.agroText
+import com.example.ui.theme.AgriBackgroundStyle
+import com.example.ui.theme.agriAmbientBackground
 
 @Composable
 fun AgriWeatherScreen(
@@ -32,6 +34,7 @@ fun AgriWeatherScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .agriAmbientBackground(AgriBackgroundStyle.WEATHER)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
