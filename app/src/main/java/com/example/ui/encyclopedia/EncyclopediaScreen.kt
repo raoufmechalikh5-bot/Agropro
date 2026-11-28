@@ -233,7 +233,10 @@ fun EncyclopediaScreen(
                     Surface(
                         modifier = Modifier.weight(mixWeight).height(70.dp)
                             .clip(RoundedCornerShape(22.dp))
-                            .clickable { showProductsSection = false }
+                            .clickable {
+                                showProductsSection = false
+                                if (!state.isTankMixExpanded) viewModel.toggleTankMixExpanded()
+                            }
                             .testTag("tab_encyclopedia_mix_checker"),
                         color = if (!productsSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
                         shape = RoundedCornerShape(22.dp),
