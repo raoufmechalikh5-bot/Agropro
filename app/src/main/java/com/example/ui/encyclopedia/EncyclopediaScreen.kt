@@ -257,19 +257,6 @@ fun EncyclopediaScreen(
             }
 
             
-            item {
-                TankMixCheckerCard(
-                    allItems = state.allItems,
-                    productA = state.mixProductA,
-                    productB = state.mixProductB,
-                    mixResult = state.mixResult,
-                    isExpanded = state.isTankMixExpanded,
-                    onToggleExpanded = viewModel::toggleTankMixExpanded,
-                    onSelectA = viewModel::setMixProductA,
-                    onSelectB = viewModel::setMixProductB
-                )
-            }
-
 item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -339,6 +326,19 @@ item {
                         onDeleteCustom = { viewModel.deleteCustomAgrochemical(item.id) }
                     )
                 }
+            }
+
+            item {
+                TankMixCheckerCard(
+                    allItems = state.allItems,
+                    productA = state.mixProductA,
+                    productB = state.mixProductB,
+                    mixResult = state.mixResult,
+                    isExpanded = state.isTankMixExpanded,
+                    onToggleExpanded = viewModel::toggleTankMixExpanded,
+                    onSelectA = viewModel::setMixProductA,
+                    onSelectB = viewModel::setMixProductB
+                )
             }
         }
     }
