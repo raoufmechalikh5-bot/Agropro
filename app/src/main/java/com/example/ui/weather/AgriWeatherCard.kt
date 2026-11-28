@@ -481,10 +481,7 @@ fun AgriWeatherCard(
                 if (weatherData != null) {
                     val data = weatherData!!
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0x6630475A), RoundedCornerShape(18.dp))
-                            .padding(horizontal = 11.dp, vertical = 7.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
                         Row(
@@ -494,22 +491,31 @@ fun AgriWeatherCard(
                         ) {
                             Column(
                                 modifier = Modifier.weight(1f),
-                                verticalArrangement = Arrangement.spacedBy(2.dp)
+                                verticalArrangement = Arrangement.spacedBy(3.dp)
                             ) {
                                 Text(
                                     text = data.conditionText,
+                                    modifier = Modifier
+                                        .background(Color(0x4430475A), RoundedCornerShape(10.dp))
+                                        .padding(horizontal = 8.dp, vertical = 3.dp),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.White
                                 )
                                 Text(
                                     text = "الطقس الحالي",
+                                    modifier = Modifier
+                                        .background(Color(0x3330475A), RoundedCornerShape(8.dp))
+                                        .padding(horizontal = 7.dp, vertical = 2.dp),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = Color.White.copy(alpha = 0.94f)
+                                    color = Color.White
                                 )
                             }
                             Text(
                                 text = "${data.temperatureC.toInt()}°",
+                                modifier = Modifier
+                                    .background(Color(0x4430475A), RoundedCornerShape(12.dp))
+                                    .padding(horizontal = 8.dp, vertical = 2.dp),
                                 style = MaterialTheme.typography.displayMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
@@ -517,10 +523,7 @@ fun AgriWeatherCard(
                         }
 
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color.White.copy(alpha = 0.22f), RoundedCornerShape(14.dp))
-                                .padding(horizontal = 9.dp, vertical = 5.dp),
+                            modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceAround,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -637,6 +640,9 @@ fun AgriWeatherCard(
 @Composable
 private fun CompactMetric(icon: ImageVector, text: String) {
     Row(
+        modifier = Modifier
+            .background(Color.White.copy(alpha = 0.17f), RoundedCornerShape(10.dp))
+            .padding(horizontal = 6.dp, vertical = 5.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
