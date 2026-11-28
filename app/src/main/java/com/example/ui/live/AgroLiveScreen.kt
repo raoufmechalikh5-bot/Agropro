@@ -1,6 +1,8 @@
 package com.example.ui.live
 
 import com.example.ui.agroText
+import com.example.ui.theme.AgriBackgroundStyle
+import com.example.ui.theme.agriAmbientBackground
 import android.Manifest
 import android.os.Build
 import android.content.Context
@@ -176,11 +178,7 @@ fun AgroLiveScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color(0xFF0C1510), Color(0xFF183D2A), Color(0xFF0C1510))
-                )
-            )
+            .agriAmbientBackground(AgriBackgroundStyle.LIVE)
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
