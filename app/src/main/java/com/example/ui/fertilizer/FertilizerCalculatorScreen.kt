@@ -87,6 +87,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.R
 import com.example.data.local.FertilizerCalculationEntity
 import com.example.ui.theme.AgriTheme
+import com.example.ui.theme.AgriBackgroundStyle
 import com.example.ui.theme.AgriPageHero
 import com.example.ui.theme.agriAmbientBackground
 import java.text.SimpleDateFormat
@@ -109,7 +110,7 @@ fun FertilizerCalculatorScreen(
     var cropDropdownExpanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = modifier.fillMaxSize().agriAmbientBackground(),
+        modifier = modifier.fillMaxSize().agriAmbientBackground(AgriBackgroundStyle.FERTILIZER),
         contentAlignment = Alignment.TopCenter
     ) {
         LazyColumn(
