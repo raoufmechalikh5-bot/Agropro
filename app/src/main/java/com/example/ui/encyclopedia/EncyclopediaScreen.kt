@@ -301,70 +301,73 @@ fun EncyclopediaScreen(
                 }
 
                 item {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        FilledTonalButton(
-                            onClick = { categoryMenuExpanded = true },
-                            modifier = Modifier.height(44.dp).testTag("encyclopedia_category_filter")
-                        ) {
-                            Icon(Icons.Default.FilterList, contentDescription = null, modifier = Modifier.size(18.dp))
-                            Spacer(Modifier.width(6.dp))
-                            Text(
-                                text = agroText(
-                                    if (state.selectedCategory == AgroCategory.ALL) "فلترة: الكل"
-                                    else "فلترة: ${state.selectedCategory.titleAr}"
-                                ),
-                                maxLines = 1
-                            )
-                            Spacer(Modifier.width(4.dp))
-                            Icon(Icons.Default.ExpandMore, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            FilledTonalButton(
+                                onClick = { categoryMenuExpanded = true },
+                                modifier = Modifier.fillMaxWidth().height(44.dp)
+                                    .testTag("encyclopedia_category_filter")
+                            ) {
+                                Icon(Icons.Default.FilterList, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(6.dp))
+                                Text(
+                                    text = agroText(
+                                        if (state.selectedCategory == AgroCategory.ALL) "فلترة: الكل"
+                                        else "فلترة: ${state.selectedCategory.titleAr}"
+                                    ),
+                                    maxLines = 1
+                                )
+                                Spacer(Modifier.width(4.dp))
+                                Icon(Icons.Default.ExpandMore, contentDescription = null, modifier = Modifier.size(18.dp))
+                            }
+
+                            DropdownMenu(
+                                expanded = categoryMenuExpanded,
+                                onDismissRequest = { categoryMenuExpanded = false }
+                            ) {
+                                AgroCategory.entries.forEach { category ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(agroText(if (category == AgroCategory.ALL) "الكل" else category.titleAr))
+                                        },
+                                        onClick = {
+                                            viewModel.selectCategory(category)
+                                            categoryMenuExpanded = false
+                                        },
+                                        leadingIcon = {
+                                            if (state.selectedCategory == category) {
+                                                Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                            }
+                                        },
+                                        modifier = Modifier.testTag("category_chip_${category.name}")
+                                    )
+                                }
+                            }
                         }
 
-                        DropdownMenu(
-                            expanded = categoryMenuExpanded,
-                            onDismissRequest = { categoryMenuExpanded = false }
+                        FilledTonalButton(
+                            onClick = { showAddCustomDialog = true },
+                            modifier = Modifier.height(44.dp).testTag("add_custom_pesticide_button"),
+                            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 0.dp)
                         ) {
-                            AgroCategory.entries.forEach { category ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(agroText(if (category == AgroCategory.ALL) "الكل" else category.titleAr))
-                                    },
-                                    onClick = {
-                                        viewModel.selectCategory(category)
-                                        categoryMenuExpanded = false
-                                    },
-                                    leadingIcon = {
-                                        if (state.selectedCategory == category) {
-                                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                                        }
-                                    },
-                                    modifier = Modifier.testTag("category_chip_${category.name}")
-                                )
-                            }
+                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(19.dp))
+                            Spacer(Modifier.width(5.dp))
+                            Text(agroText("إضافة"))
                         }
                     }
                 }
 
                 item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = agroText("المركبات المتوفرة (${state.filteredItems.size} • محفوظة محلياً)"),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.weight(1f)
-                        )
-                        FilledTonalButton(
-                            onClick = { showAddCustomDialog = true },
-                            modifier = Modifier.height(48.dp).testTag("add_custom_pesticide_button")
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
-                            Spacer(Modifier.width(4.dp))
-                            Text(agroText("إضافة منتج"))
-                        }
-                    }
+                    Text(
+                        text = agroText("المركبات المتوفرة (${state.filteredItems.size} • محفوظة محلياً)"),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
 
                 if (state.filteredItems.isEmpty()) {
