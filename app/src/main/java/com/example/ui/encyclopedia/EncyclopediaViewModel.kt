@@ -32,7 +32,7 @@ data class EncyclopediaUiState(
         AgrochemicalCatalog.items.first { it.id == "kocide_2000" },
         AgrochemicalCatalog.items.first { it.id == "dimethoate" }
     ),
-    val isTankMixExpanded: Boolean = true,
+    val isTankMixExpanded: Boolean = false,
     val nextSlotIsA: Boolean = true
 )
 
@@ -49,7 +49,7 @@ class EncyclopediaViewModel(
             true
         )
     )
-    private val _isTankMixExpanded = MutableStateFlow(true)
+    private val _isTankMixExpanded = MutableStateFlow(false)
 
     val uiState: StateFlow<EncyclopediaUiState> = combine(
         _searchQuery,
