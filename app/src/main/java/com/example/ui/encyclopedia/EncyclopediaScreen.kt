@@ -91,6 +91,7 @@ import com.example.data.catalog.CompatibilityLevel
 import com.example.data.catalog.TankMixResult
 import com.example.data.local.PesticideNoteEntity
 import com.example.ui.theme.AgriTheme
+import com.example.ui.theme.AgriBackgroundStyle
 import com.example.ui.theme.AgriPageHero
 import com.example.ui.theme.agriAmbientBackground
 import com.example.util.PhotoStorageHelper
@@ -112,7 +113,7 @@ fun EncyclopediaScreen(
     var showAddCustomDialog by remember { mutableStateOf(false) }
 
     Box(
-        modifier = modifier.fillMaxSize().agriAmbientBackground(),
+        modifier = modifier.fillMaxSize().agriAmbientBackground(AgriBackgroundStyle.ENCYCLOPEDIA),
         contentAlignment = Alignment.TopCenter
     ) {
         LazyColumn(
