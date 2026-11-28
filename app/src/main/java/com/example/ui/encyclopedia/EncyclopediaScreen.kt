@@ -41,6 +41,7 @@ import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.LocalPharmacy
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.Search
@@ -51,6 +52,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -111,6 +113,7 @@ fun EncyclopediaScreen(
 
     var editingNoteForItem by remember { mutableStateOf<AgrochemicalItem?>(null) }
     var showAddCustomDialog by remember { mutableStateOf(false) }
+    var categoryMenuExpanded by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier.fillMaxSize().agriAmbientBackground(AgriBackgroundStyle.ENCYCLOPEDIA),
@@ -189,19 +192,67 @@ fun EncyclopediaScreen(
             }
 
             item {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    items(AgroCategory.entries) { category ->
-                        FilterChip(
-                            selected = state.selectedCategory == category,
-                            onClick = { viewModel.selectCategory(category) },
-                            label = { Text(category.titleAr) },
-                            modifier = Modifier.testTag("category_chip_${category.name}")
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    FilledTonalButton(
+                        onClick = { categoryMenuExpanded = true },
+                        modifier = Modifier
+                            .height(44.dp)
+                            .testTag("encyclopedia_category_filter")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FilterList,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = agroText(
+                                if (state.selectedCategory == AgroCategory.ALL) {
+                                    "فلترة: الكل"
+                                } else {
+                                    "فلترة: ${state.selectedCategory.titleAr}"
+                                }
+                            ),
+                            maxLines = 1
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.ExpandMore,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
 
+                    DropdownMenu(
+                        expanded = categoryMenuExpanded,
+                        onDismissRequest = { categoryMenuExpanded = false }
+                    ) {
+                        AgroCategory.entries.forEach { category ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = agroText(
+                                            if (category == AgroCategory.ALL) "الكل" else category.titleAr
+                                        )
+                                    )
+                                },
+                                onClick = {
+                                    viewModel.selectCategory(category)
+                                    categoryMenuExpanded = false
+                                },
+                                leadingIcon = {
+                                    if (state.selectedCategory == category) {
+                                        Icon(
+                                            imageVector = Icons.Default.CheckCircle,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                },
+                                modifier = Modifier.testTag("category_chip_${category.name}")
+                            )
+                        }
+                    }
                 }
             }
 
