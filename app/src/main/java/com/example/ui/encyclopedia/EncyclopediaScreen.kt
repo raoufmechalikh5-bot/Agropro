@@ -7,6 +7,13 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -114,6 +121,7 @@ fun EncyclopediaScreen(
     var editingNoteForItem by remember { mutableStateOf<AgrochemicalItem?>(null) }
     var showAddCustomDialog by remember { mutableStateOf(false) }
     var categoryMenuExpanded by remember { mutableStateOf(false) }
+    var showProductsSection by rememberSaveable { mutableStateOf(true) }
 
     Box(
         modifier = modifier.fillMaxSize().agriAmbientBackground(AgriBackgroundStyle.ENCYCLOPEDIA),
@@ -167,178 +175,245 @@ fun EncyclopediaScreen(
                 }
             }
             item {
-                OutlinedTextField(
-                    value = state.searchQuery,
-                    onValueChange = viewModel::updateSearchQuery,
-                    label = { Text(agroText("ابحث في الموسوعة")) },
-                    placeholder = { Text(agroText("اسم المنتج أو المادة الفعالة أو الآفة")) },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    trailingIcon = {
-                        if (state.searchQuery.isNotEmpty()) {
-                            IconButton(
-                                onClick = { viewModel.updateSearchQuery("") },
-                                modifier = Modifier.size(48.dp)
-                            ) {
-                                Icon(Icons.Default.Clear, contentDescription = agroText("مسح البحث"))
-                            }
-                        }
-                    },
-                    singleLine = true,
-                    shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("encyclopedia_search_input")
+                val productsSelected = showProductsSection
+                val productsWeight by animateFloatAsState(
+                    targetValue = if (productsSelected) 1.65f else 0.85f,
+                    animationSpec = spring(dampingRatio = 0.82f, stiffness = 420f),
+                    label = "encyclopedia_products_tab_width"
                 )
-            }
-
-            item {
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    FilledTonalButton(
-                        onClick = { categoryMenuExpanded = true },
-                        modifier = Modifier
-                            .height(44.dp)
-                            .testTag("encyclopedia_category_filter")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.FilterList,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = agroText(
-                                if (state.selectedCategory == AgroCategory.ALL) {
-                                    "فلترة: الكل"
-                                } else {
-                                    "فلترة: ${state.selectedCategory.titleAr}"
-                                }
-                            ),
-                            maxLines = 1
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Icon(
-                            imageVector = Icons.Default.ExpandMore,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-
-                    DropdownMenu(
-                        expanded = categoryMenuExpanded,
-                        onDismissRequest = { categoryMenuExpanded = false }
-                    ) {
-                        AgroCategory.entries.forEach { category ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = agroText(
-                                            if (category == AgroCategory.ALL) "الكل" else category.titleAr
-                                        )
-                                    )
-                                },
-                                onClick = {
-                                    viewModel.selectCategory(category)
-                                    categoryMenuExpanded = false
-                                },
-                                leadingIcon = {
-                                    if (state.selectedCategory == category) {
-                                        Icon(
-                                            imageVector = Icons.Default.CheckCircle,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-                                },
-                                modifier = Modifier.testTag("category_chip_${category.name}")
-                            )
-                        }
-                    }
-                }
-            }
-
-            
-item {
+                val mixWeight by animateFloatAsState(
+                    targetValue = if (productsSelected) 0.85f else 1.65f,
+                    animationSpec = spring(dampingRatio = 0.82f, stiffness = 420f),
+                    label = "encyclopedia_mix_tab_width"
+                )
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth().testTag("encyclopedia_section_toggle"),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = agroText("المركبات المتوفرة (${state.filteredItems.size} • محفوظة محلياً)"),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.weight(1f)
-                    )
-                    FilledTonalButton(
-                        onClick = { showAddCustomDialog = true },
-                        modifier = Modifier
-                            .height(48.dp)
-                            .testTag("add_custom_pesticide_button")
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Spacer(Modifier.width(4.dp))
-                        Text(agroText("إضافة منتج"))
-                    }
-                }
-            }
-
-            if (state.filteredItems.isEmpty()) {
-                item {
                     Surface(
-                        color = MaterialTheme.colorScheme.surfaceContainerLow,
-                        shape = RoundedCornerShape(24.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.weight(productsWeight).height(70.dp)
+                            .clip(RoundedCornerShape(22.dp))
+                            .clickable { showProductsSection = true }
+                            .testTag("tab_encyclopedia_products"),
+                        color = if (productsSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
+                        shape = RoundedCornerShape(22.dp),
+                        border = BorderStroke(
+                            1.dp,
+                            if (productsSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+                        )
                     ) {
-                        Column(
-                            modifier = Modifier.padding(28.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        Row(
+                            modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
                         ) {
                             Icon(
-                                imageVector = Icons.Default.LocalPharmacy,
+                                Icons.Default.LocalPharmacy,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.outline,
-                                modifier = Modifier.size(40.dp)
+                                tint = if (productsSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(25.dp)
                             )
-                            Text(
-                                text = agroText("لا توجد مركبات مطابقة للبحث"),
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Text(
-                                text = agroText("جرّب البحث باسم المادة الفعالة أو اختر تصنيف «الكل»."),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            AnimatedVisibility(
+                                visible = productsSelected,
+                                enter = fadeIn(spring()) + expandHorizontally(spring()),
+                                exit = fadeOut(spring()) + shrinkHorizontally(spring())
+                            ) {
+                                Text(
+                                    text = agroText("المركبات الزراعية"),
+                                    modifier = Modifier.padding(start = 8.dp),
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         }
+                    }
+                    Surface(
+                        modifier = Modifier.weight(mixWeight).height(70.dp)
+                            .clip(RoundedCornerShape(22.dp))
+                            .clickable { showProductsSection = false }
+                            .testTag("tab_encyclopedia_mix_checker"),
+                        color = if (!productsSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLow,
+                        shape = RoundedCornerShape(22.dp),
+                        border = BorderStroke(
+                            1.dp,
+                            if (!productsSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                Icons.Default.Science,
+                                contentDescription = null,
+                                tint = if (!productsSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(25.dp)
+                            )
+                            AnimatedVisibility(
+                                visible = !productsSelected,
+                                enter = fadeIn(spring()) + expandHorizontally(spring()),
+                                exit = fadeOut(spring()) + shrinkHorizontally(spring())
+                            ) {
+                                Text(
+                                    text = agroText("فحص قابلية الخلط"),
+                                    modifier = Modifier.padding(start = 8.dp),
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (showProductsSection) {
+                item {
+                    OutlinedTextField(
+                        value = state.searchQuery,
+                        onValueChange = viewModel::updateSearchQuery,
+                        label = { Text(agroText("ابحث في الموسوعة")) },
+                        placeholder = { Text(agroText("اسم المنتج أو المادة الفعالة أو الآفة")) },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                        trailingIcon = {
+                            if (state.searchQuery.isNotEmpty()) {
+                                IconButton(
+                                    onClick = { viewModel.updateSearchQuery("") },
+                                    modifier = Modifier.size(48.dp)
+                                ) {
+                                    Icon(Icons.Default.Clear, contentDescription = agroText("مسح البحث"))
+                                }
+                            }
+                        },
+                        singleLine = true,
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier.fillMaxWidth().testTag("encyclopedia_search_input")
+                    )
+                }
+
+                item {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        FilledTonalButton(
+                            onClick = { categoryMenuExpanded = true },
+                            modifier = Modifier.height(44.dp).testTag("encyclopedia_category_filter")
+                        ) {
+                            Icon(Icons.Default.FilterList, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(6.dp))
+                            Text(
+                                text = agroText(
+                                    if (state.selectedCategory == AgroCategory.ALL) "فلترة: الكل"
+                                    else "فلترة: ${state.selectedCategory.titleAr}"
+                                ),
+                                maxLines = 1
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Icon(Icons.Default.ExpandMore, contentDescription = null, modifier = Modifier.size(18.dp))
+                        }
+
+                        DropdownMenu(
+                            expanded = categoryMenuExpanded,
+                            onDismissRequest = { categoryMenuExpanded = false }
+                        ) {
+                            AgroCategory.entries.forEach { category ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(agroText(if (category == AgroCategory.ALL) "الكل" else category.titleAr))
+                                    },
+                                    onClick = {
+                                        viewModel.selectCategory(category)
+                                        categoryMenuExpanded = false
+                                    },
+                                    leadingIcon = {
+                                        if (state.selectedCategory == category) {
+                                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                                        }
+                                    },
+                                    modifier = Modifier.testTag("category_chip_${category.name}")
+                                )
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = agroText("المركبات المتوفرة (${state.filteredItems.size} • محفوظة محلياً)"),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.weight(1f)
+                        )
+                        FilledTonalButton(
+                            onClick = { showAddCustomDialog = true },
+                            modifier = Modifier.height(48.dp).testTag("add_custom_pesticide_button")
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text(agroText("إضافة منتج"))
+                        }
+                    }
+                }
+
+                if (state.filteredItems.isEmpty()) {
+                    item {
+                        Surface(
+                            color = MaterialTheme.colorScheme.surfaceContainerLow,
+                            shape = RoundedCornerShape(24.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(28.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(Icons.Default.LocalPharmacy, contentDescription = null, tint = MaterialTheme.colorScheme.outline, modifier = Modifier.size(40.dp))
+                                Text(text = agroText("لا توجد مركبات مطابقة للبحث"), style = MaterialTheme.typography.titleMedium)
+                                Text(
+                                    text = agroText("جرّب البحث باسم المادة الفعالة أو اختر تصنيف «الكل»."),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    items(state.filteredItems, key = { it.id }) { item ->
+                        val savedNote = state.notesById[item.id]
+                        val isCustom = item.id in state.customItemIds
+                        AgrochemicalCard(
+                            item = item,
+                            savedNote = savedNote,
+                            isCustom = isCustom,
+                            onAddToMix = { viewModel.addItemToMixChecker(item) },
+                            onEditNote = { editingNoteForItem = item },
+                            onDeleteNote = { viewModel.deletePesticideNote(item.id) },
+                            onDeleteCustom = { viewModel.deleteCustomAgrochemical(item.id) }
+                        )
                     }
                 }
             } else {
-                items(state.filteredItems, key = { it.id }) { item ->
-                    val savedNote = state.notesById[item.id]
-                    val isCustom = item.id in state.customItemIds
-                    AgrochemicalCard(
-                        item = item,
-                        savedNote = savedNote,
-                        isCustom = isCustom,
-                        onAddToMix = { viewModel.addItemToMixChecker(item) },
-                        onEditNote = { editingNoteForItem = item },
-                        onDeleteNote = { viewModel.deletePesticideNote(item.id) },
-                        onDeleteCustom = { viewModel.deleteCustomAgrochemical(item.id) }
+                item {
+                    TankMixCheckerCard(
+                        allItems = state.allItems,
+                        productA = state.mixProductA,
+                        productB = state.mixProductB,
+                        mixResult = state.mixResult,
+                        isExpanded = state.isTankMixExpanded,
+                        onToggleExpanded = viewModel::toggleTankMixExpanded,
+                        onSelectA = viewModel::setMixProductA,
+                        onSelectB = viewModel::setMixProductB
                     )
                 }
-            }
-
-            item {
-                TankMixCheckerCard(
-                    allItems = state.allItems,
-                    productA = state.mixProductA,
-                    productB = state.mixProductB,
-                    mixResult = state.mixResult,
-                    isExpanded = state.isTankMixExpanded,
-                    onToggleExpanded = viewModel::toggleTankMixExpanded,
-                    onSelectA = viewModel::setMixProductA,
-                    onSelectB = viewModel::setMixProductB
-                )
             }
         }
     }
