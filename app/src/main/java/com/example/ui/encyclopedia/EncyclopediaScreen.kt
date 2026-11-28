@@ -124,19 +124,51 @@ fun EncyclopediaScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             item {
-                AgriPageHero(
-                    eyebrow = "AGROPRO • KNOWLEDGE",
-                    title = "الموسوعة الزراعية",
-                    subtitle = "ابحث عن الآفات والمواد الفعالة وطرق المكافحة",
-                    icon = Icons.Default.Science
-                )
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    shape = RoundedCornerShape(22.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = RoundedCornerShape(15.dp),
+                            modifier = Modifier.size(48.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Science,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    modifier = Modifier.size(25.dp)
+                                )
+                            }
+                        }
+                        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                            Text(
+                                text = agroText("الموسوعة الزراعية"),
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = agroText("مرجعك للمركبات والآفات وطرق المكافحة"),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
             }
             item {
                 OutlinedTextField(
                     value = state.searchQuery,
                     onValueChange = viewModel::updateSearchQuery,
-                    label = { Text(agroText("ابحث بالاسم التجاري، المادة الفعالة، الآفة، أو ملاحظاتك")) },
-                    placeholder = { Text(agroText("مثال: أزوكسيستروبين، عين الطاووس، المن...")) },
+                    label = { Text(agroText("ابحث في الموسوعة")) },
+                    placeholder = { Text(agroText("اسم المنتج أو المادة الفعالة أو الآفة")) },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                     trailingIcon = {
                         if (state.searchQuery.isNotEmpty()) {
