@@ -131,47 +131,25 @@ fun EncyclopediaScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .widthIn(max = 760.dp),
-            contentPadding = PaddingValues(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 120.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 120.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item {
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    shape = RoundedCornerShape(22.dp),
-                    modifier = Modifier.fillMaxWidth()
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp, vertical = 2.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = RoundedCornerShape(15.dp),
-                            modifier = Modifier.size(48.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Default.Science,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(25.dp)
-                                )
-                            }
-                        }
-                        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                            Text(
-                                text = agroText("الموسوعة الزراعية"),
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = agroText("مرجعك للمركبات والآفات وطرق المكافحة"),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
+                    Text(
+                        text = agroText("الموسوعة الزراعية"),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = agroText("المركبات الزراعية وفحص قابلية الخلط"),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
             item {
@@ -281,8 +259,7 @@ fun EncyclopediaScreen(
                     OutlinedTextField(
                         value = state.searchQuery,
                         onValueChange = viewModel::updateSearchQuery,
-                        label = { Text(agroText("ابحث في الموسوعة")) },
-                        placeholder = { Text(agroText("اسم المنتج أو المادة الفعالة أو الآفة")) },
+                        placeholder = { Text(agroText("ابحث عن مركب أو مادة فعالة أو آفة")) },
                         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                         trailingIcon = {
                             if (state.searchQuery.isNotEmpty()) {
@@ -295,7 +272,7 @@ fun EncyclopediaScreen(
                             }
                         },
                         singleLine = true,
-                        shape = MaterialTheme.shapes.medium,
+                        shape = RoundedCornerShape(16.dp),
                         modifier = Modifier.fillMaxWidth().testTag("encyclopedia_search_input")
                     )
                 }
@@ -362,12 +339,22 @@ fun EncyclopediaScreen(
                 }
 
                 item {
-                    Text(
-                        text = agroText("المركبات المتوفرة (${state.filteredItems.size} • محفوظة محلياً)"),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = agroText("المركبات الزراعية"),
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = agroText("${state.filteredItems.size} مركب"),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
 
                 if (state.filteredItems.isEmpty()) {
@@ -687,7 +674,7 @@ private fun AgrochemicalCard(
     var isExpanded by remember(item.id) { mutableStateOf(false) }
 
     ElevatedCard(
-        shape = RoundedCornerShape(26.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
@@ -697,8 +684,8 @@ private fun AgrochemicalCard(
             .testTag("agro_card_${item.id}")
     ) {
         Column(
-            modifier = Modifier.padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -709,7 +696,7 @@ private fun AgrochemicalCard(
                     text = item.commercialName,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
-                    maxLines = if (isExpanded) 3 else 2,
+                    maxLines = if (isExpanded) 3 else 1,
                     modifier = Modifier.weight(1f)
                 )
                 Spacer(Modifier.width(8.dp))
@@ -758,7 +745,7 @@ private fun AgrochemicalCard(
                 Text(
                     text = agroText("الآفات المستهدفة: ${item.targetPests}"),
                     style = MaterialTheme.typography.bodySmall,
-                    maxLines = if (isExpanded) 8 else 3
+                    maxLines = if (isExpanded) 8 else 2
                 )
             }
 
