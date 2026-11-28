@@ -112,7 +112,7 @@ fun Modifier.agriAmbientBackground(
     val palette = when (style) {
         AgriBackgroundStyle.CALCULATOR -> if (dark) listOf(Color(0xFF14251C), Color(0xFF172A20), Color(0xFF101B15)) else listOf(Color(0xFFE2EFE7), Color(0xFFEDF4EE), Color(0xFFF8FAF5))
         AgriBackgroundStyle.FERTILIZER -> if (dark) listOf(Color(0xFF282719), Color(0xFF20291D), Color(0xFF151D14)) else listOf(Color(0xFFECEBD9), Color(0xFFF1F1E5), Color(0xFFFAF8EF))
-        AgriBackgroundStyle.ENCYCLOPEDIA -> if (dark) listOf(Color(0xFF14271F), Color(0xFF172A22), Color(0xFF101B16)) else listOf(Color(0xFFDDEDE4), Color(0xFFECF4EC), Color(0xFFF7FAF5))
+        AgriBackgroundStyle.ENCYCLOPEDIA -> if (dark) listOf(Color(0xFF14271F), Color(0xFF172A22), Color(0xFF101B16)) else listOf(Color(0xFFF1EBDD), Color(0xFFF7F3E9), Color(0xFFFCFAF4))
         AgriBackgroundStyle.NOTEBOOK -> if (dark) listOf(Color(0xFF29251B), Color(0xFF24271D), Color(0xFF171D15)) else listOf(Color(0xFFECE6D6), Color(0xFFF3F0E5), Color(0xFFFAF8F0))
         AgriBackgroundStyle.WEATHER -> if (dark) listOf(Color(0xFF172832), Color(0xFF192A32), Color(0xFF111D24)) else listOf(Color(0xFFDCECF5), Color(0xFFEDF5F8), Color(0xFFF8FBFC))
         AgriBackgroundStyle.LIVE -> if (dark) listOf(Color(0xFF14291F), Color(0xFF172B22), Color(0xFF101B15)) else listOf(Color(0xFFDDEFE5), Color(0xFFECF5EE), Color(0xFFF7FAF5))
@@ -150,8 +150,7 @@ fun Modifier.agriAmbientBackground(
                     drawCircle(scheme.primary.copy(alpha = alpha * 0.55f), size.minDimension * 0.16f, Offset(size.width * -0.08f, size.height * 0.40f))
                 }
                 AgriBackgroundStyle.ENCYCLOPEDIA -> {
-                    drawCircle(accent.copy(alpha = alpha), size.minDimension * 0.34f, Offset(size.width * 1.03f, size.height * 0.18f))
-                    drawCircle(accent.copy(alpha = alpha * 0.70f), size.minDimension * 0.25f, Offset(size.width * -0.08f, size.height * 0.72f))
+                    // Keep the encyclopedia background clean so cards and controls stand apart.
                 }
                 AgriBackgroundStyle.NOTEBOOK -> {
                     val step = 29.dp.toPx()
